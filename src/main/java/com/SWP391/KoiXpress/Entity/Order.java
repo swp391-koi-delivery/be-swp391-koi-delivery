@@ -21,6 +21,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long orderId;
 
+    boolean isDeleted = false;
+
     @Enumerated(EnumType.STRING)
     DescribeOrder describeOrder;
 
