@@ -124,13 +124,13 @@ public class CalculateBoxService {
         boxDetails.put("mediumBoxCount", medium_box_count);
         boxDetails.put("smallBoxCount", small_box_count);
         boxDetails.put("totalVolume", totalVolume);
-        boxDetails.put("totalPrice",0.0);
+        boxDetails.put("totalPrice", 0.0);
         boxDetails.put("remainingVolume", remainVolume = 0 - remainVolume);
 
         return boxDetails;
     }
 
-    public List<String> suggestFishSizes(double remainVolume){
+    public List<String> suggestFishSizes(double remainVolume) {
         List<String> suggestions = new ArrayList<>();
         List<Map.Entry<String, Double>> sortedFishSizes = FISH_SIZES.entrySet()
                 .stream()
@@ -141,7 +141,7 @@ public class CalculateBoxService {
             double volume = entry.getValue();
             if (volume <= remainVolume) {
                 int fishQuantity = (int) (remainVolume / volume);
-                suggestions.add("Số lượng còn có thể thêm: " + fishQuantity + ", Size: "+ entry.getKey());
+                suggestions.add("Số lượng còn có thể thêm: " + fishQuantity + ", Size: " + entry.getKey());
             }
         }
 
@@ -158,14 +158,19 @@ public class CalculateBoxService {
         return boxDetails;
     }
 
-    public BoxDetail createBox(Map<Double, Integer> fishSizeQuantityMap){
-        try{
+    public BoxDetail createBox(Map<Double, Integer> fishSizeQuantityMap) {
+        try {
             Map<String, Object> boxDetails = calculateBox(fishSizeQuantityMap);
             int largeBox = (int) boxDetails.get("largeBoxCount");
             int mediumBox = (int) boxDetails.get("mediumBoxCount");
             int smallBox = (int) boxDetails.get("smallBoxCount");
             double totalVolume = (double) boxDetails.get("totalVolume");
-            double totalPrice = (double) boxDetails.get("totalPrice");
+
+            double smallBoxPrice = smallBox * 5;  // Giá của Small Box: 5 USD
+            double mediumBoxPrice = mediumBox * 10;  // Giá của Medium Box: 10 USD
+            double largeBoxPrice = largeBox * 15;  // Giá của Large Box: 15 USD
+            double totalPrice = smallBoxPrice + mediumBoxPrice + largeBoxPrice;
+
             BoxDetail boxDetail = new BoxDetail();
             boxDetail.setSmallBox(smallBox);
             boxDetail.setMediumBox(mediumBox);
@@ -173,10 +178,11 @@ public class CalculateBoxService {
             boxDetail.setTotalVolume(totalVolume);
             boxDetail.setTotalPrice(totalPrice);
             return boxDetailRepository.save(boxDetail);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Đã xảy ra lỗi trong quá trình tạo BoxDetail");
         }
     }
+
 
 }

@@ -1,6 +1,7 @@
 package com.SWP391.KoiXpress.Entity;
 
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
+import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,8 +22,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long orderId;
 
-    boolean isDeleted = false;
-
     @Enumerated(EnumType.STRING)
     DescribeOrder describeOrder;
 
@@ -36,6 +35,13 @@ public class Order {
     @NotBlank(message = "location end can not be blank")
     String destinationLocation;
 
+    @NotNull(message = "Size cannot be null")
+    double size;
+
+    @Min(value = 1, message = "Quantity must be at least 1")
+    int quantity;
+
+
     @Min(value = 0,message = "price at least 0")
     @NotNull(message = "price can not be null")
     double totalPrice;
@@ -48,6 +54,10 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     PaymentStatus paymentStatus;
+
+
+    @Enumerated(EnumType.STRING)
+    HealthFishStatus healthFishStatus;
 
     @ManyToOne
     @JoinColumn(name="user_id")

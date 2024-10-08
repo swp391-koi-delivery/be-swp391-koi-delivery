@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
     Order findOrderByOrderId(long orderId); // Corrected method name
-    List<Order> findOrdersByIsDeletedFalse(); // Already correct
+
 }

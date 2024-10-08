@@ -1,16 +1,23 @@
 package com.SWP391.KoiXpress.Service;
 
+import com.SWP391.KoiXpress.Entity.BoxDetail;
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
+import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Order;
+import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
+import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Model.request.OrderRequest;
+import com.SWP391.KoiXpress.Model.response.BoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
+import com.SWP391.KoiXpress.Repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,26 +27,38 @@ public class OrderService {
     OrderRepository orderRepository;
 
     @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    CalculateBoxService calculateBoxService;
 
     // Create
     public OrderResponse create(OrderRequest orderRequest) {
-        // Validate orderDescription
-        validateOrderDescription(orderRequest.getDescribeOrder());
+        try {
+            Map<Double, Integer> fishSizeQuantityMap = Map.of(orderRequest.getSize(), orderRequest.getQuantity());
+            BoxDetail boxDetail = calculateBoxService.createBox(fishSizeQuantityMap);
+            Order order = modelMapper.map(orderRequest, Order.class);
+            order.setBoxDetail(boxDetail);
+            Order newOrder = orderRepository.save(order);
+            OrderResponse orderResponse = modelMapper.map(newOrder, OrderResponse.class);
+            orderResponse.setTotalPrice(boxDetail.getTotalPrice());
+            orderResponse.setBoxDetail(modelMapper.map(newOrder.getBoxDetail(), BoxDetailResponse.class));
+            return orderResponse;
 
-        // Use ModelMapper to map the request DTO to the entity
-        Order order = modelMapper.map(orderRequest, Order.class);
-        Order newOrder = orderRepository.save(order);
-
-        // Map the saved entity to the response DTO
-        return modelMapper.map(newOrder, OrderResponse.class);
+        } catch (Exception e) {
+            // Log chi tiết lỗi
+            e.printStackTrace();
+            throw new RuntimeException("Đã xảy ra lỗi trong quá trình tạo Order", e);
+        }
     }
 
 
     // Read all orders
     public List<OrderResponse> getAllOrders() {
-        List<Order> orders = orderRepository.findOrdersByIsDeletedFalse();
-        // Map the entity list to a list of response DTOs
+        List<Order> orders = orderRepository.findAll();
         return orders.stream()
                 .map(order -> modelMapper.map(order, OrderResponse.class))
                 .collect(Collectors.toList());
@@ -47,41 +66,28 @@ public class OrderService {
 
     // Update
     public OrderResponse update(long orderId, OrderRequest orderRequest) {
-        // Validate orderDescription
-        validateOrderDescription(orderRequest.getDescribeOrder());
-
         Order oldOrder = getOrderById(orderId);
-
-        // Use ModelMapper to update the entity with the new data
         modelMapper.map(orderRequest, oldOrder);
-
         Order updatedOrder = orderRepository.save(oldOrder);
-        // Return the updated order as a response DTO
         return modelMapper.map(updatedOrder, OrderResponse.class);
     }
 
 
-    // Delete (soft delete)
+    // Delete
     public OrderResponse delete(long orderId) {
         Order oldOrder = getOrderById(orderId);
-        oldOrder.setDeleted(true);
+        oldOrder.setOrderStatus(OrderStatus.OrderCanceled);
         Order deletedOrder = orderRepository.save(oldOrder);
         return modelMapper.map(deletedOrder, OrderResponse.class);
     }
 
-    // Helper method to get order by id
+
     private Order getOrderById(long orderId) {
         Order oldOrder = orderRepository.findOrderByOrderId(orderId);
         if (oldOrder == null) {
             throw new EntityNotFoundException("Order not found");
         }
         return oldOrder;
-    }
-
-    private void validateOrderDescription(DescribeOrder orderDescription) {
-        if (orderDescription != DescribeOrder.WHOLESALEORDER && orderDescription != DescribeOrder.RETAILORDER) {
-            throw new IllegalArgumentException("Order description must be either 'wholesale' or 'retail'.");
-        }
     }
 
 }

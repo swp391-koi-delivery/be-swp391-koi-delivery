@@ -1,10 +1,14 @@
 package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Model.request.OrderRequest;
+import com.SWP391.KoiXpress.Model.response.OrderResponse;
 import com.SWP391.KoiXpress.Service.CalculateBoxService;
+import com.SWP391.KoiXpress.Service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -15,7 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/saleStaff")
 @CrossOrigin("*")
-@SecurityRequirement(name="api")
+@SecurityRequirement(name = "api")
 public class SalesStaffAPI {
     @Autowired
     CalculateBoxService calculateBoxService;
@@ -45,7 +49,7 @@ public class SalesStaffAPI {
 
     @GetMapping("/createBox")
     public ResponseEntity createBox(@RequestParam List<Integer> quantities,
-                                                            @RequestParam List<Double> fishSizes) {
+                                    @RequestParam List<Double> fishSizes) {
         // Kiểm tra nếu số lượng fishSizes và quantities khớp nhau
         if (quantities.size() != fishSizes.size()) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Số lượng và kích thước cá không khớp"));
@@ -61,4 +65,5 @@ public class SalesStaffAPI {
         BoxDetail boxDetail = calculateBoxService.createBox(fishSizeQuantityMap);
         return ResponseEntity.ok(boxDetail);
     }
+
 }

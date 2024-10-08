@@ -1,5 +1,5 @@
-package com.SWP391.KoiXpress.Service;//package com.SWP391.KoiXpress.Service;
-//
+package com.SWP391.KoiXpress.Service;
+
 //import com.SWP391.KoiXpress.Entity.Order;
 //
 //import com.SWP391.KoiXpress.Entity.Vehicle;
@@ -22,8 +22,6 @@ package com.SWP391.KoiXpress.Service;//package com.SWP391.KoiXpress.Service;
 //
 //    @Autowired
 //    private GeoCodingService geoCodingService;
-//
-//
 //
 //    @Autowired
 //    OrderRepository orderRepository;
