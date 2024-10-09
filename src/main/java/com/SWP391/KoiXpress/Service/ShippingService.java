@@ -1,6 +1,9 @@
 package com.SWP391.KoiXpress.Service;
 
-//import com.SWP391.KoiXpress.Entity.Order;
+import com.SWP391.KoiXpress.Entity.Order;
+import com.SWP391.KoiXpress.Entity.Vehicle;
+
+import java.util.List;//import com.SWP391.KoiXpress.Entity.Order;
 //
 //import com.SWP391.KoiXpress.Entity.Vehicle;
 //import com.SWP391.KoiXpress.Repository.OrderRepository;
@@ -34,17 +37,17 @@ package com.SWP391.KoiXpress.Service;
 //     */
 //
 //
-//    public String planAndCalculateCosts(List<Order> orders) {
-//        if (orders == null || orders.isEmpty()) {
-//            return "No orders provided.";
-//        }
+    public String planAndCalculateCosts(List<Order> orders) {
+        if (orders == null || orders.isEmpty()) {
+            return "No orders provided.";
+        }
 //
-//        Vehicle vehicle = new Vehicle();
-//        vehicle.setTotalCapacity(1000);  // Full capacity at the start
-//        vehicle.setRemainingCapacity(vehicle.getTotalCapacity());  // Set remaining capacity to full capacity (1000)
-//        double totalRouteDistance = 0;
-//        double totalCost = 0;
-//        vehicle.setCurrentLocation("Hồ Chí Minh");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setCapacity(1000);
+        vehicle.setRemainingCapacity(vehicle.getCapacity());
+        double totalRouteDistance = 0;
+        double totalCost = 0;
+        vehicle.setCurrentLocation("Hồ Chí Minh");
 //
 //        StringBuilder resultDetails = new StringBuilder("Route details:\n");
 //

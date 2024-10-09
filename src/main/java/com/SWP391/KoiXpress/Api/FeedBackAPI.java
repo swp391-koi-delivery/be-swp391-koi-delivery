@@ -32,4 +32,17 @@ public class FeedBackAPI {
         List<FeedBack> feedBacks = feedBackService.getAllFeedBack();
         return ResponseEntity.ok(feedBacks);
     }
+
+    @PutMapping("/{feedBackId}")
+    public ResponseEntity updateFeedBack( @PathVariable long feedId,@Valid @RequestBody FeedBackRequet feedBackRequet){
+        FeedBack newFeedBack = feedBackService.updateFeedBack( feedId,feedBackRequet);
+        return ResponseEntity.ok(newFeedBack);
+    }
+
+    @DeleteMapping("/{feedBackId}")
+    public ResponseEntity deleteFeedBack(@PathVariable long feedBackId){
+        feedBackService.deleteFeedBack(feedBackId);
+        return ResponseEntity.ok().build();
+    }
+    
 }

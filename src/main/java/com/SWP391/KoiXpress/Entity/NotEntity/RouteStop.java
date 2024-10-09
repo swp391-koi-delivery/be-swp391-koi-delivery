@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Entity.NotEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
@@ -7,6 +8,7 @@ import lombok.Data;
 @Embeddable  // Make it embeddable so that it can be used as part of another entity
 public class RouteStop {
     private String location;
+    @Column(name = "`load`", nullable = false)
     private double load;
 
     public RouteStop(String location, double load) {
