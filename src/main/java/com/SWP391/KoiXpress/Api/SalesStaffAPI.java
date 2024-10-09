@@ -32,7 +32,7 @@ public class SalesStaffAPI {
 
         // Kiểm tra nếu số lượng fishSizes và quantities khớp nhau
         if (quantities.size() != fishSizes.size()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Số lượng và kích thước cá không khớp"));
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "The number and size of fish do not match"));
         }
 
         // Tạo map chứa các cặp kích thước-số lượng
@@ -52,7 +52,7 @@ public class SalesStaffAPI {
                                     @RequestParam List<Double> fishSizes) {
         // Kiểm tra nếu số lượng fishSizes và quantities khớp nhau
         if (quantities.size() != fishSizes.size()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Số lượng và kích thước cá không khớp"));
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "The number and size of fish do not match"));
         }
 
         // Tạo map chứa các cặp kích thước-số lượng

@@ -37,17 +37,17 @@ import java.util.List;//import com.SWP391.KoiXpress.Entity.Order;
 //     */
 //
 //
-    public String planAndCalculateCosts(List<Order> orders) {
-        if (orders == null || orders.isEmpty()) {
-            return "No orders provided.";
-        }
-//
-        Vehicle vehicle = new Vehicle();
-        vehicle.setCapacity(1000);
-        vehicle.setRemainingCapacity(vehicle.getCapacity());
-        double totalRouteDistance = 0;
-        double totalCost = 0;
-        vehicle.setCurrentLocation("Hồ Chí Minh");
+//    public String planAndCalculateCosts(List<Order> orders) {
+//        if (orders == null || orders.isEmpty()) {
+//            return "No orders provided.";
+//        }
+////
+//        Vehicle vehicle = new Vehicle();
+//        vehicle.setCapacity(1000);
+//        vehicle.setRemainingCapacity(vehicle.getCapacity());
+//        double totalRouteDistance = 0;
+//        double totalCost = 0;
+//        vehicle.setCurrentLocation("Hồ Chí Minh");
 //
 //        StringBuilder resultDetails = new StringBuilder("Route details:\n");
 //

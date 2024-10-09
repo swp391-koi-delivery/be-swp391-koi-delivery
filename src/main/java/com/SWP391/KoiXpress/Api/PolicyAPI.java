@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +16,13 @@ import java.util.List;
 @RequestMapping("/api/Policy")
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
+@PreAuthorize("hasAuthority('CUSTOMER') or hasAuthority('Manager')")
 public class PolicyAPI {
     @Autowired
     PolicyService policyService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('Manager')")
     public ResponseEntity createPolicy(@Valid @RequestBody Policy policy) {
         Policy newPolicy = policyService.createPolicy(policy);
         return ResponseEntity.ok(newPolicy);
@@ -32,12 +35,14 @@ public class PolicyAPI {
     }
 
     @PutMapping("{policyId}")
+    @PreAuthorize("hasAuthority('Manager')")
     public ResponseEntity updatrPolicy(@PathVariable long policyId, @Valid @RequestBody Policy policy) {
         Policy updatedPolicy = policyService.updatePolicy(policyId, policy);
         return ResponseEntity.ok(updatedPolicy);
     }
 
     @DeleteMapping("{policyId}")
+    @PreAuthorize("hasAuthority('Manager')")
     public ResponseEntity deletePolicy(@PathVariable long policyId) {
         policyService.deletePolicy(policyId);
         return ResponseEntity.ok().build();

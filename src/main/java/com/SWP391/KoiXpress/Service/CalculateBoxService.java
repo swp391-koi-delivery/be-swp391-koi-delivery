@@ -46,11 +46,11 @@ public class CalculateBoxService {
 
     public double getFishVolume(int quantity, double size) {
         if (quantity <= 0) {
-            throw new BoxException("Kích thước hộp không hợp lệ");
+            throw new BoxException("Invalid box size");
 
         }
         if (size < 19.9 || size > 83) {
-            throw new BoxException("Kích thước cá Không hợp lệ (20-83).");
+            throw new BoxException("Invalid fish size (20-83)");
         }
 
         double total = 0;
@@ -143,7 +143,7 @@ public class CalculateBoxService {
             double volume = entry.getValue();
             if (volume <= remainVolume) {
                 int fishQuantity = (int) (remainVolume / volume);
-                suggestions.add("Số lượng còn có thể thêm: " + fishQuantity + ", Size: "+ entry.getKey());
+                suggestions.add("Quantity can be added: " + fishQuantity + ", Size: "+ entry.getKey());
             }
         }
 
@@ -177,7 +177,7 @@ public class CalculateBoxService {
             return boxDetailRepository.save(boxDetail);
         }catch(Exception e){
             e.printStackTrace();
-            throw new BoxException("Đã xảy ra lỗi trong quá trình tạo BoxDetail");
+            throw new BoxException("An error occurred while creating Box");
         }
     }
 
