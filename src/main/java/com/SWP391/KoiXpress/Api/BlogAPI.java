@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Entity.Blog;
 import com.SWP391.KoiXpress.Model.request.BlogRequest;
+import com.SWP391.KoiXpress.Model.response.BlogResponse;
 import com.SWP391.KoiXpress.Service.BlogService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -24,13 +25,13 @@ public class BlogAPI {
 
     @PostMapping
     public ResponseEntity createBlog(@Valid @RequestBody BlogRequest blogRequest){
-        Blog newBlog = blogService.createBlog(blogRequest);
+        BlogResponse newBlog = blogService.createBlog(blogRequest);
         return ResponseEntity.ok(newBlog);
     }
 
     @GetMapping
     public  ResponseEntity get(){
-        List<Blog> blogs = blogService.getAllBlog();
+        List<BlogResponse> blogs = blogService.getAllBlog();
         return ResponseEntity.ok(blogs);
     }
 

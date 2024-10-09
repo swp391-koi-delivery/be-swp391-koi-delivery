@@ -6,9 +6,9 @@ import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
 import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
-import com.SWP391.KoiXpress.Exception.EmailNotVerifiedException;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
+import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
 import com.SWP391.KoiXpress.Model.request.LoginRequest;
 import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
 import com.SWP391.KoiXpress.Model.request.RegisterRequest;
@@ -16,7 +16,6 @@ import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
 import com.SWP391.KoiXpress.Repository.UserRepository;
-import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,9 +28,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
@@ -68,9 +64,9 @@ public class AuthenticationService implements UserDetailsService {
             User newUser = userRepository.save(user);
             EmailDetail emailDetail = new EmailDetail();
             emailDetail.setUser(newUser);
-            emailDetail.setSubject("HELLO WORLD");
+            emailDetail.setSubject("Verify your email");
             emailDetail.setLink("#");
-            boolean emailSent =  emailService.sendEmail(emailDetail);
+            boolean emailSent =  emailService.sendEmailVerify(emailDetail);
             if(emailSent) {
                 newUser.setEmailStatus(EmailStatus.Verified);
                 userRepository.save(newUser);
@@ -106,8 +102,8 @@ public class AuthenticationService implements UserDetailsService {
 
     }
 
-    public void forgotPassword(String email){
-        User user = userRepository.findUserByEmail(email);
+    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest){
+        User user = userRepository.findUserByEmail(forgotPasswordRequest.getEmail());
         if(user == null ){
             throw new EntityNotFoundException("Cant find your email account");
         }
@@ -116,7 +112,7 @@ public class AuthenticationService implements UserDetailsService {
         emailDetail.setUser(user);
         emailDetail.setSubject("Reset Password");
         emailDetail.setLink("http://transportkoifish.online/?token=" + token);
-        emailService.sendEmail(emailDetail);
+        emailService.sendEmailResetPassword(emailDetail);
 
     }
 

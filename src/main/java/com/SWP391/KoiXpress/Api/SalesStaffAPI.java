@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/saleStaff")
+@RequestMapping("/api")
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
 public class SalesStaffAPI {

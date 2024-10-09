@@ -1,13 +1,14 @@
 package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Exception.BoxException;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
-import com.SWP391.KoiXpress.Model.request.BoxDetailRequest;
 import com.SWP391.KoiXpress.Repository.BoxDetailRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.util.*;
 
 @Service
@@ -23,7 +24,9 @@ public class CalculateBoxService {
     static final double SMALL_BOX_CAPACITY = 100;
     static final double MEDIUM_BOX_CAPACITY = 200;
     static final double LARGE_BOX_CAPACITY = 350;
-
+    static final double SM_PRICE = 2.01;
+    static final double MD_PRICE = 4.02;
+    static final double LR_PRICE = 8.05;
     static final Map<String, Double> FISH_SIZES = new HashMap<>();
 
     static {
@@ -35,19 +38,19 @@ public class CalculateBoxService {
         FISH_SIZES.put("44.1-50", 50.0);
         FISH_SIZES.put("50.1-55", 60.0);
         FISH_SIZES.put("55.1-65", 70.0);
-        FISH_SIZES.put("50-60", 75.0);
-        FISH_SIZES.put("60.1-65", 80.0);
-        FISH_SIZES.put("65.1-73", 90.0);
-        FISH_SIZES.put("73.1-83", 100.0);
+        FISH_SIZES.put("65.1-70", 75.0);
+        FISH_SIZES.put("70.1-75", 80.0);
+        FISH_SIZES.put("75.1-80", 90.0);
+        FISH_SIZES.put("80.1-83", 100.0);
     }
 
     public double getFishVolume(int quantity, double size) {
         if (quantity <= 0) {
-            throw new EntityNotFoundException("Kích thước hộp không hợp lệ");
+            throw new BoxException("Kích thước hộp không hợp lệ");
 
         }
         if (size < 19.9 || size > 83) {
-            throw new IllegalArgumentException("Kích thước cá Không hợp lệ (20-83).");
+            throw new BoxException("Kích thước cá Không hợp lệ (20-83).");
         }
 
         double total = 0;
@@ -73,7 +76,7 @@ public class CalculateBoxService {
     }
 
     public Map<String, Object> calculateBox(Map<Double, Integer> fishSizeQuantityMap) {
-        double usedVolume = 0;
+        double remainVolume = 0;
         double totalVolume = 0;
 
         // Duyệt qua từng cặp kích thước-số lượng và cộng dồn thể tích tổng
@@ -81,18 +84,17 @@ public class CalculateBoxService {
             double fishSize = entry.getKey();
             int quantity = entry.getValue();
             totalVolume += getFishVolume(quantity, fishSize);
-            usedVolume += getFishVolume(quantity, fishSize);
+            remainVolume += getFishVolume(quantity, fishSize);
         }
 
         // Tính toán số lượng hộp dựa trên thể tích tổng
-        double remainVolume = 0;
         int small_box_count = 0;
         int medium_box_count = 0;
         int large_box_count = 0;
 
         do {
-            large_box_count = (int) (usedVolume / LARGE_BOX_CAPACITY);
-            remainVolume = usedVolume - (large_box_count * LARGE_BOX_CAPACITY);
+            large_box_count = (int) (remainVolume / LARGE_BOX_CAPACITY);
+            remainVolume = remainVolume - (large_box_count * LARGE_BOX_CAPACITY);
             if (remainVolume >= MEDIUM_BOX_CAPACITY) {
                 medium_box_count = (int) (remainVolume / MEDIUM_BOX_CAPACITY);
                 remainVolume -= (medium_box_count * MEDIUM_BOX_CAPACITY);
@@ -124,7 +126,7 @@ public class CalculateBoxService {
         boxDetails.put("mediumBoxCount", medium_box_count);
         boxDetails.put("smallBoxCount", small_box_count);
         boxDetails.put("totalVolume", totalVolume);
-        boxDetails.put("totalPrice",0.0);
+        boxDetails.put("totalPrice",large_box_count*LR_PRICE + medium_box_count * MD_PRICE + small_box_count * SM_PRICE);
         boxDetails.put("remainingVolume", remainVolume = 0 - remainVolume);
 
         return boxDetails;
@@ -165,17 +167,17 @@ public class CalculateBoxService {
             int mediumBox = (int) boxDetails.get("mediumBoxCount");
             int smallBox = (int) boxDetails.get("smallBoxCount");
             double totalVolume = (double) boxDetails.get("totalVolume");
-            double totalPrice = (double) boxDetails.get("totalPrice");
+            double price = (double) boxDetails.get("totalPrice");
             BoxDetail boxDetail = new BoxDetail();
             boxDetail.setSmallBox(smallBox);
             boxDetail.setMediumBox(mediumBox);
             boxDetail.setLargeBox(largeBox);
             boxDetail.setTotalVolume(totalVolume);
-            boxDetail.setTotalPrice(totalPrice);
+            boxDetail.setPrice(price);
             return boxDetailRepository.save(boxDetail);
         }catch(Exception e){
             e.printStackTrace();
-            throw new RuntimeException("Đã xảy ra lỗi trong quá trình tạo BoxDetail");
+            throw new BoxException("Đã xảy ra lỗi trong quá trình tạo BoxDetail");
         }
     }
 

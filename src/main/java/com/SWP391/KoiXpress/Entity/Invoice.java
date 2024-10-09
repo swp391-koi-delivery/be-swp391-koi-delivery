@@ -10,7 +10,8 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long invoiceId;
     double price;
+    double VAT;
 
-    @OneToOne(mappedBy = "invoice")
-    Order order;
+//    @OneToOne(mappedBy = "invoice")
+//    Order order;
 }

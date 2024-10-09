@@ -24,7 +24,7 @@ public class EmailService {
     @Autowired
     TemplateEngine templateEngine;
 
-    public boolean sendEmail(EmailDetail emailDetail)  {
+    public boolean sendEmailVerify(EmailDetail emailDetail)  {
         try{
             Context context = new Context();
             context.setVariable("name",emailDetail.getUser().getEmail());
@@ -32,6 +32,75 @@ public class EmailService {
             context.setVariable("link",emailDetail.getLink());
             context.setVariable("email",emailDetail.getUser().getEmail());
             String template = templateEngine.process("EmailVerify",context);
+
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message);
+
+            messageHelper.setFrom("admin@gmail.com");
+            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setText(template,true);
+            messageHelper.setSubject(emailDetail.getSubject());
+            javaMailSender.send(message);
+            return true;
+        }catch(MessagingException e){
+            throw new EmailNotVerifiedException("Error sending  email, please check your mail again");
+        }
+    }
+
+    public boolean sendEmailResetPassword(EmailDetail emailDetail)  {
+        try{
+            Context context = new Context();
+            context.setVariable("name",emailDetail.getUser().getEmail());
+            context.setVariable("button","Reset Password");
+            context.setVariable("link",emailDetail.getLink());
+            context.setVariable("email",emailDetail.getUser().getEmail());
+            String template = templateEngine.process("EmailResetPassword",context);
+
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message);
+
+            messageHelper.setFrom("admin@gmail.com");
+            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setText(template,true);
+            messageHelper.setSubject(emailDetail.getSubject());
+            javaMailSender.send(message);
+            return true;
+        }catch(MessagingException e){
+            throw new EmailNotVerifiedException("Error sending  email, please check your mail again");
+        }
+    }
+
+    public boolean sendEmailAccount(EmailDetail emailDetail)  {
+        try{
+            Context context = new Context();
+            context.setVariable("name",emailDetail.getUser().getEmail());
+//            context.setVariable("button","Click Here to verify");
+            context.setVariable("link",emailDetail.getLink());
+            context.setVariable("email",emailDetail.getUser().getEmail());
+            String template = templateEngine.process("EmailAccount",context);
+
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message);
+
+            messageHelper.setFrom("admin@gmail.com");
+            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setText(template,true);
+            messageHelper.setSubject(emailDetail.getSubject());
+            javaMailSender.send(message);
+            return true;
+        }catch(MessagingException e){
+            throw new EmailNotVerifiedException("Error sending  email, please check your mail again");
+        }
+    }
+
+    public boolean sendEmailThankYou(EmailDetail emailDetail)  {
+        try{
+            Context context = new Context();
+            context.setVariable("name",emailDetail.getUser().getEmail());
+            context.setVariable("button","Our Website");
+            context.setVariable("link",emailDetail.getLink());
+            context.setVariable("email",emailDetail.getUser().getEmail());
+            String template = templateEngine.process("EmailThankYou",context);
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message);

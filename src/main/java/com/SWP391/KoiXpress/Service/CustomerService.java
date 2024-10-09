@@ -56,7 +56,7 @@ public class CustomerService {
                 emailDetail.setUser(newUser);
                 emailDetail.setSubject("Update Email");
                 emailDetail.setLink("#");
-                boolean emailSend = emailService.sendEmail(emailDetail);
+                boolean emailSend = emailService.sendEmailVerify(emailDetail);
                 if(emailSend){
                     //gui email xac thuc
                     newUser.setEmailStatus(EmailStatus.Verified);
