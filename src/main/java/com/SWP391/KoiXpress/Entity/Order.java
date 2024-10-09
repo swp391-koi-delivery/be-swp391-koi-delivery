@@ -3,16 +3,19 @@ package com.SWP391.KoiXpress.Entity;
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
+import com.SWP391.KoiXpress.Entity.Enum.Payment;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -22,11 +25,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long orderId;
 
-    @Enumerated(EnumType.STRING)
-    DescribeOrder describeOrder;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    UUID trackingOrder = UUID.randomUUID();
 
-    @NotNull(message = "date can not be null")
-    @Temporal(TemporalType.DATE)
     Date orderDate;
 
     @NotBlank(message = "location start can not be blank")
@@ -44,10 +45,15 @@ public class Order {
 
     @Min(value = 0,message = "price at least 0")
     @NotNull(message = "price can not be null")
-    double totalPrice;
-    String payment;
+    double price;
 
-    double VAT;
+    int totalquantity;
+
+    @Enumerated(EnumType.STRING)
+    DescribeOrder describeOrder;
+
+    @Enumerated(EnumType.STRING)
+    Payment payment;
 
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
@@ -63,20 +69,19 @@ public class Order {
     @JoinColumn(name="user_id")
     User user;
 
-    @ManyToOne
-    @JoinColumn(name = "report_id")
-    Report report;
+//    @ManyToOne
+//    @JoinColumn(name = "report_id")
+//    Report report;
 
     @OneToMany(mappedBy = "order")
-    @JsonIgnore
-    List<Progress> progresses;
+    List<OrderDetail> orderDetails;
 
-    @OneToOne
-    @JoinColumn(name = "invoice_id")
-    Invoice invoice;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "box_detail_id", referencedColumnName = "boxId")
-    BoxDetail boxDetail;
+//    @OneToMany(mappedBy = "order")
+//    @JsonIgnore
+//    List<Progress> progresses;
+//
+//    @OneToOne
+//    @JoinColumn(name = "invoice_id")
+//    Invoice invoice;
 
 }

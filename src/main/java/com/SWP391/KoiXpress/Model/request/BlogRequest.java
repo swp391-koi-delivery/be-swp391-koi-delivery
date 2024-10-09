@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Model.request;
 
+import com.SWP391.KoiXpress.Model.response.UserResponse;
 import jakarta.persistence.Column;
 import lombok.Data;
 

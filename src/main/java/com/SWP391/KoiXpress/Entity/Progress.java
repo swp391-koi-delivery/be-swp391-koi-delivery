@@ -20,9 +20,9 @@ public class Progress {
     String destinationLocation;
     Boolean status;
 
-    @ManyToOne
-    @JoinColumn(name="order_id")
-    Order order;
+//    @ManyToOne
+//    @JoinColumn(name="order_id")
+//    Order order;
 
     @OneToMany(mappedBy = "progress")
     @JsonIgnore

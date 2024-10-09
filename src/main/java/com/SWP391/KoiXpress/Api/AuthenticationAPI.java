@@ -1,6 +1,7 @@
 package com.SWP391.KoiXpress.Api;
 
 
+import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
 import com.SWP391.KoiXpress.Model.request.LoginRequest;
 import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
 import com.SWP391.KoiXpress.Model.request.RegisterRequest;
@@ -36,13 +37,15 @@ public class AuthenticationAPI {
         return ResponseEntity.ok(newUser);
     }
 
-    public ResponseEntity forgotPassword(@RequestBody String email){
-        authenticationService.forgotPassword(email);
+    @PostMapping("/forgot-password")
+    public ResponseEntity forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest){
+        authenticationService.forgotPassword(forgotPasswordRequest);
         return ResponseEntity.ok("Check your email!");
     }
 
-    public ResponseEntity resetPassword(PasswordResetRequest passwordResetRequest){
+    @PostMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestBody PasswordResetRequest passwordResetRequest){
         authenticationService.resetPassword(passwordResetRequest);
-        return ResponseEntity.ok("Reset password successfull");
+        return ResponseEntity.ok("Reset password successfully");
     }
 }

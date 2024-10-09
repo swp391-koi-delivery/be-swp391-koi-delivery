@@ -17,7 +17,7 @@ public class Blog {
     @Column(length = 2000)
     String post;
 
-    Boolean poststatus=false;
+    Boolean poststatus =false;
 
     @ManyToOne
     @JoinColumn(name="user_id")

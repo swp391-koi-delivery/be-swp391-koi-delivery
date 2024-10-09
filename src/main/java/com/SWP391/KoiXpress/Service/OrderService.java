@@ -4,9 +4,11 @@ import com.SWP391.KoiXpress.Entity.BoxDetail;
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Order;
+import com.SWP391.KoiXpress.Entity.OrderDetail;
 import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
+import com.SWP391.KoiXpress.Model.request.OrderDetailRequest;
 import com.SWP391.KoiXpress.Model.request.OrderRequest;
 import com.SWP391.KoiXpress.Model.response.BoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
@@ -16,6 +18,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,23 +40,40 @@ public class OrderService {
     CalculateBoxService calculateBoxService;
 
     // Create
-    public OrderResponse create(OrderRequest orderRequest) {
-        try {
-            Map<Double, Integer> fishSizeQuantityMap = Map.of(orderRequest.getSize(), orderRequest.getQuantity());
-            BoxDetail boxDetail = calculateBoxService.createBox(fishSizeQuantityMap);
-            Order order = modelMapper.map(orderRequest, Order.class);
-            order.setBoxDetail(boxDetail);
-            Order newOrder = orderRepository.save(order);
-            OrderResponse orderResponse = modelMapper.map(newOrder, OrderResponse.class);
-            orderResponse.setTotalPrice(boxDetail.getTotalPrice());
-            orderResponse.setBoxDetail(modelMapper.map(newOrder.getBoxDetail(), BoxDetailResponse.class));
-            return orderResponse;
+    public Order create(OrderRequest orderRequest) {
+        User user = authenticationService.getCurrentUser();
+        Order order = new Order();
+        double totalPrice = 0;
+        int totalBox = 0;
+        order.setUser(user);
+        order.setOrderDate(new Date());
 
-        } catch (Exception e) {
-            // Log chi tiết lỗi
-            e.printStackTrace();
-            throw new RuntimeException("Đã xảy ra lỗi trong quá trình tạo Order", e);
+        order.setOriginLocation(orderRequest.getOriginLocation());
+        order.setDestinationLocation(orderRequest.getDestinationLocation());
+        order.setPayment(orderRequest.getPayment());
+        order.setDescribeOrder(orderRequest.getDescribeOrder());
+        order.setOrderStatus(orderRequest.getOrderStatus());
+        order.setPaymentStatus(orderRequest.getPaymentStatus());
+
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for(OrderDetailRequest orderDetailRequest : orderRequest.getOrderDetailRequestList()){
+            Map<Double, Integer> fishSizeQuantityMap = Map.of(orderDetailRequest.getSize(), orderDetailRequest.getQuantity());
+            BoxDetail boxDetail = calculateBoxService.createBox(fishSizeQuantityMap);
+            OrderDetail orderDetail= new OrderDetail();
+
+            orderDetail.setOrder(order);
+            orderDetail.setBoxDetail(boxDetail);
+            orderDetail.setType(orderDetail.getType());
+            totalPrice = boxDetail.getLargeBox()*8.05 + boxDetail.getMediumBox() *4.02 + boxDetail.getSmallBox() * 2.01;
+            orderDetail.setPrice(boxDetail.getPrice());
+            totalBox =  boxDetail.getLargeBox()+boxDetail.getMediumBox()+boxDetail.getSmallBox();
+            orderDetails.add(orderDetail);
+
         }
+        order.setOrderDetails(orderDetails);
+        order.setTotalquantity(totalBox);
+        order.setPrice(totalPrice);
+        return orderRepository.save(order);
     }
 
 

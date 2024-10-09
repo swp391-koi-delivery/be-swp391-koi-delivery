@@ -14,13 +14,13 @@ public class BoxDetail {
     int mediumBox;
     int smallBox;
     int totalBox;
-    double totalPrice;
+    double price;
     double totalVolume;
 
 
     @OneToOne(mappedBy = "boxDetail")
     @JsonIgnore
-    Order order;
+    OrderDetail orderDetail;
 
     public void setLargeBox(int largeBox) {
         this.largeBox = largeBox;
