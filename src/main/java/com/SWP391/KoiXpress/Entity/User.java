@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,14 +16,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long userId;
+    long id;
 
     @Enumerated(EnumType.STRING)
     Role role;
@@ -57,14 +58,14 @@ public class User implements UserDetails{
     String email;
 
     @Enumerated(EnumType.STRING)
-    EmailStatus emailStatus =EmailStatus.NotVerified;
+    EmailStatus emailStatus = EmailStatus.NotVerified;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Min(value = 0, message = "at least 0")
     long loyaltyPoint;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Boolean userstatus = false;
+    boolean isDeleted = false;
 
 
     @OneToMany(mappedBy = "user")

@@ -1,16 +1,23 @@
 package com.SWP391.KoiXpress.Entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProgressDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long progressDetailId;
+    long id;
     Date dateDelivery;
     Date dateReceived;
     String originLocation;

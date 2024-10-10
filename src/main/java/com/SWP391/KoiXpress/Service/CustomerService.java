@@ -89,7 +89,7 @@ public class CustomerService {
     public LoginResponse delete(long userId) {
         try {
             User oldUser = getUserById(userId);
-            oldUser.setUserstatus(true);
+            oldUser.setDeleted(true);
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, LoginResponse.class);
 
@@ -101,11 +101,11 @@ public class CustomerService {
     }
 
         private User getUserById ( long userId){
-        User oldUser = userRepository.findUserByUserId(userId);
+        User oldUser = userRepository.findUserById(userId);
         if (oldUser == null){
             throw new EntityNotFoundException("User not found!");
         }
-            if (oldUser.getUserstatus()){
+            if (oldUser.isDeleted()){
                 throw new EntityNotFoundException("User not found!");
             }
         return oldUser;

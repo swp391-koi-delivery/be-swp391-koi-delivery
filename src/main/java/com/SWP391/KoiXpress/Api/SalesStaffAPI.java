@@ -1,7 +1,7 @@
 package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
-import com.SWP391.KoiXpress.Service.CalculateBoxService;
+import com.SWP391.KoiXpress.Service.BoxDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.Map;
 @SecurityRequirement(name="api")
 public class SalesStaffAPI {
     @Autowired
-    CalculateBoxService calculateBoxService;
+    BoxDetailService boxDetailService;
 
 
     @GetMapping("/calculateBoxAndSuggestFishSizes")
@@ -38,7 +38,7 @@ public class SalesStaffAPI {
         }
 
         // Gọi service để tính toán hộp và gợi ý kích thước cá có thể thêm
-        Map<String, Object> result = calculateBoxService.calculateBoxAndSuggestFishSizes(fishSizeQuantityMap);
+        Map<String, Object> result = boxDetailService.calculateBoxAndSuggestFishSizes(fishSizeQuantityMap);
 
         return ResponseEntity.ok(result);
     }
@@ -58,7 +58,7 @@ public class SalesStaffAPI {
         }
 
         // Gọi service để tạo BoxDetail
-        BoxDetail boxDetail = calculateBoxService.createBox(fishSizeQuantityMap);
+        BoxDetail boxDetail = boxDetailService.createBox(fishSizeQuantityMap);
         return ResponseEntity.ok(boxDetail);
     }
 }

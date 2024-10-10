@@ -145,6 +145,6 @@ public class AuthenticationService implements UserDetailsService {
     //ai đang call request này ( role)
     public User getCurrentUser(){
         User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return authenticationRepository.findUserByUserId(user.getUserId());
+        return authenticationRepository.findUserById(user.getId());
     }
 }

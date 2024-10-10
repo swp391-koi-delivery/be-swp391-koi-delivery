@@ -10,6 +10,7 @@ import com.SWP391.KoiXpress.Model.request.UpdateRequestManager;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Model.response.UpdateResponse;
+import com.SWP391.KoiXpress.Model.response.UserResponse;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class ManagerService {
             oldUser.setImage(updateRequestManager.getImage());
             oldUser.setRole(updateRequestManager.getRole());
             oldUser.setLoyaltyPoint(updateRequestManager.getLoyaltyPoint());
-            oldUser.setUserstatus(updateRequestManager.getUserstatus());
+            oldUser.setDeleted(updateRequestManager.getUserstatus());
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, UpdateResponse.class);
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class ManagerService {
     public LoginResponse delete(long userId) {
         try {
             User oldUser = getUserById(userId);
-            oldUser.setUserstatus(true);
+            oldUser.setDeleted(true);
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, LoginResponse.class);
 
@@ -87,12 +88,20 @@ public class ManagerService {
         return registerResponses;
     }
 
-    private User getUserById(long userId) {
-        User oldUser = userRepository.findUserByUserId(userId);
-        if (oldUser == null)
+    private User getUserById(long id) {
+        User oldUser = userRepository.findUserById(id);
+        if (oldUser == null) {
             throw new EntityNotFoundException("User not found!");
-//            if (oldUser.getUserstatus()=="BLOCK")throw new EntityNotFoundException("User not found!");
+        }
+
         return oldUser;
+    }
+    public RegisterResponse getEachUserById(long id){
+        User user = userRepository.findUserById(id);
+        if(user == null){
+            throw new EntityNotFoundException("User not found");
+        }
+        return modelMapper.map(user, RegisterResponse.class);
     }
 }
 

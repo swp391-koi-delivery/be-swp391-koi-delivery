@@ -2,17 +2,15 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
 import com.SWP391.KoiXpress.Exception.BoxException;
-import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Repository.BoxDetailRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.util.*;
 
 @Service
-public class CalculateBoxService {
+public class BoxDetailService {
 
     @Autowired
     BoxDetailRepository boxDetailRepository;
@@ -173,12 +171,14 @@ public class CalculateBoxService {
             boxDetail.setMediumBox(mediumBox);
             boxDetail.setLargeBox(largeBox);
             boxDetail.setTotalVolume(totalVolume);
-            boxDetail.setPrice(price);
+            boxDetail.setTotalPrice(price);
             return boxDetailRepository.save(boxDetail);
         }catch(Exception e){
             e.printStackTrace();
             throw new BoxException("Đã xảy ra lỗi trong quá trình tạo BoxDetail");
         }
     }
+
+
 
 }

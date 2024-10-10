@@ -4,13 +4,16 @@ import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Payment;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.List;
@@ -18,11 +21,14 @@ import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name="`order`")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long orderId;
+    long id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     UUID trackingOrder = UUID.randomUUID();
@@ -35,8 +41,8 @@ public class Order {
     @NotBlank(message = "location end can not be blank")
     String destinationLocation;
 
-    @Min(value = 0,message = "price at least 0")
-    @NotNull(message = "price can not be null")
+    @Min(value = 0,message = "totalPrice at least 0")
+    @NotNull(message = "totalPrice can not be null")
     double price;
 
     int totalquantity;
@@ -61,7 +67,7 @@ public class Order {
 //    @JoinColumn(name = "report_id")
 //    Report report;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;
 
 //    @OneToMany(mappedBy = "order")

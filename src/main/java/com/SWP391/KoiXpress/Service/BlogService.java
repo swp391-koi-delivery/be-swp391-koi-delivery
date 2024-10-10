@@ -39,7 +39,7 @@ public class BlogService {
         UserResponse userResponse = modelMapper.map(user, UserResponse.class);
         BlogResponse blogResponse = new BlogResponse();
         blogResponse.setUserResponse(userResponse);
-        blogResponse.setBlogId(blog.getBlogId());
+        blogResponse.setBlogId(blog.getId());
         blogResponse.setPost(blog.getPost());
         blogResponse.setImg(blog.getImg());
 
@@ -54,7 +54,7 @@ public class BlogService {
             User user = blog.getUser();
             BlogResponse blogResponse = new BlogResponse();
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-            blogResponse.setBlogId(blog.getBlogId());
+            blogResponse.setBlogId(blog.getId());
             blogResponse.setImg(blog.getImg());
             blogResponse.setPost(blog.getPost());
             blogResponse.setUserResponse(userResponse);
@@ -69,7 +69,7 @@ public class BlogService {
         if(blog == null){
             throw new NotFoundException("Can not found blog");
         }
-            blog.setPoststatus(true);
+            blog.setDeleted(true);
             return blogRepository.save(blog);
     }
     public Blog update(long blogId, Blog blog){
@@ -85,11 +85,11 @@ public class BlogService {
 
 
     private Blog getBlogById (long blogId){
-        Blog oldBlog = blogRepository.findBlogByBlogId(blogId);
+        Blog oldBlog = blogRepository.findBlogById(blogId);
         if (oldBlog == null){
             throw new EntityNotFoundException("Blog not found!");
         }
-        if (oldBlog.getPoststatus()){
+        if (oldBlog.isDeleted()){
             throw new EntityNotFoundException("Blog not found!");
         }
         return oldBlog;

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.UUID;
+
 
 
 @Service
@@ -29,7 +29,7 @@ public class TokenService {
     //tạo token
     public String generateToken(User user){
         String token = Jwts.builder()
-                .subject(user.getUserId() + "")
+                .subject(user.getId() + "")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+ 1000*60*60*24))
                 .signWith(getSignKey())
@@ -42,6 +42,6 @@ public class TokenService {
         Claims claims = Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(token).getPayload();
         String idString = claims.getSubject().trim();
         long id = Long.parseLong(idString);
-        return userRepository.findUserByUserId(id);
+        return userRepository.findUserById(id);
     }
 }

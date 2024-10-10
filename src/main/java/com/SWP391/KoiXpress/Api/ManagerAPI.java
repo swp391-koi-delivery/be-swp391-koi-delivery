@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Api;
 
+import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Model.request.RegisterRequestManager;
 import com.SWP391.KoiXpress.Model.request.UpdateRequestManager;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
@@ -39,9 +40,16 @@ public class ManagerAPI {
         List<RegisterResponse> users = managerService.getAllUser();
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("{userId}")
+    public ResponseEntity getEachUser(long id){
+        RegisterResponse user = managerService.getEachUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
     @DeleteMapping("{userId}")
-    public ResponseEntity delete(@PathVariable long userId){
-        LoginResponse deleteUser = managerService.delete(userId);
+    public ResponseEntity delete(@PathVariable long id){
+        LoginResponse deleteUser = managerService.delete(id);
         return ResponseEntity.ok(deleteUser);
     }
 }

@@ -2,19 +2,28 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BoxDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long boxId;
+    long id;
     int largeBox;
     int mediumBox;
     int smallBox;
     int totalBox;
-    double price;
+    @NumberFormat(pattern = "#.##")
+    double totalPrice;
     double totalVolume;
 
 

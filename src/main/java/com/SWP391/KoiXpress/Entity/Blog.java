@@ -1,23 +1,32 @@
 package com.SWP391.KoiXpress.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long blogId;
+    long id;
 
-    @Column(length=50)
+    @Column(length=200)
     String img;
 
     @Column(length = 2000)
     String post;
 
-    Boolean poststatus =false;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    boolean isDeleted =false;
 
     @ManyToOne
     @JoinColumn(name="user_id")
