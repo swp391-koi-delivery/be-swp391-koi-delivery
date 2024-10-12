@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.NotEntity.EmailDetail;
+import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Exception.EmailNotVerifiedException;
 import com.SWP391.KoiXpress.Model.response.EmailResponse;
 import jakarta.mail.MessagingException;
@@ -74,7 +74,7 @@ public class EmailService {
         try{
             Context context = new Context();
             context.setVariable("name",emailDetail.getUser().getEmail());
-//            context.setVariable("button","Click Here to verify");
+
             context.setVariable("link",emailDetail.getLink());
             context.setVariable("email",emailDetail.getUser().getEmail());
             String template = templateEngine.process("EmailAccount",context);

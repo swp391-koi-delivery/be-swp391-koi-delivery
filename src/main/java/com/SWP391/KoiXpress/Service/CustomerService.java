@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.NotEntity.EmailDetail;
+import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
@@ -61,7 +61,7 @@ public class CustomerService {
                     //gui email xac thuc
                     newUser.setEmailStatus(EmailStatus.Verified);
                 }else{
-                    newUser.setEmailStatus(EmailStatus.NotVerified);
+                    newUser.setEmailStatus(EmailStatus.Not_Verified);
                     throw new EmailNotVerifiedException("Email not verify. please provide a valid email.");
                 }
                 userRepository.save(newUser);

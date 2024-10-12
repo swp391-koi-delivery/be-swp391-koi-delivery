@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class RegisterResponse {
-    long userId;
+    long id;
     String username;
     String fullname;
     String password;
@@ -14,7 +14,7 @@ public class RegisterResponse {
     String phone;
     String email;
     EmailStatus emailStatus;
-    Boolean userstatus;
+    boolean isDeleted;
     String role;
     long loyaltyPoint;
 

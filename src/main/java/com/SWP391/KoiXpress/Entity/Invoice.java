@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
 @Data
 @Entity
@@ -19,13 +20,15 @@ public class Invoice {
     long id;
 
     @Min(value = 0, message = "price should greater than 0")
-    double price;
+    @NumberFormat(pattern = "#.##")
+    double totalPrice;
 
-    double VAT;
+    double TAX = 0.05;
 
-    public void setVAT(double VAT){
-        this.VAT = 0.05;
+    public double calculateTotalInvoice() {
+        return totalPrice * (1 + TAX);
     }
-//    @OneToOne(mappedBy = "invoice")
-//    Order order;
+
+    @OneToOne(mappedBy = "invoice")
+    Order order;
 }

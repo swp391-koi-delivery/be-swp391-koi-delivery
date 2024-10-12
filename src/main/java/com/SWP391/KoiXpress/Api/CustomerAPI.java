@@ -28,15 +28,15 @@ public class CustomerAPI {
     CustomerService customerService;
 
 
-    @PutMapping("{userId}")
-    public ResponseEntity update(@PathVariable long userId,@Valid @RequestBody UpdateRequest updateRequest){
-        UpdateResponse updateUser = customerService.update(userId,updateRequest);
+    @PutMapping("{id}")
+    public ResponseEntity update(@PathVariable long id,@Valid @RequestBody UpdateRequest updateRequest){
+        UpdateResponse updateUser = customerService.update(id,updateRequest);
         return ResponseEntity.ok(updateUser);
     }
 
-    @DeleteMapping("{userId}")
-    public ResponseEntity delete(@PathVariable long userId){
-        LoginResponse deleteUser = customerService.delete(userId);
+    @DeleteMapping("{id}")
+    public ResponseEntity delete(@PathVariable long id){
+        LoginResponse deleteUser = customerService.delete(id);
         return ResponseEntity.ok(deleteUser);
     }
 

@@ -22,14 +22,10 @@ public class Progress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     Date dateDelivery;
-    Date dateRecived;
+    Date dateReceived;
     String originLocation;
     String destinationLocation;
     boolean status;
-
-//    @ManyToOne
-//    @JoinColumn(name="order_id")
-//    Order order;
 
     @OneToMany(mappedBy = "progress")
     @JsonIgnore

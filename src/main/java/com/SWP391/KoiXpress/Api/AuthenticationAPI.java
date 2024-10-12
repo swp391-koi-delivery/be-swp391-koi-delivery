@@ -1,6 +1,8 @@
 package com.SWP391.KoiXpress.Api;
 
 
+import com.SWP391.KoiXpress.Exception.AuthException;
+import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
 import com.SWP391.KoiXpress.Model.request.LoginRequest;
 import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
@@ -8,6 +10,7 @@ import com.SWP391.KoiXpress.Model.request.RegisterRequest;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Service.AuthenticationService;
+import com.SWP391.KoiXpress.Service.TokenService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +47,9 @@ public class AuthenticationAPI {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity resetPassword(@RequestBody PasswordResetRequest passwordResetRequest){
-        authenticationService.resetPassword(passwordResetRequest);
-        return ResponseEntity.ok("Reset password successfully");
+    public ResponseEntity resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
+            authenticationService.resetPassword(passwordResetRequest);
+            return ResponseEntity.ok("Reset password successfully");
     }
+
 }

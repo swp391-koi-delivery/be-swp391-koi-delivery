@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class UpdateResponse {
-    long userId;
+    long id;
     Role role;
     String username;
     String password;
@@ -16,6 +16,6 @@ public class UpdateResponse {
     String phone;
     String email;
     EmailStatus emailStatus;
-    Boolean userstatus;
+    boolean isDeleted;
     long loyaltyPoint;
 }

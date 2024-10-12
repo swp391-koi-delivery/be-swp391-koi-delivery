@@ -24,6 +24,7 @@ public class BoxDetail {
     int totalBox;
     @NumberFormat(pattern = "#.##")
     double totalPrice;
+    @NumberFormat(pattern = "#.##")
     double totalVolume;
 
 

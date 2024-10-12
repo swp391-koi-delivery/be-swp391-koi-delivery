@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Entity.Enum;
 
 public enum DescribeOrder {
-    WHOLESALEORDER,
-    RETAILORDER
+    Wholesale_Order,
+    Retail_Order
 }

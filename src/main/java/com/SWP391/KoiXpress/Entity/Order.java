@@ -1,9 +1,9 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
-import com.SWP391.KoiXpress.Entity.Enum.Payment;
-import com.SWP391.KoiXpress.Entity.Enum.PaymentStatus;
+import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -33,7 +33,11 @@ public class Order {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     UUID trackingOrder = UUID.randomUUID();
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date orderDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    Date deliveryDate;
 
     @NotBlank(message = "location start can not be blank")
     String originLocation;
@@ -43,39 +47,42 @@ public class Order {
 
     @Min(value = 0,message = "totalPrice at least 0")
     @NotNull(message = "totalPrice can not be null")
-    double price;
+    double totalPrice;
 
-    int totalquantity;
+    int totalQuantity;
+
+    int totalBox;
+
+    double totalVolume;
+
+    String customerNotes;
+
 
     @Enumerated(EnumType.STRING)
-    DescribeOrder describeOrder;
-
-    @Enumerated(EnumType.STRING)
-    Payment payment;
+    PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
 
-    @Enumerated(EnumType.STRING)
-    PaymentStatus paymentStatus;
-
     @ManyToOne
     @JoinColumn(name="user_id")
+    @JsonIgnore
     User user;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id")
+    @JsonIgnore
+    Vehicle vehicle;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    List<OrderDetail> orderDetails;
 
 //    @ManyToOne
 //    @JoinColumn(name = "report_id")
 //    Report report;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    List<OrderDetail> orderDetails;
-
-//    @OneToMany(mappedBy = "order")
-//    @JsonIgnore
-//    List<Progress> progresses;
-//
-//    @OneToOne
-//    @JoinColumn(name = "invoice_id")
-//    Invoice invoice;
+    @OneToOne
+    @JoinColumn(name = "invoice_id")
+    Invoice invoice;
 
 }

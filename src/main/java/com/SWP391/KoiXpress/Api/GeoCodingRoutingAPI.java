@@ -2,12 +2,14 @@ package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Service.GeoCodingService;
 import com.SWP391.KoiXpress.Service.RoutingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin("*")
+@SecurityRequirement(name="api")
 public class GeoCodingRoutingAPI {
     @Autowired
     GeoCodingService geoCodingService;

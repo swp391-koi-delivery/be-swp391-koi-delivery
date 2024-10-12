@@ -58,7 +58,7 @@ public class User implements UserDetails{
     String email;
 
     @Enumerated(EnumType.STRING)
-    EmailStatus emailStatus = EmailStatus.NotVerified;
+    EmailStatus emailStatus = EmailStatus.Not_Verified;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Min(value = 0, message = "at least 0")
@@ -77,7 +77,6 @@ public class User implements UserDetails{
     List<FeedBack> feedBacks;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     List<Order> orders;
 
     @OneToMany(mappedBy = "user")

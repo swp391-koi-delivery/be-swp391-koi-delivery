@@ -29,9 +29,9 @@ public class ManagerAPI {
         RegisterResponse newUser = managerService.create(registerRequestManager);
         return ResponseEntity.ok(newUser);
     }
-    @PutMapping("{userId}")
-    public ResponseEntity update(@PathVariable long userId, @Valid @RequestBody UpdateRequestManager updateRequestManager){
-        UpdateResponse updateUser = managerService.update(userId,updateRequestManager);
+    @PutMapping("{id}")
+    public ResponseEntity update(@PathVariable long id, @Valid @RequestBody UpdateRequestManager updateRequestManager){
+        UpdateResponse updateUser = managerService.update(id,updateRequestManager);
         return ResponseEntity.ok(updateUser);
     }
 
@@ -41,13 +41,13 @@ public class ManagerAPI {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("{userId}")
-    public ResponseEntity getEachUser(long id){
+    @GetMapping("{id}")
+    public ResponseEntity getEachUser(@PathVariable long id){
         RegisterResponse user = managerService.getEachUserById(id);
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("{userId}")
+    @DeleteMapping("{id}")
     public ResponseEntity delete(@PathVariable long id){
         LoginResponse deleteUser = managerService.delete(id);
         return ResponseEntity.ok(deleteUser);

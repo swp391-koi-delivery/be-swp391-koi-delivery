@@ -1,7 +1,7 @@
 package com.SWP391.KoiXpress.Service;
 
 
-import com.SWP391.KoiXpress.Entity.NotEntity.EmailDetail;
+import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
 import com.SWP391.KoiXpress.Entity.User;
@@ -111,7 +111,7 @@ public class AuthenticationService implements UserDetailsService {
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setUser(user);
         emailDetail.setSubject("Reset Password");
-        emailDetail.setLink("http://transportkoifish.online/?token=" + token);
+        emailDetail.setLink("http://transportkoifish.online/reset-password?token=" + token);
         emailService.sendEmailResetPassword(emailDetail);
 
     }

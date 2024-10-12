@@ -28,9 +28,9 @@ public class ProgressDetail {
     @JoinColumn(name = "progress_id")
     Progress progress;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    Vehicle vehicle;
+//    @ManyToOne
+//    @JoinColumn(name = "vehicle_id")
+//    Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")

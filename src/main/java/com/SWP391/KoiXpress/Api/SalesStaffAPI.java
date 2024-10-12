@@ -1,6 +1,7 @@
 package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Model.response.OrderResponse;
 import com.SWP391.KoiXpress.Service.BoxDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +61,11 @@ public class SalesStaffAPI {
         // Gọi service để tạo BoxDetail
         BoxDetail boxDetail = boxDetailService.createBox(fishSizeQuantityMap);
         return ResponseEntity.ok(boxDetail);
+    }
+
+    @GetMapping
+    public ResponseEntity get(){
+        List<BoxDetail> boxDetails = boxDetailService.getAllBox();
+        return ResponseEntity.ok(boxDetails);
     }
 }

@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Service;
 
 
 import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Exception.AuthException;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
@@ -31,6 +32,8 @@ public class ManagerService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    AuthenticationService authenticationService;
 
     public RegisterResponse create(RegisterRequestManager registerRequestManager) {
         User user = modelMapper.map(registerRequestManager, User.class);
@@ -54,12 +57,16 @@ public class ManagerService {
 
     public UpdateResponse update (long userId, UpdateRequestManager updateRequestManager) {
         modelMapper.map(updateRequestManager, User.class);
+        User currentUser = authenticationService.getCurrentUser();
         User oldUser = getUserById(userId);
+        if(currentUser == oldUser){
+            throw new AuthException("You cant update because this account is using");
+        }
         try {
             oldUser.setImage(updateRequestManager.getImage());
             oldUser.setRole(updateRequestManager.getRole());
             oldUser.setLoyaltyPoint(updateRequestManager.getLoyaltyPoint());
-            oldUser.setDeleted(updateRequestManager.getUserstatus());
+            oldUser.setDeleted(updateRequestManager.isDeleted());
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, UpdateResponse.class);
         } catch (Exception e) {

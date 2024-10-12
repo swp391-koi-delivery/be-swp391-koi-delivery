@@ -179,6 +179,10 @@ public class BoxDetailService {
         }
     }
 
+    public List<BoxDetail> getAllBox(){
+        List<BoxDetail> boxDetails = boxDetailRepository.findAll();
+        return boxDetails;
+    }
 
 
 }

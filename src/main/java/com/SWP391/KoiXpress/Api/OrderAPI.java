@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order")
 @SecurityRequirement(name="api")
+@CrossOrigin("*")
 public class OrderAPI {
 
     @Autowired
@@ -26,15 +27,31 @@ public class OrderAPI {
         OrderResponse order = orderService.create(orderRequest);
         return ResponseEntity.ok(order);
     }
-    @GetMapping
+    @GetMapping("/each-user")
     public ResponseEntity get(){
-        List<OrderResponse> orderResponseList = orderService.getAllOrders();
+        List<OrderResponse> orderResponseList = orderService.getAllOrdersByCurrentUser();
         return ResponseEntity.ok(orderResponseList);
     }
 
-    @GetMapping("{orderId}")
+    @GetMapping("{id}")
     public ResponseEntity getEachOrder(long id){
         OrderResponse orderResponse = orderService.getEachOrderById(id);
         return ResponseEntity.ok(orderResponse);
+    }
+    @GetMapping
+    public ResponseEntity getAll(){
+        List<OrderResponse> orderResponses = orderService.getAll();
+        return ResponseEntity.ok(orderResponses);
+    }
+    @PostMapping("{id}")
+    public ResponseEntity update(@PathVariable long id, @RequestBody @Valid OrderRequest orderRequest){
+        OrderResponse updateOrder = orderService.update(id,orderRequest);
+        return ResponseEntity.ok(updateOrder);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity delete(@PathVariable long id) {
+        OrderResponse deleteOrder = orderService.delete(id);
+        return ResponseEntity.ok(deleteOrder);
     }
 }
