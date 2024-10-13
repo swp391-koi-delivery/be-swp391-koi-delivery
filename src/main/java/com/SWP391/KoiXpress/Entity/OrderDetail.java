@@ -72,6 +72,8 @@ public class OrderDetail {
     @NumberFormat(pattern = "#.##")
     double price;
 
+    @Enumerated(EnumType.STRING)
+    DescribeOrder describeOrder;
 
     @Enumerated(EnumType.STRING)
     HealthFishStatus healthFishStatus;

@@ -1,8 +1,8 @@
 package com.SWP391.KoiXpress.Model.request;
 
+import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.format.annotation.NumberFormat;
 
-import java.util.Date;
 
 @Data
 public class OrderDetailRequest {
@@ -46,6 +45,9 @@ public class OrderDetailRequest {
 
     @NumberFormat(pattern = "#.##")
     double totalVolume;
+
+    @Enumerated(EnumType.STRING)
+    DescribeOrder describeOrder;
 
     @Enumerated(EnumType.STRING)
     HealthFishStatus healthFishStatus;

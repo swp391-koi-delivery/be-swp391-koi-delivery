@@ -21,13 +21,23 @@ public class Progress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    Date dateDelivery;
-    Date dateReceived;
-    String originLocation;
-    String destinationLocation;
-    boolean status;
+
+    String nameDelivery;
+
+    String phone;
+
+    boolean isInProgress = false;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id")
+    Vehicle vehicle;
+
+    @ManyToOne
+    @JoinColumn(name = "warehouse_id")
+    WareHouse wareHouse;
 
     @OneToMany(mappedBy = "progress")
-    @JsonIgnore
-    List<ProgressDetail> progressDetails;
+    List<Order> orders;
+
+
 }

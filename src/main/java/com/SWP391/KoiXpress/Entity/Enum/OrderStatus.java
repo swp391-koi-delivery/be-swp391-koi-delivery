@@ -2,16 +2,22 @@ package com.SWP391.KoiXpress.Entity.Enum;
 
 
 public enum OrderStatus {
+
+    //sau khi dat don
     Pending,
-    UnderReview,
+
+    //role sale staff
     Accepted,
     Rejected,
-    Approval,
-    Quoting,
+
+    //don can duoc thanh toan
     Awaiting_Payment,
     Paid,
+
+    //huy don khi co su co
     Canceled,
-    Packing,
+
+    //role delivery
     Shipping,
     Delivered
 }

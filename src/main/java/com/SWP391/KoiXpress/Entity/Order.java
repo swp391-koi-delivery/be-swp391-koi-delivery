@@ -57,7 +57,6 @@ public class Order {
 
     String customerNotes;
 
-
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
 
@@ -69,10 +68,10 @@ public class Order {
     @JsonIgnore
     User user;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    @JsonIgnore
-    Vehicle vehicle;
+//    @ManyToOne
+//    @JoinColumn(name = "vehicle_id")
+//    @JsonIgnore
+//    Vehicle vehicle;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderDetail> orderDetails;
@@ -85,4 +84,8 @@ public class Order {
     @JoinColumn(name = "invoice_id")
     Invoice invoice;
 
+    @ManyToOne
+    @JoinColumn(name = "progress_id")
+    @JsonIgnore
+    Progress progress;
 }

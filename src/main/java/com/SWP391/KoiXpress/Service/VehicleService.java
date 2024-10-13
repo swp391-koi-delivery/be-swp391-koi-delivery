@@ -33,7 +33,7 @@ public class VehicleService {
         double maxVolume = vehicle.getMaxVolume();
         List<Order> unplacedOrders = orders.stream()
                 .filter(order -> order.getOrderStatus() == OrderStatus.Shipping)// Lọc theo trạng thái mong muốn
-                .filter(order -> order.getVehicle() == null)
+//                .filter(order -> order.getVehicle() == null)
                 .sorted(Comparator.comparing(Order::getOrderDate).reversed() )
                 .collect(Collectors.toList());
         int n = unplacedOrders.size();
@@ -58,9 +58,9 @@ public class VehicleService {
             }
         }
         vehicleRepository.save(vehicle);
-        for(Order order: currentVehicleOrders){
-            order.setVehicle(vehicle);
-        }
+//        for(Order order: currentVehicleOrders){
+//            order.setVehicle(vehicle);
+//        }
         List<OrderResponse> orderResponses = currentVehicleOrders.stream()
                 .map(order -> modelMapper.map(order, OrderResponse.class)) // Giả sử OrderResponse có các trường này
                 .collect(Collectors.toList());

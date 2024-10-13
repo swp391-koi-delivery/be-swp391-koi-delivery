@@ -27,5 +27,5 @@ public class WareHouse {
 
     @OneToMany(mappedBy = "wareHouse")
     @JsonIgnore
-    List<ProgressDetail> progressDetails;
+    List<Progress> progresses;
 }

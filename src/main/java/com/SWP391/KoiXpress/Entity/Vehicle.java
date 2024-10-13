@@ -31,11 +31,11 @@ public class Vehicle {
     boolean isAvailable = true;
 
 
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<Order> orders;
-//    @OneToMany(mappedBy = "vehicle")
-//    @JsonIgnore
-//    List<ProgressDetail> progressDetails;
+//    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    List<Order> orders;
 
+    @OneToMany(mappedBy = "vehicle")
+    @JsonIgnore
+    List<Progress> progresses;
 
 }

@@ -79,9 +79,6 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     List<Order> orders;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    List<Policy> policies;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
