@@ -1,7 +1,7 @@
 package com.SWP391.KoiXpress.Service;
 
 
-import com.SWP391.KoiXpress.Entity.NotEntity.EmailDetail;
+import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
 import com.SWP391.KoiXpress.Entity.User;
@@ -27,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -111,7 +112,7 @@ public class AuthenticationService implements UserDetailsService {
         EmailDetail emailDetail = new EmailDetail();
         emailDetail.setUser(user);
         emailDetail.setSubject("Reset Password");
-        emailDetail.setLink("http://transportkoifish.online/?token=" + token);
+        emailDetail.setLink("http://transportkoifish.online/reset-password?token=" + token);
         emailService.sendEmailResetPassword(emailDetail);
 
     }
@@ -145,6 +146,27 @@ public class AuthenticationService implements UserDetailsService {
     //ai đang call request này ( role)
     public User getCurrentUser(){
         User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return authenticationRepository.findUserByUserId(user.getUserId());
+        return authenticationRepository.findUserById(user.getId());
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+    public User registerOAuthUser(OidcUser oidcUser) {
+        User user = new User();
+        user.setEmail(oidcUser.getEmail());
+        user.setFullname(oidcUser.getFullName());
+        user.setRole(Role.CUSTOMER);
+        userRepository.save(user);
+        return user;
+    }
+
+    public LoginResponse createLoginResponse(User user) {
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setFullname(user.getFullname());
+        loginResponse.setToken(tokenService.generateToken(user));
+        return loginResponse;
     }
 }

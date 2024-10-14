@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class LoginResponse {
     //tra ve thong tin User
-    long userId;
+    long id;
     String username;
     String fullname;
     String image;
@@ -15,6 +15,6 @@ public class LoginResponse {
     String email;
     Role role;
     long loyaltyPoint;
-    boolean userstatus;
+    boolean isDeleted;
     String token;
 }

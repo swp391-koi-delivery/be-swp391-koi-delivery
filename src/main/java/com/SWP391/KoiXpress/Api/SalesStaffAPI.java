@@ -1,14 +1,11 @@
 package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
-import com.SWP391.KoiXpress.Model.request.OrderRequest;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
-import com.SWP391.KoiXpress.Service.CalculateBoxService;
-import com.SWP391.KoiXpress.Service.OrderService;
+import com.SWP391.KoiXpress.Service.BoxDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -19,10 +16,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin("*")
-@SecurityRequirement(name = "api")
+@SecurityRequirement(name="api")
 public class SalesStaffAPI {
     @Autowired
-    CalculateBoxService calculateBoxService;
+    BoxDetailService boxDetailService;
 
 
     @GetMapping("/calculateBoxAndSuggestFishSizes")
@@ -32,7 +29,7 @@ public class SalesStaffAPI {
 
         // Kiểm tra nếu số lượng fishSizes và quantities khớp nhau
         if (quantities.size() != fishSizes.size()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "The number and size of fish do not match"));
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Số lượng và kích thước cá không khớp"));
         }
 
         // Tạo map chứa các cặp kích thước-số lượng
@@ -42,17 +39,17 @@ public class SalesStaffAPI {
         }
 
         // Gọi service để tính toán hộp và gợi ý kích thước cá có thể thêm
-        Map<String, Object> result = calculateBoxService.calculateBoxAndSuggestFishSizes(fishSizeQuantityMap);
+        Map<String, Object> result = boxDetailService.calculateBoxAndSuggestFishSizes(fishSizeQuantityMap);
 
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/createBox")
     public ResponseEntity createBox(@RequestParam List<Integer> quantities,
-                                    @RequestParam List<Double> fishSizes) {
+                                                            @RequestParam List<Double> fishSizes) {
         // Kiểm tra nếu số lượng fishSizes và quantities khớp nhau
         if (quantities.size() != fishSizes.size()) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "The number and size of fish do not match"));
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Số lượng và kích thước cá không khớp"));
         }
 
         // Tạo map chứa các cặp kích thước-số lượng
@@ -62,8 +59,13 @@ public class SalesStaffAPI {
         }
 
         // Gọi service để tạo BoxDetail
-        BoxDetail boxDetail = calculateBoxService.createBox(fishSizeQuantityMap);
+        BoxDetail boxDetail = boxDetailService.createBox(fishSizeQuantityMap);
         return ResponseEntity.ok(boxDetail);
     }
 
+    @GetMapping
+    public ResponseEntity get(){
+        List<BoxDetail> boxDetails = boxDetailService.getAllBox();
+        return ResponseEntity.ok(boxDetails);
+    }
 }

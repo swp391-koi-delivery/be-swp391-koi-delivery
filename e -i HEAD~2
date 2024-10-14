@@ -1,0 +1,91 @@
+[33mcommit ba44ec9308e7c1a6de05a0c8b8166d94b3f433c7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbe-PhamKhangNguyen2[m[33m)[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Mon Oct 14 18:03:31 2024 +0700
+
+    update feedback
+
+[33mcommit 5c13e4ad3e641920dbb4bdc6e12b25a1f094e2db[m
+Merge: d995bec 5f05521
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Mon Oct 14 16:04:54 2024 +0700
+
+    update
+
+[33mcommit d995bec26244deb05a5ca304e3a1fa581075a753[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Mon Oct 14 15:38:03 2024 +0700
+
+    update
+
+[33mcommit aaef901ea5108f7e221a3af6c386cbdf5320d3ca[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Mon Oct 14 14:54:13 2024 +0700
+
+    update
+
+[33mcommit 5f05521388511a48c387b0ce972be8ab24e968d1[m
+Author: QuanDong <quanonepunch@gmail.com>
+Date:   Mon Oct 14 09:07:04 2024 +0700
+
+    vehicle service, warehouse service, progressservice
+
+[33mcommit 59492d04da87bf7bf129f6234bcc0ae09f24dd2a[m
+Author: QuanDong <quanonepunch@gmail.com>
+Date:   Sun Oct 13 17:35:16 2024 +0700
+
+    entity
+
+[33mcommit e7bad6e69d27108431223d45b8172d09e2093bfc[m
+Author: QuanDong <quanonepunch@gmail.com>
+Date:   Sat Oct 12 20:24:18 2024 +0700
+
+    Update: entity, Vehicle algorithm
+
+[33mcommit cf19056876934db92cc705157ce7a274ad7e3dff[m
+Author: QuanDong <quanonepunch@gmail.com>
+Date:   Thu Oct 10 12:35:38 2024 +0700
+
+     update:Entity, OrderAPI, UserAPI
+
+[33mcommit 121d3e67fff8913444a305d2449832c6e41f879f[m[33m ([m[1;31morigin/be-PhamKhangNguyen2[m[33m)[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Thu Oct 10 02:14:05 2024 +0700
+
+    update feedback,policy
+
+[33mcommit 7b01bd0997ead3744c4b0673bbbab92f2522a5f4[m
+Merge: 0e6b1a9 70b44eb
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Thu Oct 10 00:15:04 2024 +0700
+
+    merge code create order, authenticate
+
+[33mcommit 0e6b1a9f787d5be8fc1b971ef84cc8a5508fc422[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Thu Oct 10 00:03:13 2024 +0700
+
+    feedback,policy, order
+
+[33mcommit 70b44eb5faad3ea0b340324911f13e6622a1df8d[m
+Author: QuanDong <quanonepunch@gmail.com>
+Date:   Wed Oct 9 17:34:47 2024 +0700
+
+    new  Create order
+
+[33mcommit 4c92b388824f589b4ff656e49bfb9d6fa69f4c4c[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Tue Oct 8 11:18:51 2024 +0700
+
+    Order,box
+
+[33mcommit d2031469ea9c7002aef3addc43d17dae99750eac[m
+Author: Itsuwu <phamphuckhang24@gmail.com>
+Date:   Sun Oct 6 23:17:39 2024 +0700
+
+    crud Order
+
+[33mcommit 899e788d908e8057a473e7409a173652fd3a37af[m
+Author: QuanDong <quanonepunch@gmail.com>
+Date:   Sun Oct 6 21:20:34 2024 +0700
+
+    adminAPI,calculateBox

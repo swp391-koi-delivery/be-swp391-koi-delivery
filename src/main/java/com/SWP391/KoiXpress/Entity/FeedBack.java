@@ -37,6 +37,10 @@ public class FeedBack {
     @JsonManagedReference
     List<FeedBackReply> replies;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
+    Order order;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;

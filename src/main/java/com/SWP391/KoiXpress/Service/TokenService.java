@@ -1,17 +1,21 @@
 package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Exception.AuthException;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.UUID;
+
 
 
 @Service
@@ -29,7 +33,7 @@ public class TokenService {
     //tạo token
     public String generateToken(User user){
         String token = Jwts.builder()
-                .subject(user.getUserId() + "")
+                .subject(user.getId() + "")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+ 1000*60*60*24))
                 .signWith(getSignKey())
@@ -39,9 +43,32 @@ public class TokenService {
 
     //xác thực token
     public User getUserByToken(String token){
-        Claims claims = Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(token).getPayload();
+        Claims claims = Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
         String idString = claims.getSubject().trim();
         long id = Long.parseLong(idString);
-        return userRepository.findUserByUserId(id);
+        return userRepository.findUserById(id);
     }
+
+    //tra ve email nguoi dung
+    public String getEmailByToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(getSignKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            String idString = claims.getSubject().trim();
+            long id = Long.parseLong(idString);
+            return userRepository.findEmailById(id);
+        }catch(ExpiredJwtException e){
+            throw new AuthException("Token expired");
+        }catch (SignatureException | MalformedJwtException e){
+            throw new AuthException("Token not valid");
+        }
+    }
+
 }

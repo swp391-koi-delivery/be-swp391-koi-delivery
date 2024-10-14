@@ -1,6 +1,5 @@
-package com.SWP391.KoiXpress.Entity.NotEntity;
+package com.SWP391.KoiXpress.Entity;
 
-import com.SWP391.KoiXpress.Entity.User;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

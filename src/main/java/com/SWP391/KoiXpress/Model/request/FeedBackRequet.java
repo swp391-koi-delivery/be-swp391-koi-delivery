@@ -16,4 +16,6 @@ public class FeedBackRequet {
 
     @Column(length = 200)
     String comment;
+
+    long orderId;
 }

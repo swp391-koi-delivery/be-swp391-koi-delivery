@@ -40,5 +40,5 @@ public class RegisterRequestManager {
     @Min(value = 0, message = "at least 0")
     long loyaltyPoint;
 
-    Boolean userstatus;
+    boolean isDeleted;
 }

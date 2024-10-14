@@ -1,6 +1,7 @@
 package com.SWP391.KoiXpress.Api;
 
 
+import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
 import com.SWP391.KoiXpress.Model.request.LoginRequest;
 import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -48,4 +51,18 @@ public class AuthenticationAPI {
         authenticationService.resetPassword(passwordResetRequest);
         return ResponseEntity.ok("Reset password successfully");
     }
+    @GetMapping("/login/oauth2/success")
+    public ResponseEntity<LoginResponse> handleGoogleLoginSuccess(OAuth2AuthenticationToken authentication) {
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+        String email = oidcUser.getEmail();
+
+        User user = authenticationService.findUserByEmail(email);
+        if (user == null) {
+            user = authenticationService.registerOAuthUser(oidcUser);
+        }
+
+        LoginResponse loginResponse = authenticationService.createLoginResponse(user);
+        return ResponseEntity.ok(loginResponse);
+    }
+
 }

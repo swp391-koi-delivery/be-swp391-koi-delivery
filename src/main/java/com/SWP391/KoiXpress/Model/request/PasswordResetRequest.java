@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Model.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -12,4 +13,7 @@ public class PasswordResetRequest {
     @Pattern(regexp = ".*[A-Z].*", message = "Password must contain at least one uppercase letter.")
     @Size(min=6, message = "password at least 6 character!")
     String password;
+
+    @JsonIgnore
+    String token;
 }

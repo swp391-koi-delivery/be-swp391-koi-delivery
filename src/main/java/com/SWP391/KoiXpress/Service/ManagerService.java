@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Service;
 
 
 import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Exception.AuthException;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
@@ -10,6 +11,7 @@ import com.SWP391.KoiXpress.Model.request.UpdateRequestManager;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Model.response.UpdateResponse;
+import com.SWP391.KoiXpress.Model.response.UserResponse;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class ManagerService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    AuthenticationService authenticationService;
 
     public RegisterResponse create(RegisterRequestManager registerRequestManager) {
         User user = modelMapper.map(registerRequestManager, User.class);
@@ -53,12 +57,16 @@ public class ManagerService {
 
     public UpdateResponse update (long userId, UpdateRequestManager updateRequestManager) {
         modelMapper.map(updateRequestManager, User.class);
+        User currentUser = authenticationService.getCurrentUser();
         User oldUser = getUserById(userId);
+        if(currentUser == oldUser){
+            throw new AuthException("You cant update because this account is using");
+        }
         try {
             oldUser.setImage(updateRequestManager.getImage());
             oldUser.setRole(updateRequestManager.getRole());
             oldUser.setLoyaltyPoint(updateRequestManager.getLoyaltyPoint());
-            oldUser.setUserstatus(updateRequestManager.getUserstatus());
+            oldUser.setDeleted(updateRequestManager.isDeleted());
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, UpdateResponse.class);
         } catch (Exception e) {
@@ -70,7 +78,7 @@ public class ManagerService {
     public LoginResponse delete(long userId) {
         try {
             User oldUser = getUserById(userId);
-            oldUser.setUserstatus(true);
+            oldUser.setDeleted(true);
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, LoginResponse.class);
 
@@ -87,12 +95,20 @@ public class ManagerService {
         return registerResponses;
     }
 
-    private User getUserById(long userId) {
-        User oldUser = userRepository.findUserByUserId(userId);
-        if (oldUser == null)
+    private User getUserById(long id) {
+        User oldUser = userRepository.findUserById(id);
+        if (oldUser == null) {
             throw new EntityNotFoundException("User not found!");
-//            if (oldUser.getUserstatus()=="BLOCK")throw new EntityNotFoundException("User not found!");
+        }
+
         return oldUser;
+    }
+    public RegisterResponse getEachUserById(long id){
+        User user = userRepository.findUserById(id);
+        if(user == null){
+            throw new EntityNotFoundException("User not found");
+        }
+        return modelMapper.map(user, RegisterResponse.class);
     }
 }
 

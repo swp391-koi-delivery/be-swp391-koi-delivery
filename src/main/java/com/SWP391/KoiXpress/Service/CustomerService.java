@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.NotEntity.EmailDetail;
+import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
@@ -61,7 +61,7 @@ public class CustomerService {
                     //gui email xac thuc
                     newUser.setEmailStatus(EmailStatus.Verified);
                 }else{
-                    newUser.setEmailStatus(EmailStatus.NotVerified);
+                    newUser.setEmailStatus(EmailStatus.Not_Verified);
                     throw new EmailNotVerifiedException("Email not verify. please provide a valid email.");
                 }
                 userRepository.save(newUser);
@@ -89,7 +89,7 @@ public class CustomerService {
     public LoginResponse delete(long userId) {
         try {
             User oldUser = getUserById(userId);
-            oldUser.setUserstatus(true);
+            oldUser.setDeleted(true);
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, LoginResponse.class);
 
@@ -101,11 +101,11 @@ public class CustomerService {
     }
 
         private User getUserById ( long userId){
-        User oldUser = userRepository.findUserByUserId(userId);
+        User oldUser = userRepository.findUserById(userId);
         if (oldUser == null){
             throw new EntityNotFoundException("User not found!");
         }
-            if (oldUser.getUserstatus()){
+            if (oldUser.isDeleted()){
                 throw new EntityNotFoundException("User not found!");
             }
         return oldUser;

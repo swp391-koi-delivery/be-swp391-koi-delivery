@@ -18,14 +18,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/FeedBack")
 @CrossOrigin("*")
-@SecurityRequirement(name="api")
+@SecurityRequirement(name = "api")
 @PreAuthorize("hasAuthority('CUSTOMER') or hasAuthority('SALESSTAFF')")
 public class FeedBackAPI {
 
     @Autowired
     FeedBackService feedBackService;
+
     @PostMapping
-    public ResponseEntity createFeedBack(@Valid @RequestBody FeedBackRequet feedBackRequet){
+    public ResponseEntity createFeedBack(@Valid @RequestBody FeedBackRequet feedBackRequet) {
         FeedBack newFeedBack = feedBackService.createFeedBack(feedBackRequet);
         return ResponseEntity.ok(newFeedBack);
     }
@@ -40,24 +41,26 @@ public class FeedBackAPI {
         return ResponseEntity.ok(reply);
     }
 
-    @GetMapping
-    public  ResponseEntity get(){
-        List<FeedBackResponse> feedBacks = feedBackService.getAllFeedBack();
+    @PreAuthorize("hasAuthority('SALESSTAFF')")
+    @GetMapping("/user/{userId}/feedbacks")
+    public ResponseEntity getFeedbacksByUser(@PathVariable Long userId) {
+        List<FeedBackResponse> feedBacks = feedBackService.getAllFeedBacksByUser(userId);
         return ResponseEntity.ok(feedBacks);
     }
 
+
     @PreAuthorize("hasAuthority('SALESSTAFF') and (hasAuthority('Customer') and @feedBackService.isOwner(#feedBackId))")
     @PutMapping("/{feedBackId}")
-    public ResponseEntity updateFeedBack( @PathVariable long feedBackId,@Valid @RequestBody FeedBackRequet feedBackRequet){
-        FeedBack newFeedBack = feedBackService.updateFeedBack( feedBackId,feedBackRequet);
+    public ResponseEntity updateFeedBack(@PathVariable long feedBackId, @Valid @RequestBody FeedBackRequet feedBackRequet) {
+        FeedBack newFeedBack = feedBackService.updateFeedBack(feedBackId, feedBackRequet);
         return ResponseEntity.ok(newFeedBack);
     }
 
     @PreAuthorize("hasAuthority('SALESSTAFF') or (hasAuthority('Customer') and @feedBackService.isOwner(#feedBackId))")
     @DeleteMapping("/{feedBackId}")
-    public ResponseEntity deleteFeedBack(@PathVariable long feedBackId){
+    public ResponseEntity deleteFeedBack(@PathVariable long feedBackId) {
         feedBackService.deleteFeedBack(feedBackId);
         return ResponseEntity.ok().build();
     }
-    
+
 }
