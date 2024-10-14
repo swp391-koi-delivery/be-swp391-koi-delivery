@@ -19,31 +19,16 @@ import java.util.List;
 @Data
 public class OrderRequest {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    Date orderDate;
-
     @NotBlank(message = "location start can not be blank")
     String originLocation;
 
     @NotBlank(message = "location end can not be blank")
     String destinationLocation;
 
-    @Min(value = 0,message = "totalPrice at least 0")
-    @NotNull(message = "totalPrice can not be null")
-    double totalPrice;
-
-    int totalQuantity;
-
-    double totalVolume;
-
     String customerNotes;
-
 
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
-    OrderStatus orderStatus;
 
     List<OrderDetailRequest> orderDetailRequestList;
 

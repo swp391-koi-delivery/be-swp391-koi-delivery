@@ -39,19 +39,10 @@ public class OrderDetailRequest {
     @Max(value = 100)
     int numberOfFish;
 
-    int totalBox;
     @NumberFormat(pattern = "#.##")
     double sizeOfFish;
-
-    @NumberFormat(pattern = "#.##")
-    double totalVolume;
 
     @Enumerated(EnumType.STRING)
     DescribeOrder describeOrder;
 
-    @Enumerated(EnumType.STRING)
-    HealthFishStatus healthFishStatus;
-
-    @Enumerated(EnumType.STRING)
-    OrderStatus orderStatus;
 }

@@ -82,7 +82,6 @@ public class OrderDetail {
     OrderStatus orderStatus;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "order_id")
     Order order;
 

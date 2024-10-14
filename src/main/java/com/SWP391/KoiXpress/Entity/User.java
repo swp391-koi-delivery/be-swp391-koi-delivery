@@ -3,6 +3,7 @@ package com.SWP391.KoiXpress.Entity;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -16,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -77,6 +79,7 @@ public class User implements UserDetails{
     List<FeedBack> feedBacks;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     List<Order> orders;
 
 

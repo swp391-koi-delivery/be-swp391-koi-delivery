@@ -2,10 +2,12 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Order;
+import com.SWP391.KoiXpress.Entity.Progress;
 import com.SWP391.KoiXpress.Entity.Vehicle;
 import com.SWP391.KoiXpress.Model.request.VehicleRequest;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
+import com.SWP391.KoiXpress.Repository.ProgressRepository;
 import com.SWP391.KoiXpress.Repository.VehicleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,44 +29,47 @@ public class VehicleService {
     @Autowired
     OrderRepository orderRepository;
 
-    public List<OrderResponse> createVehicle(List<Order> orders, VehicleRequest vehicleRequest) {
+    @Autowired
+    ProgressRepository progressRepository;
+
+    public List<Progress> createVehicle(VehicleRequest vehicleRequest) {
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleType(vehicleRequest.getVehicleType());
         double maxVolume = vehicle.getMaxVolume();
-        List<Order> unplacedOrders = orders.stream()
-                .filter(order -> order.getOrderStatus() == OrderStatus.Shipping)// Lọc theo trạng thái mong muốn
-//                .filter(order -> order.getVehicle() == null)
-                .sorted(Comparator.comparing(Order::getOrderDate).reversed() )
-                .collect(Collectors.toList());
-        int n = unplacedOrders.size();
-        int dp[][]= new int[n + 1][(int)maxVolume + 1];
+        List<Progress> progresses = progressRepository.findAll();
+        List<Progress> unplacedProgresses = progresses.stream()
+                .filter(progress -> !progress.isInProgress())// Lọc theo trạng thái mong muốn
+                .sorted(Comparator.comparing(Progress::getDateProgress).reversed() )
+                .toList();
+        int n = unplacedProgresses.size();
+        int[][] dp = new int[n + 1][(int)maxVolume + 1];
 
         for (int i = 1; i<= n; i++){
-            Order order = unplacedOrders.get(i-1);
+            Progress progress = unplacedProgresses.get(i-1);
             for(int j = 1; j <= maxVolume ; j++){
                 dp[i][j] = dp[i-1][j];
-                if(j>= order.getTotalVolume()) {
-                    dp[i][j] = Math.max(dp[i][j], dp[i-1][j- (int)order.getTotalVolume()] + order.getTotalBox());
+                if(j>= progress.getTotalVolume()) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i-1][j- (int)progress.getTotalVolume()] + progress.getTotalBox());
                 }
             }
         }
-        List<Order> currentVehicleOrders = new ArrayList<>();
+        List<Progress> currentVehicle_Progresses = new ArrayList<>();
 
         for (int i = n; i > 0 && maxVolume > 0; i--) {
             if (dp[i][(int)maxVolume] != dp[i - 1][(int)maxVolume]) {
                 // Đơn hàng thứ i đã được chọn
-                currentVehicleOrders.add(unplacedOrders.get(i - 1));
-                maxVolume -= unplacedOrders.get(i - 1).getTotalVolume(); // Giảm thể tích còn lại
+                currentVehicle_Progresses.add(unplacedProgresses.get(i - 1));
+                maxVolume -= unplacedProgresses.get(i - 1).getTotalVolume(); // Giảm thể tích còn lại
             }
         }
         vehicleRepository.save(vehicle);
-//        for(Order order: currentVehicleOrders){
-//            order.setVehicle(vehicle);
-//        }
-        List<OrderResponse> orderResponses = currentVehicleOrders.stream()
-                .map(order -> modelMapper.map(order, OrderResponse.class)) // Giả sử OrderResponse có các trường này
-                .collect(Collectors.toList());
-        orderRepository.saveAll(currentVehicleOrders);
-        return orderResponses;
+        for(Progress progress: currentVehicle_Progresses){
+            progress.setVehicle(vehicle);
+        }
+//        List<OrderResponse> orderResponses = currentVehicleOrders.stream()
+//                .map(order -> modelMapper.map(order, OrderResponse.class)) // Giả sử OrderResponse có các trường này
+//                .collect(Collectors.toList());
+        progressRepository.saveAll(currentVehicle_Progresses);
+        return currentVehicle_Progresses;
     }
 }

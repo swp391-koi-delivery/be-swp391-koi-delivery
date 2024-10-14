@@ -34,7 +34,7 @@ public class Vehicle {
 //    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    List<Order> orders;
 
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
     @JsonIgnore
     List<Progress> progresses;
 

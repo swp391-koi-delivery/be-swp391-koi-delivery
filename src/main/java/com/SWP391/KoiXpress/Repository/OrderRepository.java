@@ -12,7 +12,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order,Long> {
     Order findOrderById(long Id);
     List<Order> findOrdersByUser(User user);
-
-//    @Query("SELECT o.destinationLocation FROM Order o WHERE o.Id = :Id")
-//    String findOriginLocationById(long Id);
+    List<Order> findOrdersByOriginLocationContainingIgnoreCase(String originLocation);
 }

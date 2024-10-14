@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,17 +10,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -65,20 +64,11 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    @JsonIgnore
     User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "vehicle_id")
-//    @JsonIgnore
-//    Vehicle vehicle;
-
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnore
     List<OrderDetail> orderDetails;
-
-//    @ManyToOne
-//    @JoinColumn(name = "report_id")
-//    Report report;
 
     @OneToOne
     @JoinColumn(name = "invoice_id")
@@ -86,6 +76,10 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "progress_id")
-    @JsonIgnore
     Progress progress;
+
+//    @ManyToOne
+//    @JoinColumn(name = "report_id")
+//    Report report;
+
 }

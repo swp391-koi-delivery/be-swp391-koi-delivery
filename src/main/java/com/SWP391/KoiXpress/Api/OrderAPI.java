@@ -3,6 +3,7 @@ package com.SWP391.KoiXpress.Api;
 import com.SWP391.KoiXpress.Entity.Order;
 import com.SWP391.KoiXpress.Model.request.OrderRequest;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
+import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
 import com.SWP391.KoiXpress.Service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -40,7 +41,7 @@ public class OrderAPI {
     }
     @GetMapping
     public ResponseEntity getAll(){
-        List<OrderResponse> orderResponses = orderService.getAll();
+        List<OrderResponseAll> orderResponses = orderService.getAll();
         return ResponseEntity.ok(orderResponses);
     }
     @PostMapping("{id}")

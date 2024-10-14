@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Service;
 
 
 import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Order;
 import com.SWP391.KoiXpress.Entity.OrderDetail;
@@ -11,6 +12,8 @@ import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Model.request.OrderDetailRequest;
 import com.SWP391.KoiXpress.Model.request.OrderRequest;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
+import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
+import com.SWP391.KoiXpress.Model.response.UserResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import org.antlr.v4.runtime.atn.SemanticContext;
 import org.modelmapper.ModelMapper;
@@ -53,7 +56,7 @@ public class OrderService {
         order.setDestinationLocation(orderRequest.getDestinationLocation());
         order.setPaymentMethod(orderRequest.getPaymentMethod());
         order.setCustomerNotes(orderRequest.getCustomerNotes());
-        order.setOrderStatus(orderRequest.getOrderStatus());
+        order.setOrderStatus(OrderStatus.Pending);
 
 
         List<OrderDetail> orderDetails = new ArrayList<>();
@@ -74,9 +77,9 @@ public class OrderService {
             orderDetail.setFishSpecies(orderDetailRequest.getFishSpecies());
             orderDetail.setNumberOfFish(orderDetailRequest.getNumberOfFish());
             orderDetail.setSizeOfFish(orderDetailRequest.getSizeOfFish());
-            orderDetail.setHealthFishStatus(orderDetailRequest.getHealthFishStatus());
-            orderDetail.setOrderStatus(orderDetailRequest.getOrderStatus());
-
+            orderDetail.setHealthFishStatus(HealthFishStatus.Healthy);
+            orderDetail.setOrderStatus(OrderStatus.Pending);
+            orderDetail.setDescribeOrder(orderDetailRequest.getDescribeOrder());
 
             orderDetail.setPrice(boxDetail.getTotalPrice());
             orderDetail.setTotalBox(boxDetail.getTotalBox());
@@ -139,11 +142,13 @@ public class OrderService {
         return modelMapper.map(order, OrderResponse.class);
     }
 
-    public List<OrderResponse> getAll(){
+    public List<OrderResponseAll> getAll(){
         List<Order> orders = orderRepository.findAll();
-        List<OrderResponse> orderResponses = new ArrayList<>();
+        List<OrderResponseAll> orderResponses = new ArrayList<>();
         for(Order order : orders){
-            OrderResponse orderResponse = modelMapper.map(order, OrderResponse.class);
+            UserResponse userResponse = modelMapper.map(order.getUser(), UserResponse.class);
+            OrderResponseAll orderResponse = modelMapper.map(order, OrderResponseAll.class);
+            orderResponse.setUserResponse(userResponse);
             orderResponses.add(orderResponse);
         }
         return orderResponses;

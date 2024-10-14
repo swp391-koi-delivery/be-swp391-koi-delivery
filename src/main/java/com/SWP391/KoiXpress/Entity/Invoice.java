@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -30,5 +31,6 @@ public class Invoice {
     }
 
     @OneToOne(mappedBy = "invoice")
+    @JsonIgnore
     Order order;
 }

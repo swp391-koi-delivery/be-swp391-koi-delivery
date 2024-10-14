@@ -1,18 +1,19 @@
 package com.SWP391.KoiXpress.Entity;
 
+import com.SWP391.KoiXpress.Model.response.UserResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.util.Date;
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,9 +23,15 @@ public class Progress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String nameDelivery;
+    User user;
 
-    String phone;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    Date dateProgress;
+
+    @NumberFormat(pattern = "#.##")
+    double totalVolume;
+
+    int totalBox;
 
     boolean isInProgress = false;
 
@@ -36,7 +43,8 @@ public class Progress {
     @JoinColumn(name = "warehouse_id")
     WareHouse wareHouse;
 
-    @OneToMany(mappedBy = "progress")
+    @OneToMany(mappedBy = "progress", cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Order> orders;
 
 
