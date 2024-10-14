@@ -57,7 +57,7 @@ public class SecurityConfig {
         @Bean
         public FirebaseApp firebaseInit() throws IOException {
             // Update the path to the correct service account JSON file
-            FileInputStream serviceAccount = new FileInputStream("C:/FPT/New folder/be-swp391-koi-delivery/src/main/resources/google-services.json");
+            FileInputStream serviceAccount = new FileInputStream("src/main/resources/google-services.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
