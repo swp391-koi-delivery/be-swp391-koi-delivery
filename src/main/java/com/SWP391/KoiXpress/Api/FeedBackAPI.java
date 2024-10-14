@@ -56,6 +56,20 @@ public class FeedBackAPI {
         return ResponseEntity.ok(newFeedBack);
     }
 
+    @PreAuthorize("hasAuthority('SALESSTAFF')")
+    @GetMapping("/order/{orderId}/feedbacks")
+    public ResponseEntity<List<FeedBackResponse>> getFeedbacksByOrder(@PathVariable Long orderId) {
+        List<FeedBackResponse> feedBacks = feedBackService.getAllFeedBacksByOrder(orderId);
+        return ResponseEntity.ok(feedBacks);
+    }
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/my-feedbacks")
+    public ResponseEntity<List<FeedBackResponse>> getMyFeedbacks() {
+        List<FeedBackResponse> feedBacks = feedBackService.getAllFeedBacksByCurrentUser();
+        return ResponseEntity.ok(feedBacks);
+    }
+
+
     @PreAuthorize("hasAuthority('SALESSTAFF') or (hasAuthority('Customer') and @feedBackService.isOwner(#feedBackId))")
     @DeleteMapping("/{feedBackId}")
     public ResponseEntity deleteFeedBack(@PathVariable long feedBackId) {

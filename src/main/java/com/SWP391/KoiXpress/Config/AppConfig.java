@@ -22,7 +22,7 @@ public class AppConfig {
     }
 
     @Bean
-    public TemplateEngine customTemplateEngine() {
+    public TemplateEngine templateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         return templateEngine;

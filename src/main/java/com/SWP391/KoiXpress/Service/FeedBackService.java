@@ -111,7 +111,7 @@ public class FeedBackService {
             FeedBackResponse feedBackResponse = new FeedBackResponse();
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
 
-            feedBackResponse.setFeedbackId(feedBack.getId());
+            feedBackResponse.setId(feedBack.getId());
             feedBackResponse.setRatingScore(feedBack.getRatingScore());
             feedBackResponse.setComment(feedBack.getComment());
             feedBackResponse.setUserResponse(userResponse);
@@ -133,6 +133,47 @@ public class FeedBackService {
 
         return feedBackResponses;
     }
+
+    public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId) {
+        List<FeedBackResponse> feedBackResponses = new ArrayList<>();
+        List<FeedBack> feedBacks = feedBackRepository.findByOrderId(orderId); // Lấy tất cả phản hồi theo orderId
+
+        for (FeedBack feedBack : feedBacks) {
+            User user = feedBack.getUser();
+            FeedBackResponse feedBackResponse = new FeedBackResponse();
+            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+
+            feedBackResponse.setId(feedBack.getId());
+            feedBackResponse.setRatingScore(feedBack.getRatingScore());
+            feedBackResponse.setComment(feedBack.getComment());
+            feedBackResponse.setUserResponse(userResponse);
+            feedBackResponse.setCreatedTime(feedBack.getCreatedTime());
+
+            List<FeedBackReplyResponse> replyResponses = feedBack.getReplies().stream()
+                    .map(reply -> {
+                        FeedBackReplyResponse replyResponse = new FeedBackReplyResponse();
+                        replyResponse.setReplyContent(reply.getReplyContent());
+                        replyResponse.setRepliedBy(reply.getRepliedBy());
+                        replyResponse.setReplyDate(reply.getReplyDate());
+                        return replyResponse;
+                    }).collect(Collectors.toList());
+
+            feedBackResponse.setReplies(replyResponses);
+
+            feedBackResponses.add(feedBackResponse);
+        }
+
+        return feedBackResponses;
+    }
+
+    public List<FeedBackResponse> getAllFeedBacksByCurrentUser() {
+        User user = authenticationService.getCurrentUser();
+        if (user != null) {
+            return getAllFeedBacksByUser(user.getId());
+        }
+        return new ArrayList<>();
+    }
+
 
     private FeedBack getFeedById(long Id) {
         FeedBack oldFeedBack = feedBackRepository.findById(Id);

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class FeedBackResponse {
-    long feedbackId;
+    long Id;
     byte ratingScore;
     String comment;
     LocalDateTime createdTime;

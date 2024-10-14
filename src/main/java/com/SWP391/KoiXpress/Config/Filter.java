@@ -55,7 +55,7 @@ public class Filter extends OncePerRequestFilter {
         }else{
             String token = getToken(request);
             if(token == null){
-            //chan quyen truy cap
+                //chan quyen truy cap
                 handlerExceptionResolver.resolveException(request,response,null,new AuthException("Empty token"));
                 return;
             }
@@ -78,7 +78,6 @@ public class Filter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         }
     }
-
 
 
     public String getToken(HttpServletRequest request){

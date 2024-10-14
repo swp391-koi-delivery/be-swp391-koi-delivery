@@ -18,7 +18,7 @@ import java.util.List;
 public class FeedBack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long feedBackId;
+    long Id;
 
     @JsonIgnore
     boolean isDeleted = false;

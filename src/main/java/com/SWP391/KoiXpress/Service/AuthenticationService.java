@@ -27,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -153,14 +153,7 @@ public class AuthenticationService implements UserDetailsService {
         return userRepository.findUserByEmail(email);
     }
 
-    public User registerOAuthUser(OidcUser oidcUser) {
-        User user = new User();
-        user.setEmail(oidcUser.getEmail());
-        user.setFullname(oidcUser.getFullName());
-        user.setRole(Role.CUSTOMER);
-        userRepository.save(user);
-        return user;
-    }
+
 
     public LoginResponse createLoginResponse(User user) {
         LoginResponse loginResponse = new LoginResponse();

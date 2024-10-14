@@ -9,12 +9,13 @@ import com.SWP391.KoiXpress.Model.request.RegisterRequest;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Service.AuthenticationService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
 import org.springframework.web.bind.annotation.*;
 
 
@@ -51,18 +52,16 @@ public class AuthenticationAPI {
         authenticationService.resetPassword(passwordResetRequest);
         return ResponseEntity.ok("Reset password successfully");
     }
-    @GetMapping("/login/oauth2/success")
-    public ResponseEntity<LoginResponse> handleGoogleLoginSuccess(OAuth2AuthenticationToken authentication) {
-        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-        String email = oidcUser.getEmail();
-
-        User user = authenticationService.findUserByEmail(email);
-        if (user == null) {
-            user = authenticationService.registerOAuthUser(oidcUser);
+    @PostMapping("/google")
+    public ResponseEntity<String> googleLogin(@RequestBody String idToken) {
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            String uid = decodedToken.getUid();
+            // Add further logic (e.g., create user session, JWT)
+            return ResponseEntity.ok("User verified: " + uid);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid token");
         }
-
-        LoginResponse loginResponse = authenticationService.createLoginResponse(user);
-        return ResponseEntity.ok(loginResponse);
     }
 
 }

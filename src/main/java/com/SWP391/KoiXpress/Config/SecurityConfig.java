@@ -2,6 +2,9 @@ package com.SWP391.KoiXpress.Config;
 
 
 import com.SWP391.KoiXpress.Service.AuthenticationService;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,13 +17,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @Configuration
 @EnableMethodSecurity
@@ -33,12 +37,12 @@ public class SecurityConfig {
     Filter filter;
 
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -46,6 +50,21 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
+    @Configuration
+    public class FirebaseConfig {
+
+        @Bean
+        public FirebaseApp firebaseInit() throws IOException {
+            // Update the path to the correct service account JSON file
+            FileInputStream serviceAccount = new FileInputStream("C:/FPT/New folder/be-swp391-koi-delivery/src/main/resources/google-services.json");
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
+            return FirebaseApp.initializeApp(options);
+        }
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http)  throws Exception {
@@ -62,18 +81,5 @@ public class SecurityConfig {
                     .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                     .build();
         }
-
-    @Bean
-    public SecurityFilterChain securityFilterChainGG(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/login/oauth2/success", "/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Permit Swagger
-                        .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .defaultSuccessUrl("/api/login/oauth2/success", true)  // On success, redirect to API endpoint
-                        .failureUrl("/login?error=true")  // On failure, redirect to login error
-                );
-        return http.build();
     }
 }
