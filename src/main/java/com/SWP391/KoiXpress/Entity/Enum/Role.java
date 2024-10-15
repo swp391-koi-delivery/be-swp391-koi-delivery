@@ -3,9 +3,9 @@ package com.SWP391.KoiXpress.Entity.Enum;
 
 
 public enum Role {
-    CUSTOMER,
-    MANAGER,
-    SALESSTAFF,
-    DELIVERINGSTAFF
+    Customer,
+    Manager,
+    Sale_staff,
+    Delivering_staff
 
 }

@@ -24,7 +24,7 @@ public class Report {
     Date generateDate;
     String dateRange;
 
-//    @OneToMany(mappedBy = "report")
-//    @JsonIgnore
-//    List<Order> orders;
+    @OneToMany(mappedBy = "report")
+    @JsonIgnore
+    List<Order> orders;
 }

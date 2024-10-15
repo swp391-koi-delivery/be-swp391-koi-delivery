@@ -20,10 +20,10 @@ public class GeoCodingService {
 
     public double[] geocoding(String location) throws Exception{
         String url = String.format("%s?q=%s&key=%s", GRAPH_HOPPER_API_URL, location,API_KEY);
-        String jsonresponse = restTemplate.getForObject(url,String.class);
+        String jsonResponse = restTemplate.getForObject(url,String.class);
 
 
-        JsonNode rootNode = objectMapper.readTree(jsonresponse);
+        JsonNode rootNode = objectMapper.readTree(jsonResponse);
         JsonNode point = rootNode.path("hits").get(0).path("point");
         double lat = point.path("lat").asDouble();
         double lng = point.path("lng").asDouble();

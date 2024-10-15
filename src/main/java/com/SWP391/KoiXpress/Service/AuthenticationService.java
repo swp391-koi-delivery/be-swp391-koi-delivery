@@ -59,7 +59,7 @@ public class AuthenticationService implements UserDetailsService {
         try {
             String originpassword = user.getPassword();
             user.setPassword(passwordEncoder.encode(originpassword));
-            user.setRole(Role.CUSTOMER);
+            user.setRole(Role.Customer);
 
             User newUser = userRepository.save(user);
             EmailDetail emailDetail = new EmailDetail();
@@ -146,5 +146,19 @@ public class AuthenticationService implements UserDetailsService {
     public User getCurrentUser(){
         User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return authenticationRepository.findUserById(user.getId());
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+
+
+    public LoginResponse createLoginResponse(User user) {
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setFullname(user.getFullname());
+        loginResponse.setToken(tokenService.generateToken(user));
+        return loginResponse;
     }
 }

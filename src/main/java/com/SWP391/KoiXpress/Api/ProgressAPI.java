@@ -1,8 +1,10 @@
 package com.SWP391.KoiXpress.Api;
 
-import com.SWP391.KoiXpress.Entity.Order;
+
+import com.SWP391.KoiXpress.Entity.Progress;
 import com.SWP391.KoiXpress.Model.request.ProgressRequest;
-import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
+
+import com.SWP391.KoiXpress.Model.response.ProgressResponse;
 import com.SWP391.KoiXpress.Service.ProgressService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -23,7 +25,7 @@ public class ProgressAPI {
 
     @PostMapping
     public ResponseEntity create(@Valid @RequestBody ProgressRequest progressRequest){
-        List<OrderResponseAll> orderList = progressService.create(progressRequest);
-        return ResponseEntity.ok(orderList);
+        List<ProgressResponse> progresses = progressService.create(progressRequest);
+        return ResponseEntity.ok(progresses);
     }
 }

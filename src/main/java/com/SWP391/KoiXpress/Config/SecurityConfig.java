@@ -2,6 +2,9 @@ package com.SWP391.KoiXpress.Config;
 
 
 import com.SWP391.KoiXpress.Service.AuthenticationService;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsUtils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @Configuration
 @EnableMethodSecurity
@@ -58,4 +64,21 @@ public class SecurityConfig {
                     .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                     .build();
         }
-}
+
+    @Configuration
+    public class FirebaseConfig {
+
+        @Bean
+        public FirebaseApp firebaseInit() throws IOException {
+            // Update the path to the correct service account JSON file
+            FileInputStream serviceAccount = new FileInputStream("src/main/resources/google-services.json");
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
+            return FirebaseApp.initializeApp(options);
+        }
+    }
+
+    }

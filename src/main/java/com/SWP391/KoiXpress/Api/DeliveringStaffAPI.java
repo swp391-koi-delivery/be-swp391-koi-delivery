@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Api;
 
 
 import com.SWP391.KoiXpress.Entity.Progress;
+import com.SWP391.KoiXpress.Entity.Vehicle;
 import com.SWP391.KoiXpress.Model.request.VehicleRequest;
 import com.SWP391.KoiXpress.Service.OrderService;
 import com.SWP391.KoiXpress.Service.VehicleService;
@@ -28,7 +29,7 @@ public class DeliveringStaffAPI {
 
     @PostMapping
     public ResponseEntity create(@Valid @RequestBody VehicleRequest vehicleRequest){
-        List<Progress> progresses = vehicleService.createVehicle(vehicleRequest);
-        return ResponseEntity.ok(progresses);
+        Vehicle vehicle = vehicleService.create(vehicleRequest);
+        return ResponseEntity.ok(vehicle);
     }
 }

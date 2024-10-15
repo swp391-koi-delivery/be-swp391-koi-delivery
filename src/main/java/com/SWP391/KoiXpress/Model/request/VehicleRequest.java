@@ -8,8 +8,7 @@ import lombok.Data;
 
 @Data
 public class VehicleRequest {
-
+    long idDriver;
     @Enumerated(EnumType.STRING)
     VehicleType vehicleType;
-
 }

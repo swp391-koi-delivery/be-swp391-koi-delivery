@@ -46,13 +46,9 @@ public class OrderDetail {
     @NotBlank(message = "origin of fish should not null")
     String origin;
 
-    @NotBlank(message = "destination not null")
-    String destination;
-
     @NotBlank(message = "need information of recipient")
     String recipientInfo;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date inspectionDate;
 
     @NotBlank(message = "fishSpecies can not blank")
@@ -83,6 +79,7 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     Order order;
 
     @OneToOne(cascade = CascadeType.ALL)

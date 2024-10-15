@@ -15,7 +15,7 @@ import org.springframework.format.annotation.NumberFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Invoice {
+public class Price {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -26,11 +26,5 @@ public class Invoice {
 
     double TAX = 0.05;
 
-    public double calculateTotalInvoice() {
-        return totalPrice * (1 + TAX);
-    }
 
-    @OneToOne(mappedBy = "invoice")
-    @JsonIgnore
-    Order order;
 }

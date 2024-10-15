@@ -26,9 +26,6 @@ public class OrderDetailRequest {
     @NotBlank(message = "origin of fish should not null")
     String origin;
 
-    @NotBlank(message = "destination not null")
-    String destination;
-
     @NotBlank(message = "need information of recipient")
     String recipientInfo;
 

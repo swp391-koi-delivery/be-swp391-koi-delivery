@@ -1,8 +1,8 @@
 package com.SWP391.KoiXpress.Entity;
 
+import com.SWP391.KoiXpress.Entity.Enum.MethodTransPort;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -41,6 +42,8 @@ public class Order {
     @NotBlank(message = "location start can not be blank")
     String originLocation;
 
+    String nearWareHouse;
+
     @NotBlank(message = "location end can not be blank")
     String destinationLocation;
 
@@ -52,9 +55,16 @@ public class Order {
 
     int totalBox;
 
+    @NumberFormat(pattern = "#.##")
+    double totalDistance;
+
+    @NumberFormat(pattern = "#.##")
     double totalVolume;
 
     String customerNotes;
+
+    @Enumerated(EnumType.STRING)
+    MethodTransPort methodTransPort;
 
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
@@ -67,19 +77,19 @@ public class Order {
     User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @JsonIgnore
     List<OrderDetail> orderDetails;
 
-    @OneToOne
-    @JoinColumn(name = "invoice_id")
-    Invoice invoice;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<Progress> progresses;
 
     @ManyToOne
-    @JoinColumn(name = "progress_id")
-    Progress progress;
+    @JoinColumn(name = "report_id")
+    Report report;
 
-//    @ManyToOne
-//    @JoinColumn(name = "report_id")
-//    Report report;
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<FeedBack> feedBacks;
 
 }
