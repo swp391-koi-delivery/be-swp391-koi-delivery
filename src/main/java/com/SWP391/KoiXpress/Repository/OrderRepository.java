@@ -11,7 +11,11 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
     Order findOrderById(long Id);
+
     List<Order> findOrdersByUser(User user);
+
     List<Order> findOrdersByOriginLocationContainingIgnoreCase(String originLocation);
+
+    List<Order> findOrdersByNearWareHouse(String nearWareHouse);
 
 }

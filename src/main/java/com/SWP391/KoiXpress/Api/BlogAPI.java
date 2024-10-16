@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/Blog")
+@RequestMapping("/api/blog")
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
-@PreAuthorize("hasAuthority('CUSTOMER')")
+@PreAuthorize("hasAuthority('Customer')")
 public class BlogAPI {
 
     @Autowired

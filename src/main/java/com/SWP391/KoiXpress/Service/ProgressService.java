@@ -105,4 +105,14 @@ public class ProgressService {
         }
         throw new ProgressException("Order is not ready to ship");
     }
+
+    public List<ProgressResponse> trackingOrder(UUID trackingOrder){
+        List<Progress> progresses = progressRepository.findProgressesByOrderIdAndStatusNotNull(trackingOrder);
+        if(progresses!=null) {
+            return progresses.stream().map(progress -> modelMapper.map(progress, ProgressResponse.class)).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+
 }

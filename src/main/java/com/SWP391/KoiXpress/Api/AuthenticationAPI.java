@@ -54,8 +54,8 @@ public class AuthenticationAPI {
             return ResponseEntity.ok("Reset password successfully");
     }
 
-    @PostMapping("/google")
-    public ResponseEntity<String> googleLogin(@RequestBody String idToken) {
+    @PostMapping("/login-google")
+    public ResponseEntity<String> googleLogin(@RequestParam String idToken) {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String uid = decodedToken.getUid();

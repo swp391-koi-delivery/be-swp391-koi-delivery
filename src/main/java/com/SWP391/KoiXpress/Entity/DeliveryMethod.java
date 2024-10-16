@@ -1,8 +1,6 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,16 +13,13 @@ import org.springframework.format.annotation.NumberFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Price {
+public class DeliveryMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @Min(value = 0, message = "price should greater than 0")
+    String typeVehicle;
+
     @NumberFormat(pattern = "#.##")
-    double totalPrice;
-
-    double TAX = 0.05;
-
-
+    double price;
 }

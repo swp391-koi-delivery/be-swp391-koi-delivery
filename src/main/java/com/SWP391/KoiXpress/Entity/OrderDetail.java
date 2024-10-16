@@ -46,27 +46,27 @@ public class OrderDetail {
     @NotBlank(message = "origin of fish should not null")
     String origin;
 
-    @NotBlank(message = "need information of recipient")
-    String recipientInfo;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date inspectionDate;
 
     @NotBlank(message = "fishSpecies can not blank")
     String fishSpecies;
 
+    //
     @Min(value = 1)
     @Max(value = 100)
     int numberOfFish;
-
     @NumberFormat(pattern = "#.##")
     double sizeOfFish;
+    //
 
+    //
     int totalBox;
     @NumberFormat(pattern = "#.##")
     double totalVolume;
-
     @NumberFormat(pattern = "#.##")
     double price;
+    //
 
     @Enumerated(EnumType.STRING)
     DescribeOrder describeOrder;
@@ -82,7 +82,6 @@ public class OrderDetail {
     @JsonIgnore
     Order order;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "box_detail_id", referencedColumnName = "id")
-    BoxDetail boxDetail;
+    @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL)
+    List<BoxDetail> boxDetails;
 }

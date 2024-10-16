@@ -92,7 +92,7 @@ public class OrderService {
         }
         order.setNearWareHouse(nearestWareHouse);
         //
-
+        order.setRecipientInfo(orderRequest.getRecipientInfo());
         order.setOriginLocation(orderRequest.getOriginLocation());
         order.setDestinationLocation(orderRequest.getDestinationLocation());
         order.setMethodTransPort(orderRequest.getMethodTransPort());
@@ -104,16 +104,14 @@ public class OrderService {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (OrderDetailRequest orderDetailRequest : orderRequest.getOrderDetailRequestList()) {
             Map<Double, Integer> fishSizeQuantityMap = Map.of(orderDetailRequest.getSizeOfFish(), orderDetailRequest.getNumberOfFish());
-            BoxDetail boxDetail = boxDetailService.createBox(fishSizeQuantityMap);
+            BoxDetailResult boxDetails = boxDetailService.createBox(fishSizeQuantityMap);
             OrderDetail orderDetail = new OrderDetail();
 
             orderDetail.setOrder(order);
-            orderDetail.setBoxDetail(boxDetail);
             orderDetail.setPriceOfFish(orderDetailRequest.getPriceOfFish());
             orderDetail.setNameFarm(orderDetailRequest.getNameFarm());
             orderDetail.setFarmAddress(orderDetailRequest.getFarmAddress());
             orderDetail.setOrigin(orderDetailRequest.getOrigin());
-            orderDetail.setRecipientInfo(orderDetailRequest.getRecipientInfo());
             orderDetail.setInspectionDate(Date.from(LocalDate.now().minusYears(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
             orderDetail.setFishSpecies(orderDetailRequest.getFishSpecies());
             orderDetail.setNumberOfFish(orderDetailRequest.getNumberOfFish());
@@ -122,9 +120,12 @@ public class OrderService {
             orderDetail.setOrderStatus(OrderStatus.Pending);
             orderDetail.setDescribeOrder(orderDetailRequest.getDescribeOrder());
 
-            orderDetail.setPrice(boxDetail.getTotalPrice());
-            orderDetail.setTotalBox(boxDetail.getTotalBox());
-            orderDetail.setTotalVolume(boxDetail.getTotalVolume());
+
+            orderDetail.setBoxDetails(boxDetails.getBoxDetails());
+            orderDetail.setPrice(boxDetails.getTotalPrice());
+            orderDetail.setTotalBox(boxDetails.getTotalCount());
+            orderDetail.setTotalVolume(boxDetails.getTotalVolume());
+
             orderDetails.add(orderDetail);
 
         }
@@ -156,6 +157,7 @@ public class OrderService {
     public OrderResponse userUpdate(long id, OrderRequestCustomer orderRequest) throws Exception {
         Order oldOrder = getOrderById(id);
         if(oldOrder.getOrderStatus() == OrderStatus.Pending){
+            oldOrder.setRecipientInfo(orderRequest.getRecipientInfo());
             oldOrder.setOriginLocation(orderRequest.getOriginLocation());
             oldOrder.setDestinationLocation(orderRequest.getDestinationLocation());
 
@@ -250,5 +252,6 @@ public class OrderService {
         }
         throw new EntityNotFoundException("Cant find distance");
     }
+
 
 }

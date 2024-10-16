@@ -7,5 +7,4 @@ public enum Role {
     Manager,
     Sale_staff,
     Delivering_staff
-
 }

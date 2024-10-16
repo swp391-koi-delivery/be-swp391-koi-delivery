@@ -3,6 +3,7 @@ package com.SWP391.KoiXpress.Entity;
 import com.SWP391.KoiXpress.Entity.Enum.MethodTransPort;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
+import com.SWP391.KoiXpress.Exception.OrderException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,6 +39,9 @@ public class Order {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date deliveryDate;
+
+    @NotBlank(message = "need information of recipient")
+    String recipientInfo;
 
     @NotBlank(message = "location start can not be blank")
     String originLocation;
@@ -92,4 +96,11 @@ public class Order {
     @JsonIgnore
     List<FeedBack> feedBacks;
 
+
+    public double calculatePrice(){
+        if(methodTransPort!=null){
+            return totalDistance * methodTransPort.getPrice() + totalPrice;
+        }
+        throw new OrderException("Method transport id not selected");
+    }
 }

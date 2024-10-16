@@ -9,6 +9,9 @@ import lombok.Data;
 
 @Data
 public class OrderRequestCustomer {
+    @NotBlank(message = "need information of recipient")
+    String recipientInfo;
+
     @NotBlank(message = "location start can not be blank")
     String originLocation;
 

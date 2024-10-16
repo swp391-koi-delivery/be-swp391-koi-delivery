@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,26 +9,26 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.NumberFormat;
 
+import java.util.List;
+
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BoxDetail {
+public class Box {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    int quantity;
+    String type;
 
-    @ManyToOne
-    @JoinColumn(name = "order_detail_id")
-    @JsonIgnore
-    OrderDetail orderDetail;
+    @NumberFormat(pattern = "#.##")
+    double volume;
 
-    @ManyToOne
-    @JoinColumn(name = "box_id")
-    @JsonIgnore
-    Box box;
+    @NumberFormat(pattern = "#.##")
+    double price;
 
+    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL)
+    List<BoxDetail> boxDetails;
 }

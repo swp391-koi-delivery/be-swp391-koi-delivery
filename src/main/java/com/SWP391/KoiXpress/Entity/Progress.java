@@ -43,9 +43,9 @@ public class Progress {
     @Enumerated(EnumType.STRING)
     ProgressStatus progressStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    Vehicle vehicle;
+//    @ManyToOne
+//    @JoinColumn(name = "vehicle_id")
+//    Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")

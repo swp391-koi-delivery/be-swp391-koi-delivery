@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Api;
 
-import com.SWP391.KoiXpress.Entity.Order;
+
 import com.SWP391.KoiXpress.Model.request.OrderRequest;
 import com.SWP391.KoiXpress.Model.request.OrderRequestCustomer;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
@@ -36,7 +36,7 @@ public class OrderAPI {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity getEachOrder(long id){
+    public ResponseEntity getEachOrder(@PathVariable long id){
         OrderResponse orderResponse = orderService.getEachOrderById(id);
         return ResponseEntity.ok(orderResponse);
     }
@@ -45,7 +45,7 @@ public class OrderAPI {
         List<OrderResponseAll> orderResponses = orderService.getAll();
         return ResponseEntity.ok(orderResponses);
     }
-    @PostMapping("{id}")
+    @PutMapping("{id}")
     public ResponseEntity update(@PathVariable long id, @RequestBody @Valid OrderRequestCustomer orderRequest) throws Exception {
         OrderResponse updateOrder = orderService.userUpdate(id,orderRequest);
         return ResponseEntity.ok(updateOrder);

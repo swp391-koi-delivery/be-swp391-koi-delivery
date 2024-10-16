@@ -19,6 +19,8 @@ import java.util.List;
 
 @Data
 public class OrderRequest {
+    @NotBlank(message = "need information of recipient")
+    String recipientInfo;
 
     @NotBlank(message = "location start can not be blank")
     String originLocation;

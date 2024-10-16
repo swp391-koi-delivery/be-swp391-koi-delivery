@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -23,6 +24,7 @@ import org.springframework.web.cors.CorsUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 @EnableMethodSecurity
@@ -71,7 +73,7 @@ public class SecurityConfig {
         @Bean
         public FirebaseApp firebaseInit() throws IOException {
             // Update the path to the correct service account JSON file
-            FileInputStream serviceAccount = new FileInputStream("src/main/resources/google-services.json");
+            InputStream serviceAccount = new ClassPathResource("google-services.json").getInputStream();
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))

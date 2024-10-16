@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Repository;
 
+import com.SWP391.KoiXpress.Entity.Order;
 import com.SWP391.KoiXpress.Entity.WareHouse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,9 @@ public interface WareHouseRepository extends JpaRepository<WareHouse, Long> {
 
     @Query("SELECT w.location FROM WareHouse w")
     List<String> findAllLocation();
+
+    @Query("")
+    List<Order> findOrdersByLocation(String nearWareHouse);
+
+
 }

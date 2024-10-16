@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Model.request;
 
+import com.SWP391.KoiXpress.Entity.BoxDetail;
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
@@ -10,6 +11,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.format.annotation.NumberFormat;
+
+import java.util.List;
 
 
 @Data
@@ -26,9 +29,6 @@ public class OrderDetailRequest {
     @NotBlank(message = "origin of fish should not null")
     String origin;
 
-    @NotBlank(message = "need information of recipient")
-    String recipientInfo;
-
     @NotBlank(message = "fishSpecies can not blank")
     String fishSpecies;
 
@@ -41,5 +41,6 @@ public class OrderDetailRequest {
 
     @Enumerated(EnumType.STRING)
     DescribeOrder describeOrder;
+
 
 }
