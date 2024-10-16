@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Entity;
 
+import com.SWP391.KoiXpress.Entity.Enum.WareHouseStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,7 +24,8 @@ public class WareHouse {
     String location;
     int stockCapacity;
     int currentStock;
-    Boolean status;
+    @Enumerated(EnumType.STRING)
+    WareHouseStatus wareHouseStatus;
 
     @OneToMany(mappedBy = "wareHouse")
     @JsonIgnore

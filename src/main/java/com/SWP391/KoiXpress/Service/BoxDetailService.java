@@ -1,10 +1,14 @@
 package com.SWP391.KoiXpress.Service;
 
+import com.SWP391.KoiXpress.Entity.Box;
 import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Entity.BoxDetailResult;
 import com.SWP391.KoiXpress.Exception.BoxException;
 import com.SWP391.KoiXpress.Repository.BoxDetailRepository;
+import com.SWP391.KoiXpress.Repository.BoxRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,13 +22,10 @@ public class BoxDetailService {
     @Autowired
     ModelMapper modelMapper;
 
-    // Constants remain unchanged
-    static final double SMALL_BOX_CAPACITY = 100;
-    static final double MEDIUM_BOX_CAPACITY = 200;
-    static final double LARGE_BOX_CAPACITY = 350;
-    static final double SM_PRICE = 2.01;
-    static final double MD_PRICE = 4.02;
-    static final double LR_PRICE = 8.05;
+    @Autowired
+    BoxRepository boxRepository;
+
+
     static final Map<String, Double> FISH_SIZES = new HashMap<>();
 
     static {
@@ -76,6 +77,9 @@ public class BoxDetailService {
     public Map<String, Object> calculateBox(Map<Double, Integer> fishSizeQuantityMap) {
         double remainVolume = 0;
         double totalVolume = 0;
+        double totalPrice = 0;
+        double remainingSpaceInSmallBox = 0;
+        int totalCount = 0;
 
         // Duyệt qua từng cặp kích thước-số lượng và cộng dồn thể tích tổng
         for (Map.Entry<Double, Integer> entry : fishSizeQuantityMap.entrySet()) {
@@ -85,47 +89,46 @@ public class BoxDetailService {
             remainVolume += getFishVolume(quantity, fishSize);
         }
 
-        // Tính toán số lượng hộp dựa trên thể tích tổng
-        int small_box_count = 0;
-        int medium_box_count = 0;
-        int large_box_count = 0;
+        List<Box> boxes = boxRepository.findAll(Sort.by(Sort.Order.desc("volume")));
+        Box smallestBox = boxes.get(boxes.size()-1);
 
-        do {
-            large_box_count = (int) (remainVolume / LARGE_BOX_CAPACITY);
-            remainVolume = remainVolume - (large_box_count * LARGE_BOX_CAPACITY);
-            if (remainVolume >= MEDIUM_BOX_CAPACITY) {
-                medium_box_count = (int) (remainVolume / MEDIUM_BOX_CAPACITY);
-                remainVolume -= (medium_box_count * MEDIUM_BOX_CAPACITY);
-                if (remainVolume == 0) {
-                    break;
-                } else {
-                    if (remainVolume <= SMALL_BOX_CAPACITY) {
-                        small_box_count += 1;
-                        remainVolume -= SMALL_BOX_CAPACITY;
-                    } else {
-                        medium_box_count += 1;
-                        remainVolume -= MEDIUM_BOX_CAPACITY;
-                    }
-                }
-            } else {
-                if (remainVolume <= SMALL_BOX_CAPACITY) {
-                    small_box_count += 1;
-                    remainVolume -= SMALL_BOX_CAPACITY;
-                } else {
-                    medium_box_count += 1;
-                    remainVolume -= MEDIUM_BOX_CAPACITY;
-                }
+        Map<String, Integer> boxCount = new LinkedHashMap<>();
+
+        for(Box box : boxes){
+            boxCount.put(box.getType(),0);
+        }
+
+        for(Box box : boxes){
+            int count = (int) (remainVolume / box.getVolume());
+            remainVolume -= count * box.getVolume();
+            boxCount.put(box.getType(), boxCount.get(box.getType())+ count);
+            if (remainVolume == 0) {
+                break;
             }
-        } while (remainVolume > 0);
+        }
+        if(remainVolume > 0 && remainVolume < smallestBox.getVolume()){
+            boxCount.put(smallestBox.getType(), boxCount.get(smallestBox.getType()) + 1);
+            remainingSpaceInSmallBox = smallestBox.getVolume() - remainVolume;
+        }
+
+        for(Box box : boxes){
+            totalPrice = box.getPrice() * boxCount.get(box.getType());
+            totalPrice += totalPrice;
+            totalCount += boxCount.get(box.getType());
+        }
 
         // Chuẩn bị chi tiết hộp
         Map<String, Object> boxDetails = new LinkedHashMap<>();
-        boxDetails.put("largeBoxCount", large_box_count);
-        boxDetails.put("mediumBoxCount", medium_box_count);
-        boxDetails.put("smallBoxCount", small_box_count);
+
+        for(Map.Entry<String, Integer> entry : boxCount.entrySet()){
+            String boxType = entry.getKey();
+            int quantityBox = entry.getValue();
+            boxDetails.put(boxType,quantityBox);
+        }
+        boxDetails.put("totalCount", totalCount);
         boxDetails.put("totalVolume", totalVolume);
-        boxDetails.put("totalPrice",large_box_count*LR_PRICE + medium_box_count * MD_PRICE + small_box_count * SM_PRICE);
-        boxDetails.put("remainingVolume", remainVolume = 0 - remainVolume);
+        boxDetails.put("totalPrice",totalPrice);
+        boxDetails.put("remainingVolume", remainingSpaceInSmallBox);
 
         return boxDetails;
     }
@@ -158,29 +161,47 @@ public class BoxDetailService {
         return boxDetails;
     }
 
-    public BoxDetail createBox(Map<Double, Integer> fishSizeQuantityMap){
+    public BoxDetailResult createBox(Map<Double, Integer> fishSizeQuantityMap){
         try{
             Map<String, Object> boxDetails = calculateBox(fishSizeQuantityMap);
-            int largeBox = (int) boxDetails.get("largeBoxCount");
-            int mediumBox = (int) boxDetails.get("mediumBoxCount");
-            int smallBox = (int) boxDetails.get("smallBoxCount");
+            List<BoxDetail> boxDetailList = new ArrayList<>();
             double totalVolume = (double) boxDetails.get("totalVolume");
-            double price = (double) boxDetails.get("totalPrice");
-            BoxDetail boxDetail = new BoxDetail();
-            boxDetail.setSmallBox(smallBox);
-            boxDetail.setMediumBox(mediumBox);
-            boxDetail.setLargeBox(largeBox);
-            boxDetail.setTotalVolume(totalVolume);
-            boxDetail.setTotalPrice(price);
-            return boxDetailRepository.save(boxDetail);
+            double totalPrice = (double) boxDetails.get("totalPrice");
+            int totalCount = (int) boxDetails.get("totalCount");
+            for(Map.Entry<String, Object> entry : boxDetails.entrySet()){
+                String boxType = entry.getKey();
+                Object value = entry.getValue();
+                if (boxType.equals("totalVolume") || boxType.equals("totalPrice") || boxType.equals("remainingVolume") || boxType.equals("totalCount")) {
+                    continue;
+                }
+                Integer quantityBox = (Integer) value;
+                Box box = boxRepository.findBoxByType(boxType);
+                if(box != null){
+                    BoxDetail boxDetail = new BoxDetail();
+                    boxDetail.setBox(box);
+                    boxDetail.setQuantity(quantityBox);
+                    boxDetailRepository.save(boxDetail);
+                    boxDetailList.add(boxDetail);
+                }
+            }
+            BoxDetailResult boxDetailResult = new BoxDetailResult();
+            boxDetailResult.setBoxDetails(boxDetailList);
+            boxDetailResult.setTotalPrice(totalPrice);
+            boxDetailResult.setTotalVolume(totalVolume);
+            boxDetailResult.setTotalCount(totalCount);
+
+            return boxDetailResult;
         }catch(Exception e){
             e.printStackTrace();
-            throw new BoxException("An error occurred while creating Box");
+            throw new BoxException("BoxDetail cant create");
         }
     }
 
     public List<BoxDetail> getAllBox(){
         List<BoxDetail> boxDetails = boxDetailRepository.findAll();
+        if(boxDetails.isEmpty()){
+            return Collections.emptyList();
+        }
         return boxDetails;
     }
 

@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Model.response;
 
 
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
+import com.SWP391.KoiXpress.Entity.Enum.MethodTransPort;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
 import com.SWP391.KoiXpress.Entity.OrderDetail;
@@ -23,15 +24,20 @@ import java.util.UUID;
 public class OrderResponse {
     long id;
     UUID trackingOrder = UUID.randomUUID();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date orderDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date deliveryDate;
     String originLocation;
+    String nearWareHouse;
     String destinationLocation;
     double totalPrice;
     int totalQuantity;
     int totalBox;
+    double totalDistance;
     double totalVolume;
     String customerNotes;
+    MethodTransPort methodTransPort;
     PaymentMethod paymentMethod;
     OrderStatus orderStatus;
 

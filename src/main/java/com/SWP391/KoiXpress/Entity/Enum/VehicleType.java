@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Entity.Enum;
 
-public enum VehicleType {
-    Truck,
-
+public enum Payment {
+    COD,
+    CASH
 }

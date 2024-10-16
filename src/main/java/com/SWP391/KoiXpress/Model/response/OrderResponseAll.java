@@ -3,6 +3,7 @@ package com.SWP391.KoiXpress.Model.response;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
 import com.SWP391.KoiXpress.Entity.OrderDetail;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,7 +14,9 @@ import java.util.UUID;
 public class OrderResponseAll {
     long id;
     UUID trackingOrder = UUID.randomUUID();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date orderDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date deliveryDate;
     String originLocation;
     String destinationLocation;

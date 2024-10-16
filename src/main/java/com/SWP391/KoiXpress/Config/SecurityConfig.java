@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,12 +20,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 @EnableMethodSecurity
@@ -37,12 +37,12 @@ public class SecurityConfig {
     Filter filter;
 
     @Bean
-    public ModelMapper modelMapper() {
+    public ModelMapper modelMapper(){
         return new ModelMapper();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
@@ -50,21 +50,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
-    @Configuration
-    public class FirebaseConfig {
-
-        @Bean
-        public FirebaseApp firebaseInit() throws IOException {
-            // Update the path to the correct service account JSON file
-            FileInputStream serviceAccount = new FileInputStream("src/main/resources/google-services.json");
-
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-
-            return FirebaseApp.initializeApp(options);
-        }
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http)  throws Exception {
@@ -81,5 +66,21 @@ public class SecurityConfig {
                     .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                     .build();
         }
+
+    @Configuration
+    public class FirebaseConfig {
+
+        @Bean
+        public FirebaseApp firebaseInit() throws IOException {
+            // Update the path to the correct service account JSON file
+            InputStream serviceAccount = new ClassPathResource("google-services.json").getInputStream();
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
+            return FirebaseApp.initializeApp(options);
+        }
     }
-}
+
+    }

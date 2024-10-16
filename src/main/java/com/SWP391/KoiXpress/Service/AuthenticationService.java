@@ -60,7 +60,7 @@ public class AuthenticationService implements UserDetailsService {
         try {
             String originpassword = user.getPassword();
             user.setPassword(passwordEncoder.encode(originpassword));
-            user.setRole(Role.CUSTOMER);
+            user.setRole(Role.Customer);
 
             User newUser = userRepository.save(user);
             EmailDetail emailDetail = new EmailDetail();

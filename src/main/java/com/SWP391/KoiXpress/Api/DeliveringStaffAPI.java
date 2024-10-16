@@ -19,16 +19,4 @@ import java.util.List;
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
 public class DeliveringStaffAPI {
-
-    @Autowired
-    VehicleService vehicleService;
-
-    @Autowired
-    OrderService orderService;
-
-    @PostMapping
-    public ResponseEntity create(@Valid @RequestBody VehicleRequest vehicleRequest){
-        List<Progress> progresses = vehicleService.createVehicle(vehicleRequest);
-        return ResponseEntity.ok(progresses);
-    }
 }

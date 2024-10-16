@@ -1,14 +1,14 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.NumberFormat;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,15 +16,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Report {
+public class Box {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    String reportType;
-    Date generateDate;
-    String dateRange;
 
-    @OneToMany(mappedBy = "report")
-    @JsonIgnore
-    List<Order> orders;
+    String type;
+
+    @NumberFormat(pattern = "#.##")
+    double volume;
+
+    @NumberFormat(pattern = "#.##")
+    double price;
+
+    @OneToMany(mappedBy = "box", cascade = CascadeType.ALL)
+    List<BoxDetail> boxDetails;
 }

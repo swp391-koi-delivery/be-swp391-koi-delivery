@@ -1,9 +1,9 @@
 package com.SWP391.KoiXpress.Model.response;
 
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -11,7 +11,8 @@ public class FeedBackResponse {
     long Id;
     byte ratingScore;
     String comment;
-    LocalDateTime createdTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    Date createdTime;
     UserResponse userResponse;
     List<FeedBackReplyResponse> replies;
 }

@@ -1,5 +1,7 @@
 package com.SWP391.KoiXpress.Entity;
 
+import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
+import com.SWP391.KoiXpress.Entity.Enum.ProgressStatus;
 import com.SWP391.KoiXpress.Model.response.UserResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,7 +25,7 @@ public class Progress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    User user;
+    String image;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date dateProgress;
@@ -35,17 +37,21 @@ public class Progress {
 
     boolean isInProgress = false;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
-    Vehicle vehicle;
+    @Enumerated(EnumType.STRING)
+    HealthFishStatus healthFishStatus;
+
+    @Enumerated(EnumType.STRING)
+    ProgressStatus progressStatus;
+
+//    @ManyToOne
+//    @JoinColumn(name = "vehicle_id")
+//    Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")
     WareHouse wareHouse;
 
-    @OneToMany(mappedBy = "progress", cascade = CascadeType.ALL)
-    @JsonIgnore
-    List<Order> orders;
-
-
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    Order order;
 }

@@ -18,39 +18,17 @@ public class BoxDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    int largeBox;
-    int mediumBox;
-    int smallBox;
-    int totalBox;
-    @NumberFormat(pattern = "#.##")
-    double totalPrice;
-    @NumberFormat(pattern = "#.##")
-    double totalVolume;
 
+    int quantity;
 
-    @OneToOne(mappedBy = "boxDetail")
+    @ManyToOne
+    @JoinColumn(name = "order_detail_id")
     @JsonIgnore
     OrderDetail orderDetail;
 
-    public void setLargeBox(int largeBox) {
-        this.largeBox = largeBox;
-        updateTotalBox();
-    }
+    @ManyToOne
+    @JoinColumn(name = "box_id")
+    @JsonIgnore
+    Box box;
 
-
-    public void setMediumBox(int mediumBox) {
-        this.mediumBox = mediumBox;
-        updateTotalBox();
-    }
-
-
-    public void setSmallBox(int smallBox) {
-        this.smallBox = smallBox;
-        updateTotalBox();
-    }
-
-
-    private void updateTotalBox() {
-        this.totalBox = this.largeBox + this.mediumBox + this.smallBox;
-    }
 }

@@ -1,12 +1,14 @@
 package com.SWP391.KoiXpress.Model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class FeedBackReplyResponse {
     private String replyContent;
     private String repliedBy;
-    private LocalDateTime replyDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private Date replyDate;
 }

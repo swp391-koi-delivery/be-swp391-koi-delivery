@@ -1,10 +1,8 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.FeedBack;
-import com.SWP391.KoiXpress.Entity.FeedBackReply;
-import com.SWP391.KoiXpress.Entity.Order;
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.*;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
+import com.SWP391.KoiXpress.Model.request.BlogRequest;
 import com.SWP391.KoiXpress.Model.request.FeedBackRequet;
 import com.SWP391.KoiXpress.Model.response.FeedBackReplyResponse;
 import com.SWP391.KoiXpress.Model.response.FeedBackResponse;
@@ -16,8 +14,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +35,18 @@ public class FeedBackService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    FeedBackReplyRepository feedBackReplyRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     public FeedBack createFeedBack(FeedBackRequet feedBackRequet) {
 
         User user = authenticationService.getCurrentUser();
@@ -48,7 +60,8 @@ public class FeedBackService {
         feedBack.setOrder(order);
         feedBack.setComment(feedBackRequet.getComment());
         feedBack.setRatingScore(feedBackRequet.getRatingScore());
-        feedBack.setCreatedTime(LocalDateTime.now());
+
+        feedBack.setCreatedTime(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
         return feedBackRepository.save(feedBack);
     }
@@ -71,7 +84,7 @@ public class FeedBackService {
     public void deleteFeedBack(long FeedId) {
         try {
             FeedBack feedBack = getFeedById(FeedId);
-            feedBack.setDeleted(true);
+            feedBack.setDelete(true);
             feedBackRepository.save(feedBack);
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,7 +102,7 @@ public class FeedBackService {
         feedBackReply.setFeedBack(feedBack);
         feedBackReply.setReplyContent(replyContent);
         feedBackReply.setRepliedBy(repliedBy);
-        feedBackReply.setReplyDate(LocalDateTime.now());
+        feedBackReply.setReplyDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
         feedBackReply = feedBackReplyRepository.save(feedBackReply);
 
@@ -104,7 +117,7 @@ public class FeedBackService {
 
     public List<FeedBackResponse> getAllFeedBacksByUser(Long userId) {
         List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        List<FeedBack> feedBacks = feedBackRepository.findByUserId(userId);
+        List<FeedBack> feedBacks = feedBackRepository.findFeedBacksByUserId(userId);
 
         for (FeedBack feedBack : feedBacks) {
             User user = feedBack.getUser();
@@ -136,7 +149,7 @@ public class FeedBackService {
 
     public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId) {
         List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        List<FeedBack> feedBacks = feedBackRepository.findByOrderId(orderId); // Lấy tất cả phản hồi theo orderId
+        List<FeedBack> feedBacks = feedBackRepository.findFeedBacksByOrderId(orderId); // Lấy tất cả phản hồi theo orderId
 
         for (FeedBack feedBack : feedBacks) {
             User user = feedBack.getUser();

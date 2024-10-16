@@ -1,7 +1,10 @@
 package com.SWP391.KoiXpress.Api;
 
-import com.SWP391.KoiXpress.Entity.Order;
+
 import com.SWP391.KoiXpress.Model.request.OrderRequest;
+import com.SWP391.KoiXpress.Model.response.OrderResponse;
+import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
+import com.SWP391.KoiXpress.Model.request.OrderRequestCustomer;
 import com.SWP391.KoiXpress.Model.response.OrderResponse;
 import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
 import com.SWP391.KoiXpress.Service.OrderService;
@@ -24,7 +27,7 @@ public class OrderAPI {
 
 
     @PostMapping
-    public ResponseEntity create(@Valid @RequestBody OrderRequest orderRequest){
+    public ResponseEntity create(@Valid @RequestBody OrderRequest orderRequest) throws Exception {
         OrderResponse order = orderService.create(orderRequest);
         return ResponseEntity.ok(order);
     }
