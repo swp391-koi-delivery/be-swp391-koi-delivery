@@ -6,10 +6,13 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,13 +40,15 @@ public class SecurityConfig {
     @Autowired
     Filter filter;
 
+
+
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -52,21 +57,21 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http)  throws Exception {
-            return http
-                    .cors().and()
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .authorizeHttpRequests(auth -> auth
-                            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Cho phép tất cả pre-flight requests
-                            .requestMatchers("/**").permitAll()
-                            .anyRequest().authenticated()
-                    )
-                    .userDetailsService(authenticationService)
-                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                    .build();
-        }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .cors().and()
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Cho phép tất cả pre-flight requests
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .userDetailsService(authenticationService)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
 
     @Configuration
     public class FirebaseConfig {
@@ -83,7 +88,4 @@ public class SecurityConfig {
             return FirebaseApp.initializeApp(options);
         }
     }
-
-
-
-    }
+}

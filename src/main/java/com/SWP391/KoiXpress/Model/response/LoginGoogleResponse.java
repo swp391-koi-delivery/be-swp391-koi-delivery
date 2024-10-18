@@ -9,9 +9,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginGoogleResponse {
-        String token;
-        boolean profileIncomplete;
-        private String username;
-        private String password;
+    String token;
+    String username;
+
 
 }

@@ -8,6 +8,7 @@ import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
+
 import com.SWP391.KoiXpress.Model.request.*;
 import com.SWP391.KoiXpress.Model.response.LoginGoogleResponse;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
@@ -15,6 +16,7 @@ import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
-
-import java.security.SecureRandom;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+
 public class AuthenticationService implements UserDetailsService {
 
     @Autowired
@@ -176,38 +178,27 @@ public class AuthenticationService implements UserDetailsService {
                 newUser.setEmail(email);
                 newUser.setUsername(email);
                 newUser.setRole(Role.CUSTOMER);
-                String randomPassword = generateRandomPassword(6);
-                newUser.setPassword(randomPassword);
+                newUser.setPassword(null);
                 newUser.setPhone(null);
+                newUser.setEmailStatus(EmailStatus.VERIFIED);
                 userRepository.save(newUser);
                 return new LoginGoogleResponse(
                         tokenService.generateToken(newUser),
-                        true,
-                        newUser.getUsername(),
-                        randomPassword
+                        newUser.getUsername()
                 );
             }
             return new LoginGoogleResponse(
                     tokenService.generateToken(user),
-                    false,
-                    user.getUsername(),
-                    "******"
+                    user.getUsername()
             );
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Invalid Google ID token.");
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to log in with Google.");
         }
     }
+}
 
-    private String generateRandomPassword(int length) {
-        String chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder(length);
 
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(chars.length());
-            password.append(chars.charAt(index));
-        }
-
-        return password.toString();
-    }}

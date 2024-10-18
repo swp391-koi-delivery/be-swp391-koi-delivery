@@ -55,19 +55,9 @@ public class AuthenticationAPI {
     @PostMapping("/login-google")
     public ResponseEntity<?> googleLogin(@RequestBody LoginGoogleRequest loginGoogleRequest) {
         try {
-            // Call the service to handle Google login
             LoginGoogleResponse response = authenticationService.loginGoogle(loginGoogleRequest);
-
-            if (response == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Login failed. Invalid token or user creation failed.");
-            }
-
-            // Return the login response with token and profile completion status
             return ResponseEntity.ok(response);
-
         } catch (RuntimeException e) {
-            // Handle any unexpected errors and return a 500 status
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }

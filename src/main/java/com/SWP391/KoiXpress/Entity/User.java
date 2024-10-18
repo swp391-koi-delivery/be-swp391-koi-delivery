@@ -2,9 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
-import com.SWP391.KoiXpress.Service.CompleteProfile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -33,16 +31,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @NotBlank(message = "username can not be blank!", groups = CompleteProfile.class)
-    @Size(min = 6, message = "username must at least 6 characters", groups = CompleteProfile.class)
+    @NotBlank(message = "username can not be blank!")
+    @Size(min = 6, message = "username must at least 6 characters")
     private String username;
 
     @Pattern(
             regexp = ".*[A-Z].*",
-            message = "Password must contain at least one uppercase letter.",
-            groups = CompleteProfile.class
+            message = "Password must contain at least one uppercase letter."
     )
-    @Size(min = 6, message = "password must be at least 6 characters!", groups = CompleteProfile.class)
+    @Size(min = 6, message = "password must be at least 6 characters!")
     private String password;
 
     @NotBlank(message = "fullname can not be blank!")
@@ -57,8 +54,7 @@ public class User implements UserDetails {
 
     @Pattern(
             regexp = "(84|0[3|5|7|8|9])\\d{8}",
-            message = "Phone number must start with 84 or a valid Vietnamese prefix, followed by 8 digits.",
-            groups = CompleteProfile.class
+            message = "Phone number must start with 84 or a valid Vietnamese prefix, followed by 8 digits."
     )
     @Column(unique = true)
     private String phone;
