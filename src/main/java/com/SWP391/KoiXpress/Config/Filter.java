@@ -39,7 +39,8 @@ public class Filter extends OncePerRequestFilter {
             "/api/login",
             "/api/calculateBoxAndSuggestFishSizes",
             "/api/register",
-            "/api/forgot-password"
+            "/api/forgot-password",
+            "/api/login-google"
     );
 
     public boolean isPublicAPI(String uri){

@@ -15,6 +15,8 @@ import com.SWP391.KoiXpress.Model.response.UserResponse;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -89,9 +91,18 @@ public class ManagerService {
         }
     }
 
-    public List<RegisterResponse> getAllUser() {
-        List<User> users = userRepository.findAll();
-        List<RegisterResponse> registerResponses = users.stream().map(user -> modelMapper.map(user, RegisterResponse.class)).collect(Collectors.toList());
+    public List<RegisterResponse> getAllUser(int page, int size) {
+        // Tạo PageRequest để phân trang
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        // Truy xuất danh sách người dùng theo phân trang
+        Page<User> userPage = userRepository.findAll(pageRequest);
+
+        // Ánh xạ từ User sang RegisterResponse
+        List<RegisterResponse> registerResponses = userPage.getContent().stream()
+                .map(user -> modelMapper.map(user, RegisterResponse.class))
+                .collect(Collectors.toList());
+
         return registerResponses;
     }
 

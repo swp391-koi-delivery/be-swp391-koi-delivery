@@ -91,7 +91,7 @@ public class ProgressService {
         if(order == null){
             throw new NotFoundException("Can not found order");
         }
-        if(order.getOrderStatus() == OrderStatus.Shipping) {
+        if(order.getOrderStatus() == OrderStatus.SHIPPING) {
             List<ProgressResponse> progresses = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 Progress progress = new Progress();
@@ -114,8 +114,5 @@ public class ProgressService {
         return Collections.emptyList();
     }
 
-        List<OrderResponseAll> response = unplacedOrders.stream()
-                .map(order -> modelMapper.map(order, OrderResponseAll.class))
-                .collect(Collectors.toList());
 
-    }
+}

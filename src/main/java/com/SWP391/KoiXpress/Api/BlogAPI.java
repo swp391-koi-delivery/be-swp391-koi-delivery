@@ -7,6 +7,7 @@ import com.SWP391.KoiXpress.Service.BlogService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/blog")
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
-@PreAuthorize("hasAuthority('Customer')")
+@PreAuthorize("hasAuthority('CUSTOMER')")
 public class BlogAPI {
 
     @Autowired
@@ -30,10 +31,13 @@ public class BlogAPI {
     }
 
     @GetMapping
-    public  ResponseEntity get(){
-        List<BlogResponse> blogs = blogService.getAllBlog();
-        return ResponseEntity.ok(blogs);
-    }
+    public ResponseEntity<List<BlogResponse>> getAllBlogs(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "5") int size){
+        List<BlogResponse> blogResponses = blogService.getAllBlog(page - 1, size);
+        return ResponseEntity.ok(blogResponses);
+        }
+
 
     @DeleteMapping("{blogId}")
     public ResponseEntity deleteBlog(@PathVariable long blogId){

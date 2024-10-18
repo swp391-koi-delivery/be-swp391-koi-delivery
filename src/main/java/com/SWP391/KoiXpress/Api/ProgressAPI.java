@@ -25,7 +25,7 @@ public class ProgressAPI {
 
     @PostMapping
     public ResponseEntity create(@Valid @RequestBody ProgressRequest progressRequest){
-        List<OrderResponseAll> orderList = progressService.create(progressRequest);
-        return ResponseEntity.ok(orderList);
+        List<ProgressResponse> progresses = progressService.create(progressRequest);
+        return ResponseEntity.ok(progresses);
     }
 }

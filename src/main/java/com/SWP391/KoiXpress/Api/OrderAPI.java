@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/order")
-@SecurityRequirement(name="api")
+@SecurityRequirement(name = "api")
 @CrossOrigin("*")
 public class OrderAPI {
 
@@ -31,25 +31,30 @@ public class OrderAPI {
         OrderResponse order = orderService.create(orderRequest);
         return ResponseEntity.ok(order);
     }
+
     @GetMapping("/each-user")
-    public ResponseEntity get(){
+    public ResponseEntity get() {
         List<OrderResponse> orderResponseList = orderService.getAllOrdersByCurrentUser();
         return ResponseEntity.ok(orderResponseList);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity getEachOrder(long id){
+    public ResponseEntity getEachOrder(@PathVariable long id) {
         OrderResponse orderResponse = orderService.getEachOrderById(id);
         return ResponseEntity.ok(orderResponse);
     }
+
     @GetMapping
-    public ResponseEntity getAll(){
-        List<OrderResponseAll> orderResponses = orderService.getAll();
+    public ResponseEntity<List<OrderResponseAll>> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size){
+        List<OrderResponseAll> orderResponses = orderService.getAll(page - 1, size);
         return ResponseEntity.ok(orderResponses);
     }
-    @PostMapping("{id}")
-    public ResponseEntity update(@PathVariable long id, @RequestBody @Valid OrderRequest orderRequest){
-        OrderResponse updateOrder = orderService.update(id,orderRequest);
+
+    @PutMapping("{id}")
+    public ResponseEntity update(@PathVariable long id, @RequestBody @Valid OrderRequestCustomer orderRequest) throws Exception {
+        OrderResponse updateOrder = orderService.userUpdate(id, orderRequest);
         return ResponseEntity.ok(updateOrder);
     }
 

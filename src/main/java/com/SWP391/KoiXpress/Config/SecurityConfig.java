@@ -5,6 +5,7 @@ import com.SWP391.KoiXpress.Service.AuthenticationService;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -73,7 +74,7 @@ public class SecurityConfig {
         @Bean
         public FirebaseApp firebaseInit() throws IOException {
             // Update the path to the correct service account JSON file
-            InputStream serviceAccount = new ClassPathResource("google-services.json").getInputStream();
+            InputStream serviceAccount = new ClassPathResource("koi-fish-delivery-firebase-adminsdk-hsria-f878099696.json").getInputStream();
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -82,5 +83,7 @@ public class SecurityConfig {
             return FirebaseApp.initializeApp(options);
         }
     }
+
+
 
     }

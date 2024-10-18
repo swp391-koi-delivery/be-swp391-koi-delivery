@@ -59,9 +59,9 @@ public class CustomerService {
                 boolean emailSend = emailService.sendEmailVerify(emailDetail);
                 if(emailSend){
                     //gui email xac thuc
-                    newUser.setEmailStatus(EmailStatus.Verified);
+                    newUser.setEmailStatus(EmailStatus.VERIFIED);
                 }else{
-                    newUser.setEmailStatus(EmailStatus.Not_Verified);
+                    newUser.setEmailStatus(EmailStatus.NOT_VERIFIED);
                     throw new EmailNotVerifiedException("Email not verify. please provide a valid email.");
                 }
                 userRepository.save(newUser);

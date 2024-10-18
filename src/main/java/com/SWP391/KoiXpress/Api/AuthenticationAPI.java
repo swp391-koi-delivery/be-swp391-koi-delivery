@@ -1,16 +1,17 @@
 package com.SWP391.KoiXpress.Api;
 
 
-import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
-import com.SWP391.KoiXpress.Model.request.LoginRequest;
-import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
-import com.SWP391.KoiXpress.Model.request.RegisterRequest;
+import com.SWP391.KoiXpress.Model.request.*;
+import com.SWP391.KoiXpress.Model.response.LoginGoogleResponse;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Service.AuthenticationService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,28 +50,26 @@ public class AuthenticationAPI {
             return ResponseEntity.ok("Reset password successfully");
     }
 
+
+
     @PostMapping("/login-google")
-    public ResponseEntity<String> googleLogin(@RequestParam String idToken) {
+    public ResponseEntity<?> googleLogin(@RequestBody LoginGoogleRequest loginGoogleRequest) {
         try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String uid = decodedToken.getUid();
-            // Add further logic (e.g., create user session, JWT)
-            return ResponseEntity.ok("User verified: " + uid);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid token");
+            // Call the service to handle Google login
+            LoginGoogleResponse response = authenticationService.loginGoogle(loginGoogleRequest);
+
+            if (response == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Login failed. Invalid token or user creation failed.");
+            }
+
+            // Return the login response with token and profile completion status
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            // Handle any unexpected errors and return a 500 status
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
     }
-
-    @PostMapping("/google")
-    public ResponseEntity<String> googleLogin(@RequestBody String idToken) {
-        try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String uid = decodedToken.getUid();
-            // Add further logic (e.g., create user session, JWT)
-            return ResponseEntity.ok("User verified: " + uid);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid token");
-        }
-    }
-
 }

@@ -15,14 +15,14 @@ import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
 import com.SWP391.KoiXpress.Model.response.UserResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import com.SWP391.KoiXpress.Repository.WareHouseRepository;
-import org.antlr.v4.runtime.atn.SemanticContext;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,7 +98,7 @@ public class OrderService {
         order.setMethodTransPort(orderRequest.getMethodTransPort());
         order.setPaymentMethod(orderRequest.getPaymentMethod());
         order.setCustomerNotes(orderRequest.getCustomerNotes());
-        order.setOrderStatus(OrderStatus.Pending);
+        order.setOrderStatus(OrderStatus.PENDING);
 
 
         List<OrderDetail> orderDetails = new ArrayList<>();
@@ -116,8 +116,8 @@ public class OrderService {
             orderDetail.setFishSpecies(orderDetailRequest.getFishSpecies());
             orderDetail.setNumberOfFish(orderDetailRequest.getNumberOfFish());
             orderDetail.setSizeOfFish(orderDetailRequest.getSizeOfFish());
-            orderDetail.setHealthFishStatus(HealthFishStatus.Healthy);
-            orderDetail.setOrderStatus(OrderStatus.Pending);
+            orderDetail.setHealthFishStatus(HealthFishStatus.HEALTHY);
+            orderDetail.setOrderStatus(OrderStatus.PENDING);
             orderDetail.setDescribeOrder(orderDetailRequest.getDescribeOrder());
 
 
@@ -149,14 +149,14 @@ public class OrderService {
         List<Order> orders = orderRepository.findOrdersByUser(user);
         return orders.stream()
                 .map(order -> modelMapper.map(order, OrderResponse.class))
-                .filter(order -> order.getOrderStatus() != OrderStatus.Canceled)
+                .filter(order -> order.getOrderStatus() != OrderStatus.CANCELED)
                 .collect(Collectors.toList());
     }
 
     // Update
     public OrderResponse userUpdate(long id, OrderRequestCustomer orderRequest) throws Exception {
         Order oldOrder = getOrderById(id);
-        if(oldOrder.getOrderStatus() == OrderStatus.Pending){
+        if(oldOrder.getOrderStatus() == OrderStatus.PENDING){
             oldOrder.setRecipientInfo(orderRequest.getRecipientInfo());
             oldOrder.setOriginLocation(orderRequest.getOriginLocation());
             oldOrder.setDestinationLocation(orderRequest.getDestinationLocation());
@@ -199,7 +199,7 @@ public class OrderService {
     //Delete
     public OrderResponse delete(long id) {
         Order oldOrder = getOrderById(id);
-        oldOrder.setOrderStatus(OrderStatus.Canceled);
+        oldOrder.setOrderStatus(OrderStatus.CANCELED);
         Order deletedOrder = orderRepository.save(oldOrder);
         return modelMapper.map(deletedOrder, OrderResponse.class);
     }
@@ -207,7 +207,7 @@ public class OrderService {
 
     private Order getOrderById(long id) {
         Order oldOrder = orderRepository.findOrderById(id);
-        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.Canceled) {
+        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCELED) {
             throw new EntityNotFoundException("Order not found");
         }
         return oldOrder;
@@ -222,8 +222,9 @@ public class OrderService {
         return modelMapper.map(order, OrderResponse.class);
     }
 
-    public List<OrderResponseAll> getAll() {
-        List<Order> orders = orderRepository.findAll();
+    public List<OrderResponseAll> getAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Order> orders = orderRepository.findAll(pageRequest);
         List<OrderResponseAll> orderResponses = new ArrayList<>();
         for (Order order : orders) {
             UserResponse userResponse = modelMapper.map(order.getUser(), UserResponse.class);

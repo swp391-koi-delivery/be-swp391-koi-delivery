@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
+import com.SWP391.KoiXpress.Service.CompleteProfile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,65 +24,71 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class User implements UserDetails{
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
 
     @Enumerated(EnumType.STRING)
-    Role role;
+    private Role role;
 
-    @NotBlank(message = "username can not be blank!")
-    @Size(min = 6, message = "username must at least 6 character")
-    String username;
+    @NotBlank(message = "username can not be blank!", groups = CompleteProfile.class)
+    @Size(min = 6, message = "username must at least 6 characters", groups = CompleteProfile.class)
+    private String username;
 
-    @NotBlank(message = "password can not be blank!")
-    @Pattern(regexp = ".*[A-Z].*", message = "Password must contain at least one uppercase letter.")
-    @Size(min=6, message = "password at least 6 character!")
-    String password;
+    @Pattern(
+            regexp = ".*[A-Z].*",
+            message = "Password must contain at least one uppercase letter.",
+            groups = CompleteProfile.class
+    )
+    @Size(min = 6, message = "password must be at least 6 characters!", groups = CompleteProfile.class)
+    private String password;
 
     @NotBlank(message = "fullname can not be blank!")
-    @Size(min = 1, message = "fullName at least 1 character!")
-    String fullname;
+    @Size(min = 1, message = "fullName must be at least 1 character!")
+    private String fullname;
 
     @Column(length = 200)
-    String image;
+    private String image;
 
     @Column(length = 200)
-    String address;
-    @NotBlank(message = "phone can not be blank!")
-    @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Phone number must start with 84 or a valid Vietnamese mobile prefix (03, 05, 07, 08, 09) followed by 8 digits.")
+    private String address;
+
+    @Pattern(
+            regexp = "(84|0[3|5|7|8|9])\\d{8}",
+            message = "Phone number must start with 84 or a valid Vietnamese prefix, followed by 8 digits.",
+            groups = CompleteProfile.class
+    )
     @Column(unique = true)
-    String phone;
+    private String phone;
 
     @NotBlank(message = "email can not be blank!")
     @Email(message = "Email not valid")
     @Column(unique = true)
-    String email;
+    private String email;
 
     @Enumerated(EnumType.STRING)
-    EmailStatus emailStatus = EmailStatus.Not_Verified;
+    private EmailStatus emailStatus = EmailStatus.NOT_VERIFIED;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Min(value = 0, message = "at least 0")
-    long loyaltyPoint;
+    @Min(value = 0, message = "Loyalty points must be at least 0.")
+    private long loyaltyPoint;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    boolean isDeleted = false;
-
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    List<Blog> blogs;
+    private boolean isDeleted = false;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    List<FeedBack> feedBacks;
+    private List<Blog> blogs;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    List<Order> orders;
+    private List<FeedBack> feedBacks;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Order> orders;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

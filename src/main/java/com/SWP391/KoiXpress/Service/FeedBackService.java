@@ -12,6 +12,8 @@ import com.SWP391.KoiXpress.Repository.FeedBackRepository;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,17 +37,7 @@ public class FeedBackService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    FeedBackReplyRepository feedBackReplyRepository;
 
-    @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    AuthenticationService authenticationService;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     public FeedBack createFeedBack(FeedBackRequet feedBackRequet) {
 
@@ -115,11 +107,12 @@ public class FeedBackService {
         return feedBackReply;
     }
 
-    public List<FeedBackResponse> getAllFeedBacksByUser(Long userId) {
-        List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        List<FeedBack> feedBacks = feedBackRepository.findFeedBacksByUserId(userId);
+    public List<FeedBackResponse> getAllFeedBacksByUser(Long userId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<FeedBack> feedBackPage = feedBackRepository.findFeedBacksByUserId(userId, pageRequest);
 
-        for (FeedBack feedBack : feedBacks) {
+        List<FeedBackResponse> feedBackResponses = new ArrayList<>();
+        for (FeedBack feedBack : feedBackPage.getContent()) {
             User user = feedBack.getUser();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
@@ -140,18 +133,19 @@ public class FeedBackService {
                     }).collect(Collectors.toList());
 
             feedBackResponse.setReplies(replyResponses);
-
             feedBackResponses.add(feedBackResponse);
         }
 
         return feedBackResponses;
     }
 
-    public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId) {
-        List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        List<FeedBack> feedBacks = feedBackRepository.findFeedBacksByOrderId(orderId); // Lấy tất cả phản hồi theo orderId
 
-        for (FeedBack feedBack : feedBacks) {
+    public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<FeedBack> feedBackPage = feedBackRepository.findFeedBacksByOrderId(orderId, pageRequest);
+
+        List<FeedBackResponse> feedBackResponses = new ArrayList<>();
+        for (FeedBack feedBack : feedBackPage.getContent()) {
             User user = feedBack.getUser();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
@@ -172,17 +166,16 @@ public class FeedBackService {
                     }).collect(Collectors.toList());
 
             feedBackResponse.setReplies(replyResponses);
-
             feedBackResponses.add(feedBackResponse);
         }
 
         return feedBackResponses;
     }
 
-    public List<FeedBackResponse> getAllFeedBacksByCurrentUser() {
+    public List<FeedBackResponse> getAllFeedBacksByCurrentUser(int page, int size) {
         User user = authenticationService.getCurrentUser();
         if (user != null) {
-            return getAllFeedBacksByUser(user.getId());
+            return getAllFeedBacksByUser(user.getId(), page, size);
         }
         return new ArrayList<>();
     }

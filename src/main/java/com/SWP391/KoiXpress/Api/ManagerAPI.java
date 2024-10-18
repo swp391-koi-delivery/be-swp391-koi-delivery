@@ -1,11 +1,12 @@
 package com.SWP391.KoiXpress.Api;
 
-import com.SWP391.KoiXpress.Entity.User;
+
 import com.SWP391.KoiXpress.Model.request.RegisterRequestManager;
 import com.SWP391.KoiXpress.Model.request.UpdateRequestManager;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
 import com.SWP391.KoiXpress.Model.response.UpdateResponse;
+
 import com.SWP391.KoiXpress.Service.ManagerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -36,9 +37,11 @@ public class ManagerAPI {
     }
 
     @GetMapping
-    public ResponseEntity get() {
-        List<RegisterResponse> users = managerService.getAllUser();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<RegisterResponse>> get(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<RegisterResponse> registerResponses = managerService.getAllUser(page - 1, size);
+        return ResponseEntity.ok(registerResponses);
     }
 
     @GetMapping("{id}")
