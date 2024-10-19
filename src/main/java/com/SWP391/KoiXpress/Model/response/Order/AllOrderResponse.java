@@ -3,6 +3,7 @@ package com.SWP391.KoiXpress.Model.response.Order;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
 import com.SWP391.KoiXpress.Entity.OrderDetail;
+import com.SWP391.KoiXpress.Model.response.User.EachUserResponse;
 import com.SWP391.KoiXpress.Model.response.User.UserResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class AllOrderResponse {
     String customerNotes;
     PaymentMethod paymentMethod;
     OrderStatus orderStatus;
-    UserResponse userResponse;
+    UserResponse eachUserResponse;
 
     List<OrderDetail> orderDetails;
 }

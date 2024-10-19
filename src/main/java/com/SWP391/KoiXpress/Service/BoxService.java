@@ -19,10 +19,12 @@ public class BoxService {
     ModelMapper modelMapper;
 
     public CreateBoxResponse create(CreateBoxRequest createBoxRequest){
-        Box box = modelMapper.map(createBoxRequest, Box.class);
-        CreateBoxResponse createBoxResponse = modelMapper.map(box, CreateBoxResponse.class);
+        Box box = new Box();
+        box.setType(createBoxRequest.getType());
+        box.setVolume(createBoxRequest.getVolume());
+        box.setPrice(createBoxRequest.getPrice());
         boxRepository.save(box);
-        return createBoxResponse;
+        return modelMapper.map(box, CreateBoxResponse.class);
     }
 
 

@@ -139,7 +139,11 @@ public class UserService {
 
     public DeleteUserByManagerResponse deleteByManager(long userId) {
         try {
+            User currentUser = authenticationService.getCurrentUser();
             User oldUser = getUserById(userId);
+            if(currentUser == oldUser){
+                throw new AuthException("Can delete that user because user is using web");
+            }
             oldUser.setDeleted(true);
             User newUser = userRepository.save(oldUser);
             return modelMapper.map(newUser, DeleteUserByManagerResponse.class);
@@ -156,12 +160,12 @@ public class UserService {
         return users.stream().map(user -> modelMapper.map(user, AllUserResponse.class)).collect(Collectors.toList());
     }
 
-    public UserResponse getEachUserById(long id) {
+    public EachUserResponse getEachUserById(long id) {
         User user = userRepository.findUserById(id);
         if (user == null) {
             throw new EntityNotFoundException("User not found");
         }
-        return modelMapper.map(user, UserResponse.class);
+        return modelMapper.map(user, EachUserResponse.class);
     }
 
 

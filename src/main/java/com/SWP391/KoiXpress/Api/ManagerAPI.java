@@ -1,12 +1,12 @@
 package com.SWP391.KoiXpress.Api;
 
-import com.SWP391.KoiXpress.Entity.WareHouse;
 import com.SWP391.KoiXpress.Model.request.Box.CreateBoxRequest;
 import com.SWP391.KoiXpress.Model.request.User.CreateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.WareHouse.CreateWareHouseRequest;
 import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxResponse;
+import com.SWP391.KoiXpress.Model.response.CreateWarehouseResponse;
 import com.SWP391.KoiXpress.Model.response.User.*;
 import com.SWP391.KoiXpress.Service.BoxDetailService;
 import com.SWP391.KoiXpress.Service.BoxService;
@@ -72,7 +72,7 @@ public class ManagerAPI {
 
     @GetMapping("/{userId}")
     public ResponseEntity getEachUser(@PathVariable long userId){
-        UserResponse user = userService.getEachUserById(userId);
+        EachUserResponse user = userService.getEachUserById(userId);
         return ResponseEntity.ok(user);
     }
 
@@ -84,14 +84,24 @@ public class ManagerAPI {
 
     @PostMapping("/wareHouse")
     public ResponseEntity create(@Valid @RequestBody CreateWareHouseRequest wareHouse){
-        WareHouse newWareHouse = wareHouseService.create(wareHouse);
+        CreateWarehouseResponse newWareHouse = wareHouseService.create(wareHouse);
         return ResponseEntity.ok(newWareHouse);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/wareHouse/{id}")
     public ResponseEntity delete(@PathVariable long id){
         wareHouseService.delete(id);
         return ResponseEntity.ok("Delete success");
+    }
+
+    @GetMapping("/wareHouse/available")
+    public ResponseEntity getAllWareHouseAvailable(){
+        return ResponseEntity.ok(wareHouseService.getAllWareHouseAvailable());
+    }
+
+    @GetMapping("/wareHouse/notAvailable")
+    public ResponseEntity getAllWareHouseNotAvailable(){
+        return ResponseEntity.ok(wareHouseService.getAllWareHouseNotAvailable());
     }
 
 }

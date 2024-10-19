@@ -32,7 +32,7 @@ public class CreateOrderResponse {
     String customerNotes;
     MethodTransPort methodTransPort;
     PaymentMethod paymentMethod;
-    OrderStatus orderStatus = OrderStatus.AWAITING_RESPONSE;
+    OrderStatus orderStatus;
 
     List<OrderDetail> orderDetails;
 }

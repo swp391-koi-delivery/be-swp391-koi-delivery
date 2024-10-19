@@ -49,8 +49,8 @@ public class OrderDetail {
     String fishSpecies;
 
     //
-    @Min(value = 1)
-    @Max(value = 100)
+    @Min(value = 1, message = "number min of fish not smaller than 1")
+    @Max(value = 100,message = "number max of fish not greater than 100")
     int numberOfFish;
     @NumberFormat(pattern = "#.##")
     double sizeOfFish;
@@ -69,6 +69,7 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     Order order;
 
     @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL)

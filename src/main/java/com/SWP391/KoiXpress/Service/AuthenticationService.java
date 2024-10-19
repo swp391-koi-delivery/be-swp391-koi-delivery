@@ -73,7 +73,6 @@ public class AuthenticationService implements UserDetailsService {
             }
             return modelMapper.map(newUser, CreateUserByManagerResponse.class);
         } catch (Exception e) {
-            e.printStackTrace();
             if (e.getMessage().contains(user.getEmail())) {
                 throw new DuplicateEntity("Duplicate email");
             } else if (e.getMessage().contains(user.getPhone())) {

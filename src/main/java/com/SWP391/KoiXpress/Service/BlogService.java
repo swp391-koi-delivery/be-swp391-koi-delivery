@@ -8,7 +8,7 @@ import com.SWP391.KoiXpress.Model.response.Blog.AllBlogResponse;
 import com.SWP391.KoiXpress.Model.response.Blog.CreateBlogResponse;
 import com.SWP391.KoiXpress.Model.response.Blog.DeleteBlogResponse;
 import com.SWP391.KoiXpress.Model.response.Blog.UpdateBlogResponse;
-import com.SWP391.KoiXpress.Model.response.User.UserResponse;
+import com.SWP391.KoiXpress.Model.response.User.EachUserResponse;
 import com.SWP391.KoiXpress.Repository.BlogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +38,9 @@ public class BlogService {
         blog.setUser(user);
         blogRepository.save(blog);
         //
-        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);
         CreateBlogResponse createBlogResponse = new CreateBlogResponse();
-        createBlogResponse.setUserResponse(userResponse);
+        createBlogResponse.setEachUserResponse(eachUserResponse);
         createBlogResponse.setBlogId(blog.getId());
         createBlogResponse.setPost(blog.getPost());
         createBlogResponse.setImg(blog.getImg());
@@ -55,11 +55,11 @@ public class BlogService {
         for (Blog blog : blogs) {
             User user = blog.getUser();
             AllBlogResponse allBlogResponse = new AllBlogResponse();
-            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+            EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);
             allBlogResponse.setBlogId(blog.getId());
             allBlogResponse.setImg(blog.getImg());
             allBlogResponse.setPost(blog.getPost());
-            allBlogResponse.setUserResponse(userResponse);
+            allBlogResponse.setEachUserResponse(eachUserResponse);
             allBlogResponses.add(allBlogResponse);
         }
 

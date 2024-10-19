@@ -18,4 +18,7 @@ public interface WareHouseRepository extends JpaRepository<WareHouse, Long> {
     WareHouse findWareHouseByLocation(String nearWareHouse);
 
 
+    List<WareHouse> findByIsAvailableTrue();
+
+    List<WareHouse> findByIsAvailableFalse();
 }

@@ -2,6 +2,7 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.Box;
 import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Entity.OrderDetail;
 import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
 import com.SWP391.KoiXpress.Exception.BoxException;
@@ -113,9 +114,8 @@ public class BoxDetailService {
             remainingSpaceInSmallBox = smallestBox.getVolume() - remainVolume;
         }
 
-        for(Box box : boxes){
-            totalPrice = box.getPrice() * boxCount.get(box.getType());
-            totalPrice += totalPrice;
+        for (Box box : boxes) {
+            totalPrice += box.getPrice() * boxCount.get(box.getType());
             totalCount += boxCount.get(box.getType());
         }
 
@@ -163,7 +163,7 @@ public class BoxDetailService {
         return boxDetails;
     }
 
-    public CreateBoxDetailResponse createBox(Map<Double, Integer> fishSizeQuantityMap){
+    public CreateBoxDetailResponse createBox(Map<Double, Integer> fishSizeQuantityMap, OrderDetail orderDetail){
         try{
             Map<String, Object> boxDetails = calculateBox(fishSizeQuantityMap);
             List<BoxDetail> boxDetailList = new ArrayList<>();
@@ -182,6 +182,7 @@ public class BoxDetailService {
                     BoxDetail boxDetail = new BoxDetail();
                     boxDetail.setBox(box);
                     boxDetail.setQuantity(quantityBox);
+                    boxDetail.setOrderDetail(orderDetail);
                     boxDetailRepository.save(boxDetail);
                     boxDetailList.add(boxDetail);
                 }

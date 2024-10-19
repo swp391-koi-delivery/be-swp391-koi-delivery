@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Model.response.FeedBack;
 
-import com.SWP391.KoiXpress.Model.response.User.UserResponse;
+import com.SWP391.KoiXpress.Model.response.User.EachUserResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -14,6 +14,6 @@ public class FeedBackResponse {
     String comment;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date createdTime;
-    UserResponse userResponse;
+    EachUserResponse eachUserResponse;
     List<FeedBackReplyResponse> replies;
 }

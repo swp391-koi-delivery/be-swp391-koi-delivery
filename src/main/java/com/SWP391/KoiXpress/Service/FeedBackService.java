@@ -5,7 +5,7 @@ import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Model.request.FeedBack.FeedBackRequet;
 import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackReplyResponse;
 import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackResponse;
-import com.SWP391.KoiXpress.Model.response.User.UserResponse;
+import com.SWP391.KoiXpress.Model.response.User.EachUserResponse;
 import com.SWP391.KoiXpress.Repository.FeedBackReplyRepository;
 import com.SWP391.KoiXpress.Repository.FeedBackRepository;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
@@ -113,12 +113,12 @@ public class FeedBackService {
         for (FeedBack feedBack : feedBacks) {
             User user = feedBack.getUser();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
-            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+            EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);
 
             feedBackResponse.setId(feedBack.getId());
             feedBackResponse.setRatingScore(feedBack.getRatingScore());
             feedBackResponse.setComment(feedBack.getComment());
-            feedBackResponse.setUserResponse(userResponse);
+            feedBackResponse.setEachUserResponse(eachUserResponse);
             feedBackResponse.setCreatedTime(feedBack.getCreatedTime());
 
             List<FeedBackReplyResponse> replyResponses = feedBack.getReplies().stream()
@@ -145,12 +145,12 @@ public class FeedBackService {
         for (FeedBack feedBack : feedBacks) {
             User user = feedBack.getUser();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
-            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+            EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);
 
             feedBackResponse.setId(feedBack.getId());
             feedBackResponse.setRatingScore(feedBack.getRatingScore());
             feedBackResponse.setComment(feedBack.getComment());
-            feedBackResponse.setUserResponse(userResponse);
+            feedBackResponse.setEachUserResponse(eachUserResponse);
             feedBackResponse.setCreatedTime(feedBack.getCreatedTime());
 
             List<FeedBackReplyResponse> replyResponses = feedBack.getReplies().stream()
