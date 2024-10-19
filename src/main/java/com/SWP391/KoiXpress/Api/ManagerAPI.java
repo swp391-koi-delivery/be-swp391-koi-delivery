@@ -4,6 +4,7 @@ import com.SWP391.KoiXpress.Model.request.Box.CreateBoxRequest;
 import com.SWP391.KoiXpress.Model.request.User.CreateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.WareHouse.CreateWareHouseRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxResponse;
 import com.SWP391.KoiXpress.Model.response.CreateWarehouseResponse;
@@ -65,10 +66,10 @@ public class ManagerAPI {
     }
 
     @GetMapping("/allUser")
-    public ResponseEntity<List<RegisterResponse>> getAllUser(
+    public ResponseEntity<List<AllUserResponse>> getAllUser(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<RegisterResponse> registerResponses = managerService.getAllUser(page - 1, size);
+        List<AllUserResponse> registerResponses = userService.getAllUser(page - 1, size);
         return ResponseEntity.ok(registerResponses);
     }
 

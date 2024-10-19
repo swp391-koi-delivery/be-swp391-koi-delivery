@@ -155,7 +155,7 @@ public class OrderService {
         List<Order> orders = orderRepository.findOrdersByUser(user);
         return orders.stream()
                 .map(order -> modelMapper.map(order, AllOrderByCurrentResponse.class))
-                .filter(order -> order.getOrderStatus() != OrderStatus.CANCEL)
+                .filter(order -> order.getOrderStatus() != OrderStatus.CANCELED)
                 .collect(Collectors.toList());
     }
 
@@ -185,7 +185,7 @@ public class OrderService {
 
     private Order getOrderById(long id) {
         Order oldOrder = orderRepository.findOrderById(id);
-        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCEL) {
+        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCELED) {
             throw new EntityNotFoundException("Order not found");
         }
         return oldOrder;

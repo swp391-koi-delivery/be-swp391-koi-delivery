@@ -40,15 +40,15 @@ public class DeliveryStaffAPI {
         return ResponseEntity.ok(progresses);
     }
 
-    @PostMapping("{id}")
-    public ResponseEntity update(@PathVariable long id,@Valid @RequestBody UpdateProgressRequest updateProgressRequest){
-        UpdateProgressResponse updateProgressResponse = progressService.update(id, updateProgressRequest);
+    @PutMapping("{progressId}")
+    public ResponseEntity update(@PathVariable long progressId,@Valid @RequestBody UpdateProgressRequest updateProgressRequest){
+        UpdateProgressResponse updateProgressResponse = progressService.update(progressId, updateProgressRequest);
         return ResponseEntity.ok(updateProgressResponse);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id){
-        DeleteProgressResponse deleteProgressResponse = progressService.delete(id);
+    @DeleteMapping("{progressId}")
+    public ResponseEntity delete(@PathVariable long progressId){
+        DeleteProgressResponse deleteProgressResponse = progressService.delete(progressId);
         return ResponseEntity.ok(deleteProgressResponse);
     }
 

@@ -1,7 +1,6 @@
 package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Model.response.Blog.AllBlogResponse;
-import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
 import com.SWP391.KoiXpress.Service.BlogService;
 import com.SWP391.KoiXpress.Service.BoxDetailService;
 import com.SWP391.KoiXpress.Service.GeoCodingService;
@@ -9,7 +8,7 @@ import com.SWP391.KoiXpress.Service.RoutingService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -36,9 +35,11 @@ public class FreeAccessAPI {
     GeoCodingService geoCodingService;
 
     @GetMapping("/allBlog")
-    public ResponseEntity getAll(){
-        List<AllBlogResponse> blogs = blogService.getAllBlog();
-        return ResponseEntity.ok(blogs);
+    public ResponseEntity<List<AllBlogResponse>> getAllBlogs(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size){
+        List<AllBlogResponse> blogResponses = blogService.getAllBlog(page - 1, size);
+        return ResponseEntity.ok(blogResponses);
     }
 
     @GetMapping("/calculateBoxAndSuggestFishSizes")

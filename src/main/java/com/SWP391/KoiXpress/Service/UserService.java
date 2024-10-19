@@ -9,8 +9,11 @@ import com.SWP391.KoiXpress.Model.request.User.UpdateCustomerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.response.User.*;
 import com.SWP391.KoiXpress.Repository.UserRepository;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -155,9 +158,17 @@ public class UserService {
         }
     }
 
-    public List<AllUserResponse> getAllUser() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(user -> modelMapper.map(user, AllUserResponse.class)).collect(Collectors.toList());
+    public List<AllUserResponse> getAllUser(int page, int size) {
+        // Tạo PageRequest để phân trang
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        // Truy xuất danh sách người dùng theo phân trang
+        Page<User> userPage = userRepository.findAll(pageRequest);
+
+        // Ánh xạ từ User sang RegisterResponse
+        return userPage.getContent().stream()
+                .map(user -> modelMapper.map(user, AllUserResponse.class))
+                .collect(Collectors.toList());
     }
 
     public EachUserResponse getEachUserById(long id) {

@@ -72,12 +72,6 @@ public class CustomerAPI {
         return ResponseEntity.ok(deleteUserByUserResponse);
     }
 
-//    @PostMapping("/feedBack")
-//    public ResponseEntity createFeedBack(@Valid @RequestBody FeedBackRequet feedBackRequet) {
-//        FeedBack newFeedBack = feedBackService.createFeedBack(feedBackRequet);
-//        return ResponseEntity.ok(newFeedBack);
-//    }
-
     @PostMapping("/order")
     public ResponseEntity createOrder(@Valid @RequestBody CreateOrderRequest createOrderRequest) throws Exception {
         CreateOrderResponse order = orderService.create(createOrderRequest);
