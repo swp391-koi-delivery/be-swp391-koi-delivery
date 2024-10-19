@@ -7,12 +7,12 @@ import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Exception.OrderException;
-import com.SWP391.KoiXpress.Model.request.OrderDetailRequest;
-import com.SWP391.KoiXpress.Model.request.OrderRequest;
-import com.SWP391.KoiXpress.Model.request.OrderRequestCustomer;
-import com.SWP391.KoiXpress.Model.response.OrderResponse;
-import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
-import com.SWP391.KoiXpress.Model.response.UserResponse;
+import com.SWP391.KoiXpress.Model.request.Order.OrderDetailRequest;
+import com.SWP391.KoiXpress.Model.request.Order.CreateOrderRequest;
+import com.SWP391.KoiXpress.Model.request.Order.UpdateOrderRequest;
+import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
+import com.SWP391.KoiXpress.Model.response.Order.*;
+import com.SWP391.KoiXpress.Model.response.User.UserResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import com.SWP391.KoiXpress.Repository.WareHouseRepository;
 import org.modelmapper.ModelMapper;
@@ -51,7 +51,7 @@ public class OrderService {
     WareHouseRepository wareHouseRepository;
 
     // Create
-    public OrderResponse create(OrderRequest orderRequest) throws Exception {
+    public CreateOrderResponse create(CreateOrderRequest createOrderRequest) throws Exception {
         User user = authenticationService.getCurrentUser();
         Order order = new Order();
         double totalPrice = 0;
@@ -68,7 +68,7 @@ public class OrderService {
 
 
         String destinationLocation = order.getDestinationLocation();
-        String originLocation = orderRequest.getOriginLocation();
+        String originLocation = createOrderRequest.getOriginLocation();
 
         double[] destination = geoCodingService.geocoding(destinationLocation);
         double[] originCoords = geoCodingService.geocoding(originLocation);
@@ -92,19 +92,20 @@ public class OrderService {
         }
         order.setNearWareHouse(nearestWareHouse);
         //
-        order.setRecipientInfo(orderRequest.getRecipientInfo());
-        order.setOriginLocation(orderRequest.getOriginLocation());
-        order.setDestinationLocation(orderRequest.getDestinationLocation());
-        order.setMethodTransPort(orderRequest.getMethodTransPort());
-        order.setPaymentMethod(orderRequest.getPaymentMethod());
-        order.setCustomerNotes(orderRequest.getCustomerNotes());
+        order.setRecipientInfo(createOrderRequest.getRecipientInfo());
+        order.setOriginLocation(createOrderRequest.getOriginLocation());
+        order.setDestinationLocation(createOrderRequest.getDestinationLocation());
+        order.setMethodTransPort(createOrderRequest.getMethodTransPort());
+        order.setPaymentMethod(createOrderRequest.getPaymentMethod());
+        order.setCustomerNotes(createOrderRequest.getCustomerNotes());
         order.setOrderStatus(OrderStatus.PENDING);
+        order.setDescribeOrder(createOrderRequest.getDescribeOrder());
 
 
         List<OrderDetail> orderDetails = new ArrayList<>();
-        for (OrderDetailRequest orderDetailRequest : orderRequest.getOrderDetailRequestList()) {
+        for (OrderDetailRequest orderDetailRequest : createOrderRequest.getOrderDetailRequestList()) {
             Map<Double, Integer> fishSizeQuantityMap = Map.of(orderDetailRequest.getSizeOfFish(), orderDetailRequest.getNumberOfFish());
-            BoxDetailResult boxDetails = boxDetailService.createBox(fishSizeQuantityMap);
+            CreateBoxDetailResponse boxDetails = boxDetailService.createBox(fishSizeQuantityMap);
             OrderDetail orderDetail = new OrderDetail();
 
             orderDetail.setOrder(order);
@@ -117,8 +118,7 @@ public class OrderService {
             orderDetail.setNumberOfFish(orderDetailRequest.getNumberOfFish());
             orderDetail.setSizeOfFish(orderDetailRequest.getSizeOfFish());
             orderDetail.setHealthFishStatus(HealthFishStatus.HEALTHY);
-            orderDetail.setOrderStatus(OrderStatus.PENDING);
-            orderDetail.setDescribeOrder(orderDetailRequest.getDescribeOrder());
+
 
 
             orderDetail.setBoxDetails(boxDetails.getBoxDetails());
@@ -141,94 +141,107 @@ public class OrderService {
         order.setTotalVolume(totalVolume);
         order.setTotalQuantity(totalQuantityFish);
         orderRepository.save(order);
-        return modelMapper.map(order, OrderResponse.class);
+        return modelMapper.map(order, CreateOrderResponse.class);
     }
 
-    public List<OrderResponse> getAllOrdersByCurrentUser() {
+    public List<AllOrderByCurrentResponse> getAllOrdersByCurrentUser() {
         User user = authenticationService.getCurrentUser();
         List<Order> orders = orderRepository.findOrdersByUser(user);
         return orders.stream()
-                .map(order -> modelMapper.map(order, OrderResponse.class))
-                .filter(order -> order.getOrderStatus() != OrderStatus.CANCELED)
+                .map(order -> modelMapper.map(order, AllOrderByCurrentResponse.class))
+                .filter(order -> order.getOrderStatus() != OrderStatus.CANCEL)
                 .collect(Collectors.toList());
     }
 
-    // Update
-    public OrderResponse userUpdate(long id, OrderRequestCustomer orderRequest) throws Exception {
+//    // Update
+//    public CreateOrderResponse userUpdate(long id, UpdateOrderRequest orderRequest) throws Exception {
+//        Order oldOrder = getOrderById(id);
+//        if(oldOrder.getOrderStatus() == OrderStatus.PENDING){
+//            oldOrder.setRecipientInfo(orderRequest.getRecipientInfo());
+//            oldOrder.setOriginLocation(orderRequest.getOriginLocation());
+//            oldOrder.setDestinationLocation(orderRequest.getDestinationLocation());
+//
+//            String destinationLocation = orderRequest.getDestinationLocation();
+//            String originLocation = orderRequest.getOriginLocation();
+//
+//            double[] destination = geoCodingService.geocoding(destinationLocation);
+//            double[] originCoords = geoCodingService.geocoding(originLocation);
+//            String routeOD = routingService.getFormattedRoute(originCoords[0], originCoords[1], destination[0], destination[1]);
+//            double distanceOD = extractDistance(routeOD);
+//            oldOrder.setTotalDistance(distanceOD);
+//
+//            //
+//            List<String> wareHouseRepositoryAllLocation = wareHouseRepository.findAllLocation();
+//            double minDistance = Double.MAX_VALUE;
+//            String nearestWareHouse = null;
+//            for (String wareHouse : wareHouseRepositoryAllLocation) {
+//                double[] wareHouseCoords = geoCodingService.geocoding(wareHouse);
+//                String routeInfo = routingService.getFormattedRoute(originCoords[0], originCoords[1], wareHouseCoords[0], wareHouseCoords[1]);
+//                double distance = extractDistance(routeInfo);
+//                // So sánh để tìm kho gần nhất
+//                if (distance < minDistance && distance != -1) {
+//                    minDistance = distance; // Cập nhật khoảng cách nhỏ nhất
+//                    nearestWareHouse = wareHouse; // Cập nhật kho gần nhất
+//                }
+//            }
+//            oldOrder.setNearWareHouse(nearestWareHouse);
+//            //
+//
+//            oldOrder.setCustomerNotes(orderRequest.getCustomerNotes());
+//            oldOrder.setPaymentMethod(orderRequest.getPaymentMethod());
+//            oldOrder.setMethodTransPort(orderRequest.getMethodTransPort());
+//            Order updatedOrder = orderRepository.save(oldOrder);
+//            return modelMapper.map(updatedOrder, CreateOrderResponse.class);
+//        }
+//        throw new OrderException("Order can not update");
+//    }
+
+    //Sale update
+    public UpdateOrderResponse updateBySale(long id, UpdateOrderRequest updateOrderRequest){
         Order oldOrder = getOrderById(id);
         if(oldOrder.getOrderStatus() == OrderStatus.PENDING){
-            oldOrder.setRecipientInfo(orderRequest.getRecipientInfo());
-            oldOrder.setOriginLocation(orderRequest.getOriginLocation());
-            oldOrder.setDestinationLocation(orderRequest.getDestinationLocation());
-
-            String destinationLocation = orderRequest.getDestinationLocation();
-            String originLocation = orderRequest.getOriginLocation();
-
-            double[] destination = geoCodingService.geocoding(destinationLocation);
-            double[] originCoords = geoCodingService.geocoding(originLocation);
-            String routeOD = routingService.getFormattedRoute(originCoords[0], originCoords[1], destination[0], destination[1]);
-            double distanceOD = extractDistance(routeOD);
-            oldOrder.setTotalDistance(distanceOD);
-
-            //
-            List<String> wareHouseRepositoryAllLocation = wareHouseRepository.findAllLocation();
-            double minDistance = Double.MAX_VALUE;
-            String nearestWareHouse = null;
-            for (String wareHouse : wareHouseRepositoryAllLocation) {
-                double[] wareHouseCoords = geoCodingService.geocoding(wareHouse);
-                String routeInfo = routingService.getFormattedRoute(originCoords[0], originCoords[1], wareHouseCoords[0], wareHouseCoords[1]);
-                double distance = extractDistance(routeInfo);
-                // So sánh để tìm kho gần nhất
-                if (distance < minDistance && distance != -1) {
-                    minDistance = distance; // Cập nhật khoảng cách nhỏ nhất
-                    nearestWareHouse = wareHouse; // Cập nhật kho gần nhất
-                }
-            }
-            oldOrder.setNearWareHouse(nearestWareHouse);
-            //
-
-            oldOrder.setCustomerNotes(orderRequest.getCustomerNotes());
-            oldOrder.setPaymentMethod(orderRequest.getPaymentMethod());
-            oldOrder.setMethodTransPort(orderRequest.getMethodTransPort());
-            Order updatedOrder = orderRepository.save(oldOrder);
-            return modelMapper.map(updatedOrder, OrderResponse.class);
+            oldOrder.setOrderStatus(updateOrderRequest.getOrderStatus());
+            Order newOrder = orderRepository.save(oldOrder);
+            return  modelMapper.map(newOrder, UpdateOrderResponse.class);
+        }else {
+            throw new OrderException("Can not update");
         }
-        throw new OrderException("Order can not update");
     }
+    //
 
     //Delete
-    public OrderResponse delete(long id) {
+    public DeleteOrderResponse delete(long id) {
         Order oldOrder = getOrderById(id);
         oldOrder.setOrderStatus(OrderStatus.CANCELED);
         Order deletedOrder = orderRepository.save(oldOrder);
-        return modelMapper.map(deletedOrder, OrderResponse.class);
+        return modelMapper.map(deletedOrder, DeleteOrderResponse.class);
     }
 
 
     private Order getOrderById(long id) {
         Order oldOrder = orderRepository.findOrderById(id);
-        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCELED) {
+        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCEL) {
             throw new EntityNotFoundException("Order not found");
         }
         return oldOrder;
     }
 
 
-    public OrderResponse getEachOrderById(long id) {
+    public CreateOrderResponse getEachOrderById(long id) {
         Order order = orderRepository.findOrderById(id);
         if (order == null) {
             throw new NotFoundException("Order not found");
         }
-        return modelMapper.map(order, OrderResponse.class);
+        return modelMapper.map(order, CreateOrderResponse.class);
     }
 
-    public List<OrderResponseAll> getAll(int page, int size) {
+    public List<AllOrderResponse> getAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAll(pageRequest);
-        List<OrderResponseAll> orderResponses = new ArrayList<>();
+        List<AllOrderResponse> orderResponses = new ArrayList<>();
         for (Order order : orders) {
             UserResponse userResponse = modelMapper.map(order.getUser(), UserResponse.class);
-            OrderResponseAll orderResponse = modelMapper.map(order, OrderResponseAll.class);
+            AllOrderResponse orderResponse = modelMapper.map(order, AllOrderResponse.class);
             orderResponse.setUserResponse(userResponse);
             orderResponses.add(orderResponse);
         }

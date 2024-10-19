@@ -13,6 +13,12 @@ import com.SWP391.KoiXpress.Model.request.*;
 import com.SWP391.KoiXpress.Model.response.LoginGoogleResponse;
 import com.SWP391.KoiXpress.Model.response.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.RegisterResponse;
+import com.SWP391.KoiXpress.Model.request.Authen.ForgotPasswordRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.LoginRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.ResetPasswordRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.RegisterRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+import com.SWP391.KoiXpress.Model.response.User.CreateUserByManagerResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,12 +64,12 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     AuthenticationRepository authenticationRepository;
 
-    public RegisterResponse register(RegisterRequest registerRequest) {
+    public CreateUserByManagerResponse register(RegisterRequest registerRequest) {
         User user = modelMapper.map(registerRequest, User.class);
 
         try {
-            String originpassword = user.getPassword();
-            user.setPassword(passwordEncoder.encode(originpassword));
+            String originPassword = user.getPassword();
+            user.setPassword(passwordEncoder.encode(originPassword));
             user.setRole(Role.CUSTOMER);
 
             User newUser = userRepository.save(user);
@@ -71,12 +77,12 @@ public class AuthenticationService implements UserDetailsService {
             emailDetail.setUser(newUser);
             emailDetail.setSubject("Verify your email");
             emailDetail.setLink("#");
-            boolean emailSent = emailService.sendEmailVerify(emailDetail);
-            if (emailSent) {
+            boolean emailSent =  emailService.sendEmailVerify(emailDetail);
+            if(emailSent) {
                 newUser.setEmailStatus(EmailStatus.VERIFIED);
                 userRepository.save(newUser);
             }
-            return modelMapper.map(newUser, RegisterResponse.class);
+            return modelMapper.map(newUser, CreateUserByManagerResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage().contains(user.getEmail())) {
@@ -84,7 +90,7 @@ public class AuthenticationService implements UserDetailsService {
             } else if (e.getMessage().contains(user.getPhone())) {
                 throw new DuplicateEntity("Duplicate phone");
             } else {
-                throw new NotFoundException("Unknow Error error");
+                throw new NotFoundException("Unknown Error error");
             }
 
         }
@@ -121,16 +127,15 @@ public class AuthenticationService implements UserDetailsService {
 
     }
 
-    public User resetPassword(PasswordResetRequest passwordResetRequest) {
+    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
         User user = getCurrentUser();
-        user.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
-        try {
+        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
+        try{
             userRepository.save(user);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
 
-        return user;
     }
 
     //    public List<RegisterResponse> getAllUser() {

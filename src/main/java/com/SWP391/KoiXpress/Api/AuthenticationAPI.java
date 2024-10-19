@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/authentication")
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
 public class AuthenticationAPI {
@@ -28,7 +28,7 @@ public class AuthenticationAPI {
 
     @PostMapping("/register")
     public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest){
-        RegisterResponse newUser =  authenticationService.register(registerRequest);
+        CreateUserByManagerResponse newUser =  authenticationService.register(registerRequest);
         return ResponseEntity.ok(newUser);
     }
 
@@ -45,9 +45,9 @@ public class AuthenticationAPI {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
-            authenticationService.resetPassword(passwordResetRequest);
-            return ResponseEntity.ok("Reset password successfully");
+    public ResponseEntity resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        authenticationService.resetPassword(resetPasswordRequest);
+        return ResponseEntity.ok("Reset password successfully");
     }
 
 

@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
@@ -49,6 +50,8 @@ public class FeedBack {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "feedBack")
     @JsonManagedReference
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<FeedBackReply> replies;
 
     @ManyToOne

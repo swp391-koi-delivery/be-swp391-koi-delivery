@@ -1,14 +1,16 @@
 package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.*;
+import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
+import com.SWP391.KoiXpress.Entity.Enum.ProgressStatus;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Exception.ProgressException;
-import com.SWP391.KoiXpress.Model.request.ProgressRequest;
-import com.SWP391.KoiXpress.Model.response.OrderResponse;
-import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
-import com.SWP391.KoiXpress.Model.response.ProgressResponse;
-import com.SWP391.KoiXpress.Model.response.UserResponse;
+import com.SWP391.KoiXpress.Model.request.Progress.ProgressRequest;
+import com.SWP391.KoiXpress.Model.request.Progress.UpdateProgressRequest;
+import com.SWP391.KoiXpress.Model.response.Progress.DeleteProgressResponse;
+import com.SWP391.KoiXpress.Model.response.Progress.ProgressResponse;
+import com.SWP391.KoiXpress.Model.response.Progress.UpdateProgressResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import com.SWP391.KoiXpress.Repository.ProgressRepository;
 import com.SWP391.KoiXpress.Repository.WareHouseRepository;
@@ -29,69 +31,24 @@ public class ProgressService {
     ProgressRepository progressRepository;
 
     @Autowired
-    AuthenticationService authenticationService;
-
-    @Autowired
     WareHouseRepository wareHouseRepository;
 
     @Autowired
     ModelMapper modelMapper;
 
-//    public List<OrderResponseAll> create(ProgressRequest progressRequest){
-//        Progress progress = new Progress();
-//        User delivery = authenticationService.getCurrentUser();
-//        progress.setUser(delivery);
-//        progress.setDateProgress(new Date());
-//        progress.setInProgress(true);
-//        double totalVolume = 0;
-//        int totalBox = 0;
-//
-//        WareHouse wareHouse = wareHouseRepository.findWareHouseById(progressRequest.getWareHouseId());
-//        List<Order> orderList = orderRepository.findOrdersByOriginLocationContainingIgnoreCase(wareHouse.getLocation());
-//        List<Order> unplacedOrders = orderList.stream()
-//                .filter(order -> order.getOrderStatus() == OrderStatus.Shipping)
-////                .filter(order -> order.getProgress() == null)
-//                .sorted(Comparator.comparing(Order::getOrderDate).reversed())
-//                .toList();
-//
-//        if (unplacedOrders.isEmpty()) {
-//            throw new NotFoundException("Empty List");
-//        }
-//
-//        // Thực hiện gom các đơn hàng vào Progress
-//        for (Order order : unplacedOrders) {
-////            order.setProgress(progress);
-//            totalVolume += order.getTotalVolume();
-//            totalBox += order.getTotalBox();
-//        }
-//        int curentStock = wareHouse.getCurrentStock();
-//        wareHouse.setCurrentStock(curentStock + totalBox);
-//        progress.setTotalVolume(totalVolume);
-//        progress.setTotalBox(totalBox);
-//        // Lưu Progress và các đơn hàng đã cập nhật
-//        progressRepository.save(progress);
-//        wareHouseRepository.save(wareHouse);
-//        orderRepository.saveAll(unplacedOrders); // Lưu tất cả các đơn hàng đã cập nhật
-//
-//
-//        List<OrderResponseAll> response = unplacedOrders.stream()
-//                .map(order -> modelMapper.map(order, OrderResponseAll.class))
-//                .collect(Collectors.toList());
-//
-//        return response;
-//    }
-//        Map<String,List<Order>> ordersByWareHouse = unplacedOrders.stream().collect(Collectors.groupingBy(Order::getDestinationLocation));
+    @Autowired
+    WareHouseService wareHouseService;
 
-    public List<ProgressResponse> create (ProgressRequest progressRequest){
+    public List<ProgressResponse> create(ProgressRequest progressRequest) {
         Order order = orderRepository.findOrderById(progressRequest.getOrderId());
         List<Progress> existProgressOrder = progressRepository.findProgressesByOrderId(progressRequest.getOrderId());
-        if(!existProgressOrder.isEmpty()){
+        if (!existProgressOrder.isEmpty()) {
             throw new ProgressException("Order already in another Progress");
         }
-        if(order == null){
+        if (order == null) {
             throw new NotFoundException("Can not found order");
         }
-        if(order.getOrderStatus() == OrderStatus.SHIPPING) {
+        if (order.getOrderStatus() == OrderStatus.SHIPPING) {
             List<ProgressResponse> progresses = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 Progress progress = new Progress();
@@ -106,13 +63,46 @@ public class ProgressService {
         throw new ProgressException("Order is not ready to ship");
     }
 
-    public List<ProgressResponse> trackingOrder(UUID trackingOrder){
+    public List<ProgressResponse> trackingOrder(UUID trackingOrder) {
         List<Progress> progresses = progressRepository.findProgressesByOrderIdAndStatusNotNull(trackingOrder);
-        if(progresses!=null) {
+        if (progresses != null) {
             return progresses.stream().map(progress -> modelMapper.map(progress, ProgressResponse.class)).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
 
+    public UpdateProgressResponse update(long id, UpdateProgressRequest updateProgressRequest) {
+        Progress oldProgress = progressRepository.findProgressesById(id);
+        Order order = progressRepository.findOrderByOrderId(oldProgress.getOrder());
+        WareHouse wareHouse = wareHouseRepository.findWareHouseByLocation(order.getNearWareHouse());
+
+        if (wareHouse != null && wareHouse.isAvailable()) {
+            oldProgress.setDateProgress(new Date());
+            oldProgress.setHealthFishStatus(updateProgressRequest.getHealthFishStatus());
+            if(updateProgressRequest.getHealthFishStatus()== HealthFishStatus.UNHEALTHY){
+                oldProgress.setProgressStatus(ProgressStatus.CANCELED);
+                progressRepository.save(oldProgress);
+                return modelMapper.map(oldProgress, UpdateProgressResponse.class);
+            }
+            oldProgress.setImage(updateProgressRequest.getImage());
+            oldProgress.setProgressStatus(updateProgressRequest.getProgressStatus());
+            if(updateProgressRequest.getProgressStatus() != null){
+                oldProgress.setInProgress(true);
+            }
+            oldProgress.setWareHouse(wareHouse);
+            wareHouseRepository.save(wareHouse);
+            progressRepository.save(oldProgress);
+            return modelMapper.map(oldProgress, UpdateProgressResponse.class);
+        }
+        throw new ProgressException("Can not update");
+    }
+
+    public DeleteProgressResponse delete(long id) {
+        Progress progress = progressRepository.findProgressesById(id);
+        progress.setInProgress(false);
+        progress.setProgressStatus(ProgressStatus.CANCELED);
+        progressRepository.save(progress);
+        return modelMapper.map(progress, DeleteProgressResponse.class);
+    }
 
 }

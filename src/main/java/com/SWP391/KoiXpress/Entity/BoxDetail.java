@@ -2,10 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -28,7 +25,8 @@ public class BoxDetail {
 
     @ManyToOne
     @JoinColumn(name = "box_id")
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     Box box;
 
 }

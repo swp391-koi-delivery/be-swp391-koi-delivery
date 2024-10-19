@@ -26,65 +26,69 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+     long id;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+     Role role;
 
     @NotBlank(message = "username can not be blank!")
     @Size(min = 6, message = "username must at least 6 characters")
-    private String username;
+     String username;
 
     @Pattern(
             regexp = ".*[A-Z].*",
             message = "Password must contain at least one uppercase letter."
     )
     @Size(min = 6, message = "password must be at least 6 characters!")
-    private String password;
+     String password;
 
     @NotBlank(message = "fullname can not be blank!")
     @Size(min = 1, message = "fullName must be at least 1 character!")
-    private String fullname;
+     String fullname;
 
     @Column(length = 200)
-    private String image;
+     String image;
 
     @Column(length = 200)
-    private String address;
+     String address;
 
     @Pattern(
             regexp = "(84|0[3|5|7|8|9])\\d{8}",
             message = "Phone number must start with 84 or a valid Vietnamese prefix, followed by 8 digits."
     )
     @Column(unique = true)
-    private String phone;
+     String phone;
 
     @NotBlank(message = "email can not be blank!")
     @Email(message = "Email not valid")
     @Column(unique = true)
-    private String email;
+    String email;
 
     @Enumerated(EnumType.STRING)
-    private EmailStatus emailStatus = EmailStatus.NOT_VERIFIED;
+     EmailStatus emailStatus = EmailStatus.NOT_VERIFIED;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Min(value = 0, message = "Loyalty points must be at least 0.")
-    private long loyaltyPoint;
+     long loyaltyPoint;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private boolean isDeleted = false;
+     boolean isDeleted = false;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<Blog> blogs;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<Blog> blogs;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<FeedBack> feedBacks;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<FeedBack> feedBacks;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<Order> orders;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<Order> orders;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

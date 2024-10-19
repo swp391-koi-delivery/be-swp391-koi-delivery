@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface BoxRepository extends JpaRepository<Box, Long> {
     Box findBoxByType(String boxType);
+
+    Box findBoxById(long id);
 }

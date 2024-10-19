@@ -2,7 +2,7 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Exception.EmailNotVerifiedException;
-import com.SWP391.KoiXpress.Model.response.EmailResponse;
+import com.SWP391.KoiXpress.Model.response.Email.EmailResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;

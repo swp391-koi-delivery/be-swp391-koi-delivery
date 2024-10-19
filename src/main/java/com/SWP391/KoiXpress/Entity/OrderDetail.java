@@ -1,6 +1,5 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,10 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -69,19 +65,14 @@ public class OrderDetail {
     //
 
     @Enumerated(EnumType.STRING)
-    DescribeOrder describeOrder;
-
-    @Enumerated(EnumType.STRING)
     HealthFishStatus healthFishStatus;
-
-    @Enumerated(EnumType.STRING)
-    OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    @JsonIgnore
     Order order;
 
     @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<BoxDetail> boxDetails;
 }
