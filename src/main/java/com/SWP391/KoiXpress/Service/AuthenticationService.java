@@ -8,12 +8,12 @@ import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
-import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
-import com.SWP391.KoiXpress.Model.request.LoginRequest;
-import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
-import com.SWP391.KoiXpress.Model.request.RegisterRequest;
-import com.SWP391.KoiXpress.Model.response.LoginResponse;
-import com.SWP391.KoiXpress.Model.response.RegisterResponse;
+import com.SWP391.KoiXpress.Model.request.Authen.ForgotPasswordRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.LoginRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.ResetPasswordRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.RegisterRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+import com.SWP391.KoiXpress.Model.response.User.CreateUserByManagerResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -53,13 +53,13 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     AuthenticationRepository authenticationRepository;
 
-    public RegisterResponse register(RegisterRequest registerRequest) {
+    public CreateUserByManagerResponse register(RegisterRequest registerRequest) {
         User user = modelMapper.map(registerRequest, User.class);
 
         try {
-            String originpassword = user.getPassword();
-            user.setPassword(passwordEncoder.encode(originpassword));
-            user.setRole(Role.Customer);
+            String originPassword = user.getPassword();
+            user.setPassword(passwordEncoder.encode(originPassword));
+            user.setRole(Role.CUSTOMER);
 
             User newUser = userRepository.save(user);
             EmailDetail emailDetail = new EmailDetail();
@@ -68,10 +68,10 @@ public class AuthenticationService implements UserDetailsService {
             emailDetail.setLink("#");
             boolean emailSent =  emailService.sendEmailVerify(emailDetail);
             if(emailSent) {
-                newUser.setEmailStatus(EmailStatus.Verified);
+                newUser.setEmailStatus(EmailStatus.VERIFIED);
                 userRepository.save(newUser);
             }
-            return modelMapper.map(newUser, RegisterResponse.class);
+            return modelMapper.map(newUser, CreateUserByManagerResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage().contains(user.getEmail())) {
@@ -79,7 +79,7 @@ public class AuthenticationService implements UserDetailsService {
             } else if (e.getMessage().contains(user.getPhone())) {
                 throw new DuplicateEntity("Duplicate phone");
             } else {
-                throw new NotFoundException("Unknow Error error");
+                throw new NotFoundException("Unknown Error error");
             }
 
         }
@@ -116,16 +116,15 @@ public class AuthenticationService implements UserDetailsService {
 
     }
 
-    public User resetPassword(PasswordResetRequest passwordResetRequest) {
+    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
         User user = getCurrentUser();
-        user.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
         try{
             userRepository.save(user);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
 
-        return user;
     }
 
 //    public List<RegisterResponse> getAllUser() {

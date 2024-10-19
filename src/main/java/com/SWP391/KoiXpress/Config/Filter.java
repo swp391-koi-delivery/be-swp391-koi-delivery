@@ -36,10 +36,10 @@ public class Filter extends OncePerRequestFilter {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
-            "/api/login",
-            "/api/calculateBoxAndSuggestFishSizes",
-            "/api/register",
-            "/api/forgot-password"
+            "/api/authentication/login",
+            "/api/free-access/**",
+            "/api/authentication/register",
+            "/api/authentication/forgot-password"
     );
 
     public boolean isPublicAPI(String uri){

@@ -2,10 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
@@ -25,6 +22,7 @@ public class Report {
     String dateRange;
 
     @OneToMany(mappedBy = "report")
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Order> orders;
 }

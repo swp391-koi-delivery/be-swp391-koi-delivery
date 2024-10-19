@@ -1,16 +1,11 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.SWP391.KoiXpress.Entity.Enum.WareHouseStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.Set;
+
 
 @Data
 @Entity
@@ -22,12 +17,10 @@ public class WareHouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String location;
-    int stockCapacity;
-    int currentStock;
-    @Enumerated(EnumType.STRING)
-    WareHouseStatus wareHouseStatus;
+    boolean isAvailable=true;
 
     @OneToMany(mappedBy = "wareHouse")
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Progress> progresses;
 }

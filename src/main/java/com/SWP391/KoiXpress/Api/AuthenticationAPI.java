@@ -1,16 +1,12 @@
 package com.SWP391.KoiXpress.Api;
 
-
-import com.SWP391.KoiXpress.Exception.AuthException;
-import com.SWP391.KoiXpress.Exception.NotFoundException;
-import com.SWP391.KoiXpress.Model.request.ForgotPasswordRequest;
-import com.SWP391.KoiXpress.Model.request.LoginRequest;
-import com.SWP391.KoiXpress.Model.request.PasswordResetRequest;
-import com.SWP391.KoiXpress.Model.request.RegisterRequest;
-import com.SWP391.KoiXpress.Model.response.LoginResponse;
-import com.SWP391.KoiXpress.Model.response.RegisterResponse;
+import com.SWP391.KoiXpress.Model.request.Authen.ForgotPasswordRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.LoginRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.RegisterRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.ResetPasswordRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+import com.SWP391.KoiXpress.Model.response.User.CreateUserByManagerResponse;
 import com.SWP391.KoiXpress.Service.AuthenticationService;
-import com.SWP391.KoiXpress.Service.TokenService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,20 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/authentication")
 @CrossOrigin("*")
 @SecurityRequirement(name="api")
 public class AuthenticationAPI {
-
     @Autowired
     AuthenticationService authenticationService;
 
 
     @PostMapping("/register")
     public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest){
-        RegisterResponse newUser =  authenticationService.register(registerRequest);
+        CreateUserByManagerResponse newUser =  authenticationService.register(registerRequest);
         return ResponseEntity.ok(newUser);
     }
 
@@ -49,9 +43,9 @@ public class AuthenticationAPI {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
-            authenticationService.resetPassword(passwordResetRequest);
-            return ResponseEntity.ok("Reset password successfully");
+    public ResponseEntity resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        authenticationService.resetPassword(resetPasswordRequest);
+        return ResponseEntity.ok("Reset password successfully");
     }
 
     @PostMapping("/login-google")
@@ -65,5 +59,4 @@ public class AuthenticationAPI {
             return ResponseEntity.status(401).body("Invalid token");
         }
     }
-
 }

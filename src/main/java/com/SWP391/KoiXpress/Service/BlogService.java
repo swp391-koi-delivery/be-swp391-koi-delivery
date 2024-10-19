@@ -3,10 +3,12 @@ package com.SWP391.KoiXpress.Service;
 import com.SWP391.KoiXpress.Entity.Blog;
 import com.SWP391.KoiXpress.Entity.User;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
-import com.SWP391.KoiXpress.Exception.NotFoundException;
-import com.SWP391.KoiXpress.Model.request.BlogRequest;
-import com.SWP391.KoiXpress.Model.response.BlogResponse;
-import com.SWP391.KoiXpress.Model.response.UserResponse;
+import com.SWP391.KoiXpress.Model.request.Blog.CreateBlogRequest;
+import com.SWP391.KoiXpress.Model.response.Blog.AllBlogResponse;
+import com.SWP391.KoiXpress.Model.response.Blog.CreateBlogResponse;
+import com.SWP391.KoiXpress.Model.response.Blog.DeleteBlogResponse;
+import com.SWP391.KoiXpress.Model.response.Blog.UpdateBlogResponse;
+import com.SWP391.KoiXpress.Model.response.User.UserResponse;
 import com.SWP391.KoiXpress.Repository.BlogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,68 +30,64 @@ public class BlogService {
     AuthenticationService authenticationService;
 
 
-    public BlogResponse createBlog(BlogRequest blogRequest){
+    public CreateBlogResponse createBlog(CreateBlogRequest createBlogRequest) {
         Blog blog = new Blog();
         User user = authenticationService.getCurrentUser();
-        blog.setImg(blogRequest.getImg());
-        blog.setPost(blogRequest.getPost());
+        blog.setImg(createBlogRequest.getImg());
+        blog.setPost(createBlogRequest.getPost());
         blog.setUser(user);
-        blog= blogRepository.save(blog);
+        blogRepository.save(blog);
         //
         UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-        BlogResponse blogResponse = new BlogResponse();
-        blogResponse.setUserResponse(userResponse);
-        blogResponse.setBlogId(blog.getId());
-        blogResponse.setPost(blog.getPost());
-        blogResponse.setImg(blog.getImg());
+        CreateBlogResponse createBlogResponse = new CreateBlogResponse();
+        createBlogResponse.setUserResponse(userResponse);
+        createBlogResponse.setBlogId(blog.getId());
+        createBlogResponse.setPost(blog.getPost());
+        createBlogResponse.setImg(blog.getImg());
 
-        return blogResponse;
+        return createBlogResponse;
     }
 
-    public List<BlogResponse> getAllBlog() {
-        List<BlogResponse> blogResponses = new ArrayList<>();
+    public List<AllBlogResponse> getAllBlog() {
+        List<AllBlogResponse> allBlogResponses = new ArrayList<>();
 
         List<Blog> blogs = blogRepository.findAll();
-        for(Blog blog : blogs) {
+        for (Blog blog : blogs) {
             User user = blog.getUser();
-            BlogResponse blogResponse = new BlogResponse();
+            AllBlogResponse allBlogResponse = new AllBlogResponse();
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-            blogResponse.setBlogId(blog.getId());
-            blogResponse.setImg(blog.getImg());
-            blogResponse.setPost(blog.getPost());
-            blogResponse.setUserResponse(userResponse);
-            blogResponses.add(blogResponse);
+            allBlogResponse.setBlogId(blog.getId());
+            allBlogResponse.setImg(blog.getImg());
+            allBlogResponse.setPost(blog.getPost());
+            allBlogResponse.setUserResponse(userResponse);
+            allBlogResponses.add(allBlogResponse);
         }
 
-        return blogResponses;
+        return allBlogResponses;
     }
 
-    public Blog delete(long blogId) {
+    public DeleteBlogResponse delete(long blogId) {
         Blog blog = getBlogById(blogId);
-        if(blog == null){
-            throw new NotFoundException("Can not found blog");
-        }
-            blog.setDeleted(true);
-            return blogRepository.save(blog);
+        blog.setDeleted(true);
+        blogRepository.save(blog);
+        return modelMapper.map(blog, DeleteBlogResponse.class);
     }
-    public Blog update(long blogId, Blog blog){
+
+    public UpdateBlogResponse update(long blogId, Blog blog) {
         Blog oldBlog = getBlogById(blogId);
-        if(oldBlog == null){
-            throw new EntityNotFoundException("Can not update Blog");
-        }else{
-            oldBlog.setPost(blog.getPost());
-            oldBlog.setImg(blog.getImg());
-        }
-        return blogRepository.save(oldBlog);
+        oldBlog.setPost(blog.getPost());
+        oldBlog.setImg(blog.getImg());
+        blogRepository.save(oldBlog);
+        return modelMapper.map(oldBlog, UpdateBlogResponse.class);
     }
 
 
-    private Blog getBlogById (long blogId){
+    private Blog getBlogById(long blogId) {
         Blog oldBlog = blogRepository.findBlogById(blogId);
-        if (oldBlog == null){
+        if (oldBlog == null) {
             throw new EntityNotFoundException("Blog not found!");
         }
-        if (oldBlog.isDeleted()){
+        if (oldBlog.isDeleted()) {
             throw new EntityNotFoundException("Blog not found!");
         }
         return oldBlog;

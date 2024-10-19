@@ -1,15 +1,15 @@
 package com.SWP391.KoiXpress.Api;
 
 
-import com.SWP391.KoiXpress.Model.request.OrderRequest;
-import com.SWP391.KoiXpress.Model.request.OrderRequestCustomer;
-import com.SWP391.KoiXpress.Model.response.OrderResponse;
-import com.SWP391.KoiXpress.Model.response.OrderResponseAll;
+import com.SWP391.KoiXpress.Model.request.Order.CreateOrderRequest;
+import com.SWP391.KoiXpress.Model.request.Order.UpdateOrderRequest;
+import com.SWP391.KoiXpress.Model.response.Order.*;
 import com.SWP391.KoiXpress.Service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,42 +18,33 @@ import java.util.List;
 @RequestMapping("/api/order")
 @SecurityRequirement(name="api")
 @CrossOrigin("*")
+@PreAuthorize("hasAuthority('MANAGER') or hasAuthority('DELIVERING_STAFF') or hasAuthority('SALE_STAFF')")
 public class OrderAPI {
 
     @Autowired
     OrderService orderService;
 
-
-    @PostMapping
-    public ResponseEntity create(@Valid @RequestBody OrderRequest orderRequest) throws Exception {
-        OrderResponse order = orderService.create(orderRequest);
-        return ResponseEntity.ok(order);
-    }
-    @GetMapping("/each-user")
-    public ResponseEntity get(){
-        List<OrderResponse> orderResponseList = orderService.getAllOrdersByCurrentUser();
-        return ResponseEntity.ok(orderResponseList);
-    }
-
     @GetMapping("{id}")
     public ResponseEntity getEachOrder(@PathVariable long id){
-        OrderResponse orderResponse = orderService.getEachOrderById(id);
-        return ResponseEntity.ok(orderResponse);
+        CreateOrderResponse createOrderResponse = orderService.getEachOrderById(id);
+        return ResponseEntity.ok(createOrderResponse);
     }
     @GetMapping
     public ResponseEntity getAll(){
-        List<OrderResponseAll> orderResponses = orderService.getAll();
+        List<AllOrderResponse> orderResponses = orderService.getAll();
         return ResponseEntity.ok(orderResponses);
     }
     @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable long id, @RequestBody @Valid OrderRequestCustomer orderRequest) throws Exception {
-        OrderResponse updateOrder = orderService.userUpdate(id,orderRequest);
+    @PreAuthorize("hasAuthority('SALE_STAFF')")
+    public ResponseEntity update(@PathVariable long id, @RequestBody @Valid UpdateOrderRequest orderRequest) throws Exception {
+        UpdateOrderResponse updateOrder = orderService.updateBySale(id,orderRequest);
         return ResponseEntity.ok(updateOrder);
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity delete(@PathVariable long id) {
-        OrderResponse deleteOrder = orderService.delete(id);
+        DeleteOrderResponse deleteOrder = orderService.delete(id);
         return ResponseEntity.ok(deleteOrder);
     }
 }

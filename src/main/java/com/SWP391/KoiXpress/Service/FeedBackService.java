@@ -2,11 +2,10 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.*;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
-import com.SWP391.KoiXpress.Model.request.BlogRequest;
-import com.SWP391.KoiXpress.Model.request.FeedBackRequet;
-import com.SWP391.KoiXpress.Model.response.FeedBackReplyResponse;
-import com.SWP391.KoiXpress.Model.response.FeedBackResponse;
-import com.SWP391.KoiXpress.Model.response.UserResponse;
+import com.SWP391.KoiXpress.Model.request.FeedBack.FeedBackRequet;
+import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackReplyResponse;
+import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackResponse;
+import com.SWP391.KoiXpress.Model.response.User.UserResponse;
 import com.SWP391.KoiXpress.Repository.FeedBackReplyRepository;
 import com.SWP391.KoiXpress.Repository.FeedBackRepository;
 import com.SWP391.KoiXpress.Repository.OrderRepository;

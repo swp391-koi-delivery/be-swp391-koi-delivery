@@ -2,10 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -30,5 +27,7 @@ public class Box {
     double price;
 
     @OneToMany(mappedBy = "box", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<BoxDetail> boxDetails;
 }

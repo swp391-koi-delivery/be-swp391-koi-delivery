@@ -2,7 +2,8 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.Box;
 import com.SWP391.KoiXpress.Entity.BoxDetail;
-import com.SWP391.KoiXpress.Entity.BoxDetailResult;
+import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
+import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
 import com.SWP391.KoiXpress.Exception.BoxException;
 import com.SWP391.KoiXpress.Repository.BoxDetailRepository;
 import com.SWP391.KoiXpress.Repository.BoxRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BoxDetailService {
@@ -45,11 +47,11 @@ public class BoxDetailService {
 
     public double getFishVolume(int quantity, double size) {
         if (quantity <= 0) {
-            throw new BoxException("Kích thước hộp không hợp lệ");
+            throw new BoxException("Invalid box ");
 
         }
         if (size < 19.9 || size > 83) {
-            throw new BoxException("Kích thước cá Không hợp lệ (20-83).");
+            throw new BoxException("Invalid fish size (20-83).");
         }
 
         double total = 0;
@@ -161,7 +163,7 @@ public class BoxDetailService {
         return boxDetails;
     }
 
-    public BoxDetailResult createBox(Map<Double, Integer> fishSizeQuantityMap){
+    public CreateBoxDetailResponse createBox(Map<Double, Integer> fishSizeQuantityMap){
         try{
             Map<String, Object> boxDetails = calculateBox(fishSizeQuantityMap);
             List<BoxDetail> boxDetailList = new ArrayList<>();
@@ -184,25 +186,33 @@ public class BoxDetailService {
                     boxDetailList.add(boxDetail);
                 }
             }
-            BoxDetailResult boxDetailResult = new BoxDetailResult();
-            boxDetailResult.setBoxDetails(boxDetailList);
-            boxDetailResult.setTotalPrice(totalPrice);
-            boxDetailResult.setTotalVolume(totalVolume);
-            boxDetailResult.setTotalCount(totalCount);
+            CreateBoxDetailResponse createBoxDetailResponse = new CreateBoxDetailResponse();
+            createBoxDetailResponse.setBoxDetails(boxDetailList);
+            createBoxDetailResponse.setTotalPrice(totalPrice);
+            createBoxDetailResponse.setTotalVolume(totalVolume);
+            createBoxDetailResponse.setTotalCount(totalCount);
 
-            return boxDetailResult;
+            return createBoxDetailResponse;
         }catch(Exception e){
             e.printStackTrace();
             throw new BoxException("BoxDetail cant create");
         }
     }
 
-    public List<BoxDetail> getAllBox(){
+    public List<AllBoxDetailResponse> getAllBox(){
         List<BoxDetail> boxDetails = boxDetailRepository.findAll();
         if(boxDetails.isEmpty()){
             return Collections.emptyList();
         }
-        return boxDetails;
+
+        return boxDetails.stream()
+                .map(boxDetail -> new AllBoxDetailResponse(
+                        boxDetail.getId(),
+                        boxDetail.getQuantity(),
+                        boxDetail.getOrderDetail(),
+                        boxDetail.getBox()
+                ))
+                .collect(Collectors.toList());
     }
 
 

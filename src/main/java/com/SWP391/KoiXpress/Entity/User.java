@@ -48,6 +48,7 @@ public class User implements UserDetails{
 
     @Column(length = 200)
     String address;
+
     @NotBlank(message = "phone can not be blank!")
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Phone number must start with 84 or a valid Vietnamese mobile prefix (03, 05, 07, 08, 09) followed by 8 digits.")
     @Column(unique = true)
@@ -59,7 +60,7 @@ public class User implements UserDetails{
     String email;
 
     @Enumerated(EnumType.STRING)
-    EmailStatus emailStatus = EmailStatus.Not_Verified;
+    EmailStatus emailStatus = EmailStatus.NOT_VERIFIED;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Min(value = 0, message = "at least 0")
@@ -70,15 +71,18 @@ public class User implements UserDetails{
 
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Blog> blogs;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<FeedBack> feedBacks;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Order> orders;
 
 

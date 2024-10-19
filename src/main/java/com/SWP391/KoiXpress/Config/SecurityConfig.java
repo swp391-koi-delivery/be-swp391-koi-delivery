@@ -59,7 +59,7 @@ public class SecurityConfig {
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Cho phép tất cả pre-flight requests
                             .requestMatchers("/**").permitAll()
-                            .anyRequest().authenticated()
+                             .anyRequest().authenticated()
                     )
                     .userDetailsService(authenticationService)
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

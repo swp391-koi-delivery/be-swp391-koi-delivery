@@ -15,8 +15,7 @@ public interface WareHouseRepository extends JpaRepository<WareHouse, Long> {
     @Query("SELECT w.location FROM WareHouse w")
     List<String> findAllLocation();
 
-    @Query("")
-    List<Order> findOrdersByLocation(String nearWareHouse);
+    WareHouse findWareHouseByLocation(String nearWareHouse);
 
 
 }

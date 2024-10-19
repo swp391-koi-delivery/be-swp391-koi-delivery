@@ -2,8 +2,8 @@ package com.SWP391.KoiXpress.Api;
 
 import com.SWP391.KoiXpress.Entity.FeedBack;
 import com.SWP391.KoiXpress.Entity.FeedBackReply;
-import com.SWP391.KoiXpress.Model.request.FeedBackRequet;
-import com.SWP391.KoiXpress.Model.response.FeedBackResponse;
+import com.SWP391.KoiXpress.Model.request.FeedBack.FeedBackRequet;
+import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackResponse;
 import com.SWP391.KoiXpress.Service.FeedBackService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

@@ -1,29 +1,29 @@
-package com.SWP391.KoiXpress.Service;
-
-
-import com.SWP391.KoiXpress.Repository.OrderRepository;
-import com.SWP391.KoiXpress.Repository.ProgressRepository;
-import com.SWP391.KoiXpress.Repository.UserRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class VehicleService {
-
-
-    @Autowired
-    ModelMapper modelMapper;
-
-    @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    ProgressRepository progressRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
+//package com.SWP391.KoiXpress.Service;
+//
+//
+//import com.SWP391.KoiXpress.Repository.OrderRepository;
+//import com.SWP391.KoiXpress.Repository.ProgressRepository;
+//import com.SWP391.KoiXpress.Repository.UserRepository;
+//import org.modelmapper.ModelMapper;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+//@Service
+//public class VehicleService {
+//
+//
+//    @Autowired
+//    ModelMapper modelMapper;
+//
+//    @Autowired
+//    OrderRepository orderRepository;
+//
+//    @Autowired
+//    ProgressRepository progressRepository;
+//
+//    @Autowired
+//    UserRepository userRepository;
+//
 //    public List<Progress> createVehicle(VehicleRequest vehicleRequest) {
 //        Vehicle vehicle = new Vehicle();
 //        vehicle.setVehicleType(vehicleRequest.getVehicleType());
@@ -62,5 +62,5 @@ public class VehicleService {
 //        progressRepository.saveAll(currentVehicle_Progresses);
 //        return currentVehicle_Progresses;
 //    }
-
-}
+//
+//}

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DeliveryMethodRepository extends JpaRepository<DeliveryMethod, Long> {
+    DeliveryMethod findDeliveryMethodById(long id);
 }

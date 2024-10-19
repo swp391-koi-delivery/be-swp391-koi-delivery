@@ -1,5 +1,6 @@
 package com.SWP391.KoiXpress.Entity;
 
+import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.MethodTransPort;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.springframework.format.annotation.NumberFormat;
 
 import java.util.Date;
@@ -68,6 +70,9 @@ public class Order {
     String customerNotes;
 
     @Enumerated(EnumType.STRING)
+    DescribeOrder describeOrder;
+
+    @Enumerated(EnumType.STRING)
     MethodTransPort methodTransPort;
 
     @Enumerated(EnumType.STRING)
@@ -81,11 +86,14 @@ public class Order {
     User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<OrderDetail> orderDetails;
 
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Progress> progresses;
 
     @ManyToOne
@@ -93,7 +101,8 @@ public class Order {
     Report report;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
-    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<FeedBack> feedBacks;
 
 
