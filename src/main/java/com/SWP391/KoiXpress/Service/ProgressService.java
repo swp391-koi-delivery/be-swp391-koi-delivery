@@ -80,7 +80,7 @@ public class ProgressService {
             oldProgress.setDateProgress(new Date());
             oldProgress.setHealthFishStatus(updateProgressRequest.getHealthFishStatus());
             if(updateProgressRequest.getHealthFishStatus()== HealthFishStatus.UNHEALTHY){
-                oldProgress.setProgressStatus(ProgressStatus.CANCEL);
+                oldProgress.setProgressStatus(ProgressStatus.CANCELED);
                 progressRepository.save(oldProgress);
                 return modelMapper.map(oldProgress, UpdateProgressResponse.class);
             }
@@ -100,7 +100,7 @@ public class ProgressService {
     public DeleteProgressResponse delete(long id) {
         Progress progress = progressRepository.findProgressesById(id);
         progress.setInProgress(false);
-        progress.setProgressStatus(ProgressStatus.CANCEL);
+        progress.setProgressStatus(ProgressStatus.CANCELED);
         progressRepository.save(progress);
         return modelMapper.map(progress, DeleteProgressResponse.class);
     }

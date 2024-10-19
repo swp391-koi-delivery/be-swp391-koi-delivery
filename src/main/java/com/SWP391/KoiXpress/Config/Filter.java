@@ -39,7 +39,9 @@ public class Filter extends OncePerRequestFilter {
             "/api/authentication/login",
             "/api/free-access/**",
             "/api/authentication/register",
-            "/api/authentication/forgot-password"
+            "/api/authentication/forgot-password",
+            "/api/calculateBoxAndSuggestFishSizes",
+            "/api/login-google"
     );
 
     public boolean isPublicAPI(String uri){
@@ -55,7 +57,7 @@ public class Filter extends OncePerRequestFilter {
         }else{
             String token = getToken(request);
             if(token == null){
-            //chan quyen truy cap
+                //chan quyen truy cap
                 handlerExceptionResolver.resolveException(request,response,null,new AuthException("Empty token"));
                 return;
             }

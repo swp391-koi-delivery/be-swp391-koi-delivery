@@ -12,6 +12,9 @@ import com.SWP391.KoiXpress.Model.response.User.EachUserResponse;
 import com.SWP391.KoiXpress.Repository.BlogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,11 +51,12 @@ public class BlogService {
         return createBlogResponse;
     }
 
-    public List<AllBlogResponse> getAllBlog() {
-        List<AllBlogResponse> allBlogResponses = new ArrayList<>();
+    public List<AllBlogResponse> getAllBlog(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Blog> blogsPage = blogRepository.findAll(pageRequest);
 
-        List<Blog> blogs = blogRepository.findAll();
-        for (Blog blog : blogs) {
+        List<AllBlogResponse> allBlogResponses = new ArrayList<>();
+        for (Blog blog : blogsPage.getContent()) {
             User user = blog.getUser();
             AllBlogResponse allBlogResponse = new AllBlogResponse();
             EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);

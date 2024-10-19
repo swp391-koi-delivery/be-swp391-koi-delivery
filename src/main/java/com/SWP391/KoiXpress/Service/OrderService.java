@@ -19,6 +19,8 @@ import com.SWP391.KoiXpress.Repository.OrderRepository;
 import com.SWP391.KoiXpress.Repository.WareHouseRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -175,7 +177,7 @@ public class OrderService {
     //Delete
     public DeleteOrderResponse delete(long id) {
         Order oldOrder = getOrderById(id);
-        oldOrder.setOrderStatus(OrderStatus.CANCEL);
+        oldOrder.setOrderStatus(OrderStatus.CANCELED);
         Order deletedOrder = orderRepository.save(oldOrder);
         return modelMapper.map(deletedOrder, DeleteOrderResponse.class);
     }
@@ -198,8 +200,9 @@ public class OrderService {
         return modelMapper.map(order, CreateOrderResponse.class);
     }
 
-    public List<AllOrderResponse> getAll() {
-        List<Order> orders = orderRepository.findAll();
+    public List<AllOrderResponse> getAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Order> orders = orderRepository.findAll(pageRequest);
         List<AllOrderResponse> orderResponses = new ArrayList<>();
         for (Order order : orders) {
             UserResponse userResponse = modelMapper.map(order.getUser(), UserResponse.class);

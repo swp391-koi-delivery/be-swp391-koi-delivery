@@ -146,7 +146,7 @@ public class BoxDetailService {
             double volume = entry.getValue();
             if (volume <= remainVolume) {
                 int fishQuantity = (int) (remainVolume / volume);
-                suggestions.add("Quantity that can still be added: " + fishQuantity + ", Size: " + entry.getKey());
+                suggestions.add("Quantity can be added: " + fishQuantity + ", Size: "+ entry.getKey());
             }
         }
 

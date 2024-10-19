@@ -65,9 +65,11 @@ public class ManagerAPI {
     }
 
     @GetMapping("/allUser")
-    public ResponseEntity getAllUser() {
-        List<AllUserResponse> users = userService.getAllUser();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<RegisterResponse>> getAllUser(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<RegisterResponse> registerResponses = managerService.getAllUser(page - 1, size);
+        return ResponseEntity.ok(registerResponses);
     }
 
     @GetMapping("/{userId}")

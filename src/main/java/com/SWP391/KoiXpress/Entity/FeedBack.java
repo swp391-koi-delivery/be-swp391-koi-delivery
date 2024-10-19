@@ -2,15 +2,24 @@ package com.SWP391.KoiXpress.Entity;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.List;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,7 +32,10 @@ public class FeedBack {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @NotBlank(message = "you need to rate")
+    @JsonIgnore
+    boolean isDeleted = false;
+
+    @NotNull(message = "you need to rate")
     @Min(value = 0)
     @Max(value = 5)
     byte ratingScore;

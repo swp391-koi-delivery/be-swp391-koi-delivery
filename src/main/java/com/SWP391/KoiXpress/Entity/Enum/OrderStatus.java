@@ -18,7 +18,7 @@ public enum OrderStatus {
     PAID,
 
     //huy don khi co su co
-    CANCEL,
+    CANCELED,
 
     //role delivery
     SHIPPING,
