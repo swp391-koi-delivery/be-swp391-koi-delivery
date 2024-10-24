@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface FeedBackRepository extends JpaRepository<FeedBack, Long> {
     Page<FeedBack> findFeedBacksByUserId(Long userId, Pageable pageable);
-    Page<FeedBack> findFeedBacksByOrderId(Long orderId, Pageable pageable);
+    List<FeedBack> findFeedBacksByOrderId(Long orderId);
 
     FeedBack findById(long feedId);
 }

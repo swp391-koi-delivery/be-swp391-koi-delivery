@@ -1,4 +1,4 @@
-package com.SWP391.KoiXpress.Model.request;
+package com.SWP391.KoiXpress.Model.request.Google;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

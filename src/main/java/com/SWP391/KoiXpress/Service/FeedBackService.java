@@ -5,6 +5,7 @@ import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Model.request.FeedBack.FeedBackRequet;
 import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackReplyResponse;
 import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackResponse;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
 import com.SWP391.KoiXpress.Model.response.User.UserResponse;
 import com.SWP391.KoiXpress.Repository.FeedBackReplyRepository;
 import com.SWP391.KoiXpress.Repository.FeedBackRepository;
@@ -106,7 +107,7 @@ public class FeedBackService {
         return feedBackReply;
     }
 
-    public List<FeedBackResponse> getAllFeedBacksByUser(Long userId, int page, int size) {
+    public PagedResponse<FeedBackResponse> getAllFeedBacksByUser(Long userId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<FeedBack> feedBackPage = feedBackRepository.findFeedBacksByUserId(userId, pageRequest);
 
@@ -135,16 +136,22 @@ public class FeedBackService {
             feedBackResponses.add(feedBackResponse);
         }
 
-        return feedBackResponses;
+        return new PagedResponse<>(
+                feedBackResponses,
+                page,
+                size,
+                feedBackPage.getTotalElements(),
+                feedBackPage.getTotalPages(),
+                feedBackPage.isLast()
+        );
     }
 
 
-    public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<FeedBack> feedBackPage = feedBackRepository.findFeedBacksByOrderId(orderId, pageRequest);
+    public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId) {
+        List<FeedBack> feedBacks = feedBackRepository.findFeedBacksByOrderId(orderId);
 
         List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        for (FeedBack feedBack : feedBackPage.getContent()) {
+        for (FeedBack feedBack : feedBacks) {
             User user = feedBack.getUser();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
@@ -171,12 +178,12 @@ public class FeedBackService {
         return feedBackResponses;
     }
 
-    public List<FeedBackResponse> getAllFeedBacksByCurrentUser(int page, int size) {
+    public PagedResponse<FeedBackResponse> getAllFeedBacksByCurrentUser(int page, int size) {
         User user = authenticationService.getCurrentUser();
         if (user != null) {
             return getAllFeedBacksByUser(user.getId(), page, size);
         }
-        return new ArrayList<>();
+        return new PagedResponse<>(new ArrayList<>(), page, size, 0, 0, true);
     }
 
 

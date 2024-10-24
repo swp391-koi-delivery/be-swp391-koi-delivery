@@ -1,9 +1,7 @@
 package com.SWP391.KoiXpress.Entity;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -56,6 +54,7 @@ public class FeedBack {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"feedBacks", "orders", "blogs"})
     User user;
 
     @ManyToOne(cascade = CascadeType.ALL)

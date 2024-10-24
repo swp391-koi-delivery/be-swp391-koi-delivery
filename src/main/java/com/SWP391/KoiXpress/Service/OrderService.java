@@ -12,6 +12,7 @@ import com.SWP391.KoiXpress.Model.request.Order.CreateOrderRequest;
 import com.SWP391.KoiXpress.Model.request.Order.UpdateOrderRequest;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Order.*;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
 import com.SWP391.KoiXpress.Model.response.User.UserResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import com.SWP391.KoiXpress.Repository.WareHouseRepository;
@@ -19,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -149,7 +151,7 @@ public class OrderService {
         List<Order> orders = orderRepository.findOrdersByUser(user);
         return orders.stream()
                 .map(order -> modelMapper.map(order, AllOrderByCurrentResponse.class))
-                .filter(order -> order.getOrderStatus() != OrderStatus.CANCEL)
+                .filter(order -> order.getOrderStatus() != OrderStatus.CANCELED)
                 .collect(Collectors.toList());
     }
 
@@ -220,7 +222,7 @@ public class OrderService {
 
     private Order getOrderById(long id) {
         Order oldOrder = orderRepository.findOrderById(id);
-        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCEL) {
+        if (oldOrder == null || oldOrder.getOrderStatus() == OrderStatus.CANCELED) {
             throw new EntityNotFoundException("Order not found");
         }
         return oldOrder;
@@ -235,18 +237,29 @@ public class OrderService {
         return modelMapper.map(order, CreateOrderResponse.class);
     }
 
-    public List<AllOrderResponse> getAll(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+    public PagedResponse<AllOrderResponse> getAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Order> orders = orderRepository.findAll(pageRequest);
+
         List<AllOrderResponse> orderResponses = new ArrayList<>();
-        for (Order order : orders) {
+        for (Order order : orders.getContent()) {
             UserResponse userResponse = modelMapper.map(order.getUser(), UserResponse.class);
             AllOrderResponse orderResponse = modelMapper.map(order, AllOrderResponse.class);
             orderResponse.setUserResponse(userResponse);
             orderResponses.add(orderResponse);
         }
-        return orderResponses;
+        return new PagedResponse<>(
+                orderResponses,
+                page,
+                size,
+                orders.getTotalElements(),
+                orders.getTotalPages(),
+                orders.isLast()
+        );
     }
+
+
+
 
     private double extractDistance(String routeInfo) {
         String[] lines = routeInfo.split("\n");

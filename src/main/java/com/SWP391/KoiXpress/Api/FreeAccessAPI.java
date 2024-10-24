@@ -35,11 +35,13 @@ public class FreeAccessAPI {
     @Autowired
     GeoCodingService geoCodingService;
 
-    @GetMapping("/allBlog")
-    public ResponseEntity getAll(){
-        List<AllBlogResponse> blogs = blogService.getAllBlog();
-        return ResponseEntity.ok(blogs);
-    }
+    @GetMapping
+    public ResponseEntity<List<AllBlogResponse>> getAllBlogs(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "5") int size){
+        List<AllBlogResponse> blogResponses = blogService.getAllBlog(page - 1, size);
+        return ResponseEntity.ok(blogResponses);
+        }
 
     @GetMapping("/calculateBoxAndSuggestFishSizes")
     public ResponseEntity<Map<String, Object>> calculateBoxAndSuggestFishSizes(

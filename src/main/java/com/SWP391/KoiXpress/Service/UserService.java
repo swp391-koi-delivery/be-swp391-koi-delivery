@@ -7,10 +7,14 @@ import com.SWP391.KoiXpress.Exception.*;
 import com.SWP391.KoiXpress.Model.request.User.CreateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateCustomerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateUserByManagerRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
 import com.SWP391.KoiXpress.Model.response.User.*;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -145,16 +149,27 @@ public class UserService {
             return modelMapper.map(newUser, DeleteUserByManagerResponse.class);
 
         } catch (Exception e) {
-            // Xử lý các lỗi khác nếu cần
             e.printStackTrace();
             throw new EntityNotFoundException("User not found");
         }
     }
 
-    public List<AllUserResponse> getAllUser() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(user -> modelMapper.map(user, AllUserResponse.class)).collect(Collectors.toList());
+    public PagedResponse<LoginResponse> getAllUser(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAll(pageRequest);
+        List<LoginResponse> loginResponses = userPage.getContent().stream()
+                .map(user -> modelMapper.map(user, LoginResponse.class))
+                .collect(Collectors.toList());
+        return new PagedResponse<>(
+                loginResponses,
+                page,
+                size,
+                userPage.getTotalElements(),
+                userPage.getTotalPages(),
+                userPage.isLast()
+        );
     }
+
 
     public UserResponse getEachUserById(long id) {
         User user = userRepository.findUserById(id);

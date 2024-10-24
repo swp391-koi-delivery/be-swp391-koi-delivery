@@ -9,15 +9,14 @@ import com.SWP391.KoiXpress.Exception.DuplicateEntity;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
 
-import com.SWP391.KoiXpress.Model.request.*;
-import com.SWP391.KoiXpress.Model.response.LoginGoogleResponse;
-import com.SWP391.KoiXpress.Model.response.LoginResponse;
-import com.SWP391.KoiXpress.Model.response.RegisterResponse;
+import com.SWP391.KoiXpress.Model.request.Google.LoginGoogleRequest;
+import com.SWP391.KoiXpress.Model.response.Google.LoginGoogleResponse;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+
 import com.SWP391.KoiXpress.Model.request.Authen.ForgotPasswordRequest;
 import com.SWP391.KoiXpress.Model.request.Authen.LoginRequest;
 import com.SWP391.KoiXpress.Model.request.Authen.ResetPasswordRequest;
 import com.SWP391.KoiXpress.Model.request.Authen.RegisterRequest;
-import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.User.CreateUserByManagerResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
 import com.SWP391.KoiXpress.Repository.UserRepository;
@@ -37,7 +36,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 @Service
 
@@ -177,6 +175,8 @@ public class AuthenticationService implements UserDetailsService {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(loginGoogleRequest.getToken());
             String email = decodedToken.getEmail();
             User user = userRepository.findUserByEmail(email);
+            String image = decodedToken.getPicture();
+
             if (user == null) {
                 User newUser = new User();
                 newUser.setFullname(decodedToken.getName() != null ? decodedToken.getName() : "Unknown User");
@@ -189,12 +189,30 @@ public class AuthenticationService implements UserDetailsService {
                 userRepository.save(newUser);
                 return new LoginGoogleResponse(
                         tokenService.generateToken(newUser),
-                        newUser.getUsername()
+                        newUser.getId(),
+                        newUser.getUsername(),
+                        newUser.getFullname(),
+                        image,
+                        newUser.getAddress(),
+                        newUser.getPhone(),
+                        newUser.getEmail(),
+                        newUser.getRole(),
+                        newUser.getLoyaltyPoint(),
+                        newUser.isDeleted()
                 );
             }
             return new LoginGoogleResponse(
                     tokenService.generateToken(user),
-                    user.getUsername()
+                    user.getId(),
+                    user.getUsername(),
+                    user.getFullname(),
+                    image,
+                    user.getAddress(),
+                    user.getPhone(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getLoyaltyPoint(),
+                    user.isDeleted()
             );
         } catch (FirebaseAuthException e) {
             e.printStackTrace();

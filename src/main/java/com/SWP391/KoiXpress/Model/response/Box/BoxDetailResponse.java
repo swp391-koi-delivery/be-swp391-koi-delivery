@@ -1,4 +1,4 @@
-package com.SWP391.KoiXpress.Model.response;
+package com.SWP391.KoiXpress.Model.response.Box;
 
 import lombok.Data;
 

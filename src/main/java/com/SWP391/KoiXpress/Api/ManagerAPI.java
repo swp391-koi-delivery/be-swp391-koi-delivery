@@ -5,13 +5,12 @@ import com.SWP391.KoiXpress.Model.request.Box.CreateBoxRequest;
 import com.SWP391.KoiXpress.Model.request.User.CreateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.WareHouse.CreateWareHouseRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxResponse;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
 import com.SWP391.KoiXpress.Model.response.User.*;
-import com.SWP391.KoiXpress.Service.BoxDetailService;
-import com.SWP391.KoiXpress.Service.BoxService;
-import com.SWP391.KoiXpress.Service.UserService;
-import com.SWP391.KoiXpress.Service.WareHouseService;
+import com.SWP391.KoiXpress.Service.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,8 @@ public class ManagerAPI {
     @Autowired
     WareHouseService wareHouseService;
 
+
+
     @PostMapping("/box")
     public ResponseEntity createBox(@Valid @RequestBody CreateBoxRequest createBoxRequest){
         CreateBoxResponse box = boxService.create(createBoxRequest);
@@ -47,8 +48,10 @@ public class ManagerAPI {
     }
 
     @GetMapping("/allBoxDetail")
-    public ResponseEntity getAll() {
-        List<AllBoxDetailResponse> boxDetails = boxDetailService.getAllBox();
+    public ResponseEntity<PagedResponse<AllBoxDetailResponse>> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PagedResponse<AllBoxDetailResponse> boxDetails = boxDetailService.getAllBox(page-1, size);
         return ResponseEntity.ok(boxDetails);
     }
 
@@ -65,11 +68,11 @@ public class ManagerAPI {
     }
 
     @GetMapping("/allUser")
-    public ResponseEntity<List<RegisterResponse>> getAllUser(
+    public ResponseEntity<PagedResponse<LoginResponse>> getAllUser(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<RegisterResponse> registerResponses = managerService.getAllUser(page - 1, size);
-        return ResponseEntity.ok(registerResponses);
+        PagedResponse<LoginResponse> pagedResponse = userService.getAllUser(page - 1, size);
+        return ResponseEntity.ok(pagedResponse);
     }
 
     @GetMapping("/{userId}")
