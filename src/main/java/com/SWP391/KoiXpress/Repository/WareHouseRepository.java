@@ -1,7 +1,5 @@
 package com.SWP391.KoiXpress.Repository;
-
-import com.SWP391.KoiXpress.Entity.Order;
-import com.SWP391.KoiXpress.Entity.WareHouse;
+import com.SWP391.KoiXpress.Entity.WareHouses;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,16 +7,16 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WareHouseRepository extends JpaRepository<WareHouse, Long> {
-    WareHouse findWareHouseById(long id);
+public interface WareHouseRepository extends JpaRepository<WareHouses, Long> {
+    WareHouses findWaresHouseById(long id);
 
-    @Query("SELECT w.location FROM WareHouse w")
+    @Query("SELECT w.location FROM WareHouses w")
     List<String> findAllLocation();
 
-    WareHouse findWareHouseByLocation(String nearWareHouse);
+    WareHouses findWareHousesByLocation(String nearWareHouse);
 
 
-    List<WareHouse> findByIsAvailableTrue();
+    List<WareHouses> findByIsAvailableTrue();
 
-    List<WareHouse> findByIsAvailableFalse();
+    List<WareHouses> findByIsAvailableFalse();
 }

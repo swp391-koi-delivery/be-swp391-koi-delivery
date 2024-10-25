@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.NumberFormat;
 
 import java.util.Date;
 
@@ -17,7 +16,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Progress {
+@Table(name = "`progress`")
+public class Progresses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -37,9 +37,9 @@ public class Progress {
 
     @ManyToOne
     @JoinColumn(name = "warehouse_id")
-    WareHouse wareHouse;
+    WareHouses wareHouses;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    Order order;
+    Orders orders;
 }

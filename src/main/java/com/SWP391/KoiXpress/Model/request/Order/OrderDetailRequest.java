@@ -24,8 +24,6 @@ public class OrderDetailRequest {
     @NotBlank(message = "fishSpecies can not blank")
     String fishSpecies;
 
-    @Min(value = 1)
-    @Max(value = 100)
     int numberOfFish;
 
     @NumberFormat(pattern = "#.##")

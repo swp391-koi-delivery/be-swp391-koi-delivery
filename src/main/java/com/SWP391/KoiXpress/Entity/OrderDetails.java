@@ -1,13 +1,10 @@
 package com.SWP391.KoiXpress.Entity;
 
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
-import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +19,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDetail {
+@Table(name = "`order_detail`")
+public class OrderDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -48,15 +46,12 @@ public class OrderDetail {
     @NotBlank(message = "fishSpecies can not blank")
     String fishSpecies;
 
-    //
-    @Min(value = 1, message = "number min of fish not smaller than 1")
-    @Max(value = 100,message = "number max of fish not greater than 100")
     int numberOfFish;
+
     @NumberFormat(pattern = "#.##")
     double sizeOfFish;
-    //
 
-    //
+
     int totalBox;
     @NumberFormat(pattern = "#.##")
     double totalVolume;
@@ -70,10 +65,10 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonIgnore
-    Order order;
+    Orders orders;
 
-    @OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orderDetails", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<BoxDetail> boxDetails;
+    List<BoxDetails> boxDetails;
 }

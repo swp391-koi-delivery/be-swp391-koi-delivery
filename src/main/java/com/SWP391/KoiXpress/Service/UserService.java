@@ -2,7 +2,7 @@ package com.SWP391.KoiXpress.Service;
 
 import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.Users;
 import com.SWP391.KoiXpress.Exception.*;
 import com.SWP391.KoiXpress.Model.request.User.CreateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateCustomerRequest;
@@ -38,42 +38,45 @@ public class UserService {
     @Autowired
     AuthenticationService authenticationService;
 
+    @Autowired
+    TokenService tokenService;
+
     public UpdateCustomerResponse update(long userId, UpdateCustomerRequest updateCustomerRequest) {
-        modelMapper.map(updateCustomerRequest, User.class);
-        User oldUser = getUserById(userId);
+        modelMapper.map(updateCustomerRequest, Users.class);
+        Users oldUsers = getUserById(userId);
         try {
-            oldUser.setUsername(updateCustomerRequest.getUsername());
+            oldUsers.setUsername(updateCustomerRequest.getUsername());
 
             String originPassword = updateCustomerRequest.getPassword();
-            oldUser.setPassword(passwordEncoder.encode(originPassword));
+            oldUsers.setPassword(passwordEncoder.encode(originPassword));
 
-            oldUser.setFullname(updateCustomerRequest.getFullname());
+            oldUsers.setFullname(updateCustomerRequest.getFullname());
 
-            oldUser.setImage(updateCustomerRequest.getImage());
+            oldUsers.setImage(updateCustomerRequest.getImage());
 
-            oldUser.setAddress(updateCustomerRequest.getAddress());
+            oldUsers.setAddress(updateCustomerRequest.getAddress());
 
-            oldUser.setPhone(updateCustomerRequest.getPhone());
+            oldUsers.setPhone(updateCustomerRequest.getPhone());
 
-            oldUser.setEmail(updateCustomerRequest.getEmail());
+            oldUsers.setEmail(updateCustomerRequest.getEmail());
 
             //check mail truoc khi gui
 
-            User newUser = userRepository.save(oldUser);
+            Users newUsers = userRepository.save(oldUsers);
             EmailDetail emailDetail = new EmailDetail();
-            emailDetail.setUser(newUser);
+            emailDetail.setUsers(newUsers);
             emailDetail.setSubject("Update Email");
             emailDetail.setLink("#");
             boolean emailSend = emailService.sendEmailVerify(emailDetail);
             if (emailSend) {
                 //gui email xac thuc
-                newUser.setEmailStatus(EmailStatus.VERIFIED);
+                newUsers.setEmailStatus(EmailStatus.VERIFIED);
             } else {
-                newUser.setEmailStatus(EmailStatus.NOT_VERIFIED);
+                newUsers.setEmailStatus(EmailStatus.NOT_VERIFIED);
                 throw new EmailNotVerifiedException("Email not verify. please provide a valid email.");
             }
-            userRepository.save(newUser);
-            return modelMapper.map(newUser, UpdateCustomerResponse.class);
+            userRepository.save(newUsers);
+            return modelMapper.map(newUsers, UpdateCustomerResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage().contains(updateCustomerRequest.getFullname())) {
@@ -88,10 +91,10 @@ public class UserService {
 
     public DeleteUserByUserResponse deleteByUser(long userId) {
         try {
-            User oldUser = getUserById(userId);
-            oldUser.setDeleted(true);
-            User newUser = userRepository.save(oldUser);
-            return modelMapper.map(newUser, DeleteUserByUserResponse.class);
+            Users oldUsers = getUserById(userId);
+            oldUsers.setDeleted(true);
+            Users newUsers = userRepository.save(oldUsers);
+            return modelMapper.map(newUsers, DeleteUserByUserResponse.class);
 
         } catch (Exception e) {
             // Xử lý các lỗi khác nếu cần
@@ -101,18 +104,18 @@ public class UserService {
     }
 
     public CreateUserByManagerResponse create(CreateUserByManagerRequest createUserByManagerRequest) {
-        User user = modelMapper.map(createUserByManagerRequest, User.class);
+        Users users = modelMapper.map(createUserByManagerRequest, Users.class);
         try {
-            String originPassword = user.getPassword();
-            user.setPassword(passwordEncoder.encode(originPassword));
-            user.setRole(createUserByManagerRequest.getRole());
-            User newUser = userRepository.save(user);
-            return modelMapper.map(newUser, CreateUserByManagerResponse.class);
+            String originPassword = users.getPassword();
+            users.setPassword(passwordEncoder.encode(originPassword));
+            users.setRole(createUserByManagerRequest.getRole());
+            Users newUsers = userRepository.save(users);
+            return modelMapper.map(newUsers, CreateUserByManagerResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
-            if (e.getMessage().contains(user.getFullname())) {
+            if (e.getMessage().contains(users.getFullname())) {
                 throw new DuplicateEntity("Duplicate fullName");
-            } else if (e.getMessage().contains(user.getPhone())) {
+            } else if (e.getMessage().contains(users.getPhone())) {
                 throw new DuplicateEntity("Duplicate phone");
             } else {
                 throw new NotFoundException("Unknown Error ");
@@ -121,19 +124,19 @@ public class UserService {
     }
 
     public UpdateCustomerResponse update(long userId, UpdateUserByManagerRequest updateUserByManagerRequest) {
-        modelMapper.map(updateUserByManagerRequest, User.class);
-        User currentUser = authenticationService.getCurrentUser();
-        User oldUser = getUserById(userId);
-        if (currentUser == oldUser) {
+        modelMapper.map(updateUserByManagerRequest, Users.class);
+        Users currentUsers = authenticationService.getCurrentUser();
+        Users oldUsers = getUserById(userId);
+        if (currentUsers == oldUsers) {
             throw new AuthException("You cant update because this account is using");
         }
         try {
-            oldUser.setImage(updateUserByManagerRequest.getImage());
-            oldUser.setRole(updateUserByManagerRequest.getRole());
-            oldUser.setLoyaltyPoint(updateUserByManagerRequest.getLoyaltyPoint());
-            oldUser.setDeleted(updateUserByManagerRequest.isDeleted());
-            User newUser = userRepository.save(oldUser);
-            return modelMapper.map(newUser, UpdateCustomerResponse.class);
+            oldUsers.setImage(updateUserByManagerRequest.getImage());
+            oldUsers.setRole(updateUserByManagerRequest.getRole());
+            oldUsers.setLoyaltyPoint(updateUserByManagerRequest.getLoyaltyPoint());
+            oldUsers.setDeleted(updateUserByManagerRequest.isDeleted());
+            Users newUsers = userRepository.save(oldUsers);
+            return modelMapper.map(newUsers, UpdateCustomerResponse.class);
         } catch (Exception e) {
             e.printStackTrace();
             throw new NotFoundException("Unknown Error");
@@ -142,14 +145,14 @@ public class UserService {
 
     public DeleteUserByManagerResponse deleteByManager(long userId) {
         try {
-            User currentUser = authenticationService.getCurrentUser();
-            User oldUser = getUserById(userId);
-            if(currentUser == oldUser){
+            Users currentUsers = authenticationService.getCurrentUser();
+            Users oldUsers = getUserById(userId);
+            if(currentUsers == oldUsers){
                 throw new AuthException("Can delete that user because user is using web");
             }
-            oldUser.setDeleted(true);
-            User newUser = userRepository.save(oldUser);
-            return modelMapper.map(newUser, DeleteUserByManagerResponse.class);
+            oldUsers.setDeleted(true);
+            Users newUsers = userRepository.save(oldUsers);
+            return modelMapper.map(newUsers, DeleteUserByManagerResponse.class);
 
         } catch (Exception e) {
             // Xử lý các lỗi khác nếu cần
@@ -163,7 +166,7 @@ public class UserService {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         // Truy xuất danh sách người dùng theo phân trang
-        Page<User> userPage = userRepository.findAll(pageRequest);
+        Page<Users> userPage = userRepository.findAll(pageRequest);
 
         // Ánh xạ từ User sang RegisterResponse
         return userPage.getContent().stream()
@@ -172,23 +175,42 @@ public class UserService {
     }
 
     public EachUserResponse getEachUserById(long id) {
-        User user = userRepository.findUserById(id);
-        if (user == null) {
+        Users users = userRepository.findUsersById(id);
+        if (users == null) {
             throw new EntityNotFoundException("User not found");
         }
-        return modelMapper.map(user, EachUserResponse.class);
+        return modelMapper.map(users, EachUserResponse.class);
+    }
+
+    public EachUserResponse getProfileUser(){
+        Users users = authenticationService.getCurrentUser();
+        return modelMapper.map(users, EachUserResponse.class);
+    }
+
+    public void sendAccountUser(String fullname){
+        Users account = userRepository.findUsersByFullname(fullname).orElseThrow(() -> new NotFoundException("Can found that account"));
+        if(account.getUsername().equals(account.getFullname()) && passwordEncoder.matches(account.getFullname(), account.getPassword() ) ){
+            String token = tokenService.generateToken(account);
+            EmailDetail emailDetail = new EmailDetail();
+            emailDetail.setUsers(account);
+            emailDetail.setLink("http://transportkoifish.online/login?token=" + token);
+            emailDetail.setSubject("Account Info");
+            emailService.sendEmailAccount(emailDetail);
+        }
+        throw new AuthException("Account can not send");
     }
 
 
-    private User getUserById(long userId) {
-        User oldUser = userRepository.findUserById(userId);
-        if (oldUser == null) {
+
+    private Users getUserById(long userId) {
+        Users oldUsers = userRepository.findUsersById(userId);
+        if (oldUsers == null) {
             throw new EntityNotFoundException("User not found!");
         }
-        if (oldUser.isDeleted()) {
+        if (oldUsers.isDeleted()) {
             throw new EntityNotFoundException("User not found!");
         }
-        return oldUser;
+        return oldUsers;
     }
 
 

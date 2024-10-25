@@ -2,7 +2,7 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -12,9 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -22,42 +20,43 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class User implements UserDetails {
+@Table(name = "`user`")
+public class Users implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     long id;
+    long id;
 
     @Enumerated(EnumType.STRING)
-     Role role;
+    Role role;
 
     @NotBlank(message = "username can not be blank!")
     @Size(min = 6, message = "username must at least 6 characters")
-     String username;
+    String username;
 
     @Pattern(
             regexp = ".*[A-Z].*",
             message = "Password must contain at least one uppercase letter."
     )
     @Size(min = 6, message = "password must be at least 6 characters!")
-     String password;
+    String password;
 
     @NotBlank(message = "fullname can not be blank!")
     @Size(min = 1, message = "fullName must be at least 1 character!")
-     String fullname;
+    String fullname;
 
     @Column(length = 200)
-     String image;
+    String image;
 
     @Column(length = 200)
-     String address;
+    String address;
 
     @Pattern(
             regexp = "(84|0[3|5|7|8|9])\\d{8}",
             message = "Phone number must start with 84 or a valid Vietnamese prefix, followed by 8 digits."
     )
     @Column(unique = true)
-     String phone;
+    String phone;
 
     @NotBlank(message = "email can not be blank!")
     @Email(message = "Email not valid")
@@ -65,29 +64,36 @@ public class User implements UserDetails {
     String email;
 
     @Enumerated(EnumType.STRING)
-     EmailStatus emailStatus = EmailStatus.NOT_VERIFIED;
+    EmailStatus emailStatus = EmailStatus.NOT_VERIFIED;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Min(value = 0, message = "Loyalty points must be at least 0.")
-     long loyaltyPoint;
+    long loyaltyPoint;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-     boolean isDeleted = false;
+    boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<Blog> blogs;
+    List<Blogs> blogs;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<FeedBack> feedBacks;
+    @JsonManagedReference
+    List<FeedBacks> feedBacks;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<Order> orders;
+    List<Orders> orders;
+
+    @OneToMany(mappedBy = "from")
+    Set<Transactions> transactionFrom;
+
+    @OneToMany(mappedBy = "to")
+    Set<Transactions> transactionTo;
 
 
     @Override

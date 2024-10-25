@@ -1,7 +1,6 @@
 package com.SWP391.KoiXpress.Api;
 
-import com.SWP391.KoiXpress.Entity.Blog;
-import com.SWP391.KoiXpress.Entity.FeedBack;
+import com.SWP391.KoiXpress.Entity.FeedBacks;
 import com.SWP391.KoiXpress.Entity.FeedBackReply;
 import com.SWP391.KoiXpress.Model.request.FeedBack.FeedBackRequet;
 import com.SWP391.KoiXpress.Model.response.FeedBack.FeedBackResponse;
@@ -20,21 +19,21 @@ import java.util.List;
 @RequestMapping("/api/feedBack")
 @CrossOrigin("*")
 @SecurityRequirement(name = "api")
-@PreAuthorize("hasAuthority('CUSTOMER') or hasAuthority('SALE_STAFF')")
-public class FeedBackAPI {
+@PreAuthorize("hasAuthority('CUSTOMER') or hasAuthority('SALE_STAFF') or hasAuthority('MANAGER')")
+public class FeedBackController {
 
     @Autowired
     FeedBackService feedBackService;
 
     @PostMapping
-    public ResponseEntity createFeedBack(@Valid @RequestBody FeedBackRequet feedBackRequet) {
-        FeedBack newFeedBack = feedBackService.createFeedBack(feedBackRequet);
-        return ResponseEntity.ok(newFeedBack);
+    public ResponseEntity<FeedBacks> createFeedBack(@Valid @RequestBody FeedBackRequet feedBackRequet) {
+        FeedBacks newFeedBacks = feedBackService.createFeedBack(feedBackRequet);
+        return ResponseEntity.ok(newFeedBacks);
     }
 
     @PostMapping("/{feedBackId}/reply")
     @PreAuthorize("hasAuthority('SALE_STAFF')")
-    public ResponseEntity replyToFeedBack(@PathVariable long feedBackId,
+    public ResponseEntity<FeedBackReply> replyToFeedBack(@PathVariable long feedBackId,
                                           @RequestBody String replyContent,
                                           Principal principal) {
         String repliedBy = principal.getName();
@@ -54,9 +53,9 @@ public class FeedBackAPI {
 
     @PreAuthorize("hasAuthority('SALE_STAFF') and (hasAuthority('CUSTOMER') and @feedBackService.isOwner(#feedBackId))")
     @PutMapping("/{feedBackId}")
-    public ResponseEntity updateFeedBack(@PathVariable long feedBackId, @Valid @RequestBody FeedBackRequet feedBackRequet) {
-        FeedBack newFeedBack = feedBackService.updateFeedBack(feedBackId, feedBackRequet);
-        return ResponseEntity.ok(newFeedBack);
+    public ResponseEntity<FeedBacks> updateFeedBack(@PathVariable long feedBackId, @Valid @RequestBody FeedBackRequet feedBackRequet) {
+        FeedBacks newFeedBacks = feedBackService.updateFeedBack(feedBackId, feedBackRequet);
+        return ResponseEntity.ok(newFeedBacks);
     }
 
     @PreAuthorize("hasAuthority('SALE_STAFF')")
@@ -76,9 +75,9 @@ public class FeedBackAPI {
     }
 
 
-    @PreAuthorize("hasAuthority('Sale_staff') or (hasAuthority('CUSTOMER') and @feedBackService.isOwner(#feedBackId))")
+    @PreAuthorize("hasAuthority('SALE_STAFF') or (hasAuthority('CUSTOMER') and @feedBackService.isOwner(#feedBackId))")
     @DeleteMapping("/{feedBackId}")
-    public ResponseEntity deleteFeedBack(@PathVariable long feedBackId) {
+    public ResponseEntity<?> deleteFeedBack(@PathVariable long feedBackId) {
         feedBackService.deleteFeedBack(feedBackId);
         return ResponseEntity.ok().build();
     }

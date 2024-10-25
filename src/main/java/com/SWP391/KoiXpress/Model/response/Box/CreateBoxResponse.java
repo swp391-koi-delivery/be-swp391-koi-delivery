@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Model.response.Box;
 
-import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Entity.BoxDetails;
 import lombok.Data;
 
 import java.util.List;
@@ -11,5 +11,5 @@ public class CreateBoxResponse {
     String type;
     double volume;
     double price;
-    List<BoxDetail> boxDetails;
+    List<BoxDetails> boxDetails;
 }

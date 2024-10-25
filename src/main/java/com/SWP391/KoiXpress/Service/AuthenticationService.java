@@ -4,17 +4,13 @@ package com.SWP391.KoiXpress.Service;
 import com.SWP391.KoiXpress.Entity.EmailDetail;
 import com.SWP391.KoiXpress.Entity.Enum.EmailStatus;
 import com.SWP391.KoiXpress.Entity.Enum.Role;
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.Users;
 import com.SWP391.KoiXpress.Exception.DuplicateEntity;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
 
-import com.SWP391.KoiXpress.Model.request.*;
-import com.SWP391.KoiXpress.Model.response.LoginGoogleResponse;
-import com.SWP391.KoiXpress.Model.request.Authen.ForgotPasswordRequest;
-import com.SWP391.KoiXpress.Model.request.Authen.LoginRequest;
-import com.SWP391.KoiXpress.Model.request.Authen.ResetPasswordRequest;
-import com.SWP391.KoiXpress.Model.request.Authen.RegisterRequest;
+import com.SWP391.KoiXpress.Model.request.Authen.*;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginGoogleResponse;
 import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
 import com.SWP391.KoiXpress.Model.response.User.CreateUserByManagerResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
@@ -63,28 +59,28 @@ public class AuthenticationService implements UserDetailsService {
     AuthenticationRepository authenticationRepository;
 
     public CreateUserByManagerResponse register(RegisterRequest registerRequest) {
-        User user = modelMapper.map(registerRequest, User.class);
+        Users users = modelMapper.map(registerRequest, Users.class);
 
         try {
-            String originPassword = user.getPassword();
-            user.setPassword(passwordEncoder.encode(originPassword));
-            user.setRole(Role.CUSTOMER);
+            String originPassword = users.getPassword();
+            users.setPassword(passwordEncoder.encode(originPassword));
+            users.setRole(Role.CUSTOMER);
 
-            User newUser = userRepository.save(user);
+            Users newUsers = userRepository.save(users);
             EmailDetail emailDetail = new EmailDetail();
-            emailDetail.setUser(newUser);
+            emailDetail.setUsers(newUsers);
             emailDetail.setSubject("Verify your email");
             emailDetail.setLink("#");
             boolean emailSent =  emailService.sendEmailVerify(emailDetail);
             if(emailSent) {
-                newUser.setEmailStatus(EmailStatus.VERIFIED);
-                userRepository.save(newUser);
+                newUsers.setEmailStatus(EmailStatus.VERIFIED);
+                userRepository.save(newUsers);
             }
-            return modelMapper.map(newUser, CreateUserByManagerResponse.class);
+            return modelMapper.map(newUsers, CreateUserByManagerResponse.class);
         } catch (Exception e) {
-            if (e.getMessage().contains(user.getEmail())) {
+            if (e.getMessage().contains(users.getEmail())) {
                 throw new DuplicateEntity("Duplicate email");
-            } else if (e.getMessage().contains(user.getPhone())) {
+            } else if (e.getMessage().contains(users.getPhone())) {
                 throw new DuplicateEntity("Duplicate phone");
             } else {
                 throw new NotFoundException("Unknown Error error");
@@ -99,25 +95,24 @@ public class AuthenticationService implements UserDetailsService {
                     loginRequest.getUsername(),
                     loginRequest.getPassword()
             ));
-            User user = (User) authentication.getPrincipal();
-            LoginResponse loginResponse = modelMapper.map(user, LoginResponse.class);
-            loginResponse.setToken(tokenService.generateToken(user));
+            Users users = (Users) authentication.getPrincipal();
+            LoginResponse loginResponse = modelMapper.map(users, LoginResponse.class);
+            loginResponse.setToken(tokenService.generateToken(users));
             return loginResponse;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new BadCredentialsException("UserName or password invalid!");
         }
 
     }
 
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
-        User user = userRepository.findUserByEmail(forgotPasswordRequest.getEmail());
-        if (user == null) {
+        Users users = userRepository.findUsersByEmail(forgotPasswordRequest.getEmail());
+        if (users == null) {
             throw new EntityNotFoundException("Cant find your email account");
         }
-        String token = tokenService.generateToken(user);
+        String token = tokenService.generateToken(users);
         EmailDetail emailDetail = new EmailDetail();
-        emailDetail.setUser(user);
+        emailDetail.setUsers(users);
         emailDetail.setSubject("Reset Password");
         emailDetail.setLink("http://transportkoifish.online/reset-password?token=" + token);
         emailService.sendEmailResetPassword(emailDetail);
@@ -125,79 +120,57 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
-        User user = getCurrentUser();
-        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
+        Users users = getCurrentUser();
+        users.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
         try{
-            userRepository.save(user);
+            userRepository.save(users);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    //    public List<RegisterResponse> getAllUser() {
-//        List<User> users = userRepository.findAll();
-//        List<RegisterResponse> registerResponses = users.stream().map(user -> modelMapper.map(user, RegisterResponse.class)).collect(Collectors.toList());
-//        return registerResponses;
-//    }
     //security method
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username);
-        if (user == null) {
+        Users users = userRepository.findUsersByUsername(username);
+        if(users !=null){
         }
-        return user;
+        return users;
     }
 
-    //ai đang call request này ( role)
-    public User getCurrentUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return authenticationRepository.findUserById(user.getId());
+    public Users getCurrentUser() {
+        Users users = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return authenticationRepository.findUsersById(users.getId());
     }
-
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
-    }
-
-
-    public LoginResponse createLoginResponse(User user) {
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setEmail(user.getEmail());
-        loginResponse.setFullname(user.getFullname());
-        loginResponse.setToken(tokenService.generateToken(user));
-        return loginResponse;
-    }
-
 
     public LoginGoogleResponse loginGoogle(LoginGoogleRequest loginGoogleRequest) {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(loginGoogleRequest.getToken());
             String email = decodedToken.getEmail();
-            User user = userRepository.findUserByEmail(email);
-            if (user == null) {
-                User newUser = new User();
-                newUser.setFullname(decodedToken.getName() != null ? decodedToken.getName() : "Unknown User");
-                newUser.setEmail(email);
-                newUser.setUsername(email);
-                newUser.setRole(Role.CUSTOMER);
-                newUser.setPassword(null);
-                newUser.setPhone(null);
-                newUser.setEmailStatus(EmailStatus.VERIFIED);
-                userRepository.save(newUser);
+            Users users = userRepository.findUsersByEmail(email);
+            if (users == null) {
+                Users newUsers = new Users();
+                newUsers.setFullname(decodedToken.getName() != null ? decodedToken.getName() : "Unknown User");
+                newUsers.setEmail(email);
+                newUsers.setUsername(email);
+                newUsers.setRole(Role.CUSTOMER);
+                newUsers.setPassword(null);
+                newUsers.setPhone(null);
+                newUsers.setEmailStatus(EmailStatus.VERIFIED);
+                userRepository.save(newUsers);
                 return new LoginGoogleResponse(
-                        tokenService.generateToken(newUser),
-                        newUser.getUsername()
+                        tokenService.generateToken(newUsers),
+                        newUsers.getUsername()
                 );
             }
             return new LoginGoogleResponse(
-                    tokenService.generateToken(user),
-                    user.getUsername()
+                    tokenService.generateToken(users),
+                    users.getUsername()
             );
         } catch (FirebaseAuthException e) {
-            e.printStackTrace();
             throw new RuntimeException("Invalid Google ID token.");
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Failed to log in with Google.");
         }
     }

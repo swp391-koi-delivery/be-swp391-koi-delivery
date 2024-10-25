@@ -5,24 +5,28 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-import java.util.List;
-
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Report {
+@Table(name = "`box_detail`")
+public class BoxDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    String reportType;
-    Date generateDate;
-    String dateRange;
 
-    @OneToMany(mappedBy = "report")
+    int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "order_detail_id")
+    @JsonIgnore
+    OrderDetails orderDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "box_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<Order> orders;
+    Boxes boxes;
+
 }

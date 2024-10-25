@@ -2,8 +2,8 @@ package com.SWP391.KoiXpress.Model.response.Progress;
 
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.ProgressStatus;
-import com.SWP391.KoiXpress.Entity.Order;
-import com.SWP391.KoiXpress.Entity.WareHouse;
+import com.SWP391.KoiXpress.Entity.Orders;
+import com.SWP391.KoiXpress.Entity.WareHouses;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -18,6 +18,6 @@ public class UpdateProgressResponse {
     boolean isInProgress;
     HealthFishStatus healthFishStatus;
     ProgressStatus progressStatus;
-    WareHouse wareHouse;
-    Order order;
+    WareHouses wareHouses;
+    Orders orders;
 }

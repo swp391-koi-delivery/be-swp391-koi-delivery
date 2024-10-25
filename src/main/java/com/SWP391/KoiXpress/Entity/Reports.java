@@ -4,23 +4,25 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
 import java.util.List;
-
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class WareHouse {
+@Table(name = "`report`")
+public class Reports {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    String location;
-    boolean isAvailable=true;
+    String reportType;
+    Date generateDate;
+    String dateRange;
 
-    @OneToMany(mappedBy = "wareHouse")
+    @OneToMany(mappedBy = "reports")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<Progress> progresses;
+    List<Orders> orders;
 }

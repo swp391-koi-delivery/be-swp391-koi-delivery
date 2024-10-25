@@ -1,14 +1,13 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.Box;
-import com.SWP391.KoiXpress.Entity.BoxDetail;
-import com.SWP391.KoiXpress.Entity.OrderDetail;
+import com.SWP391.KoiXpress.Entity.Boxes;
+import com.SWP391.KoiXpress.Entity.BoxDetails;
+import com.SWP391.KoiXpress.Entity.OrderDetails;
 import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
 import com.SWP391.KoiXpress.Exception.BoxException;
 import com.SWP391.KoiXpress.Repository.BoxDetailRepository;
 import com.SWP391.KoiXpress.Repository.BoxRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,6 @@ public class BoxDetailService {
 
     @Autowired
     BoxDetailRepository boxDetailRepository;
-
-    @Autowired
-    ModelMapper modelMapper;
 
     @Autowired
     BoxRepository boxRepository;
@@ -92,16 +88,16 @@ public class BoxDetailService {
             remainVolume += getFishVolume(quantity, fishSize);
         }
 
-        List<Box> boxes = boxRepository.findAll(Sort.by(Sort.Order.desc("volume")));
-        Box smallestBox = boxes.get(boxes.size()-1);
+        List<Boxes> boxes = boxRepository.findAll(Sort.by(Sort.Order.desc("volume")));
+        Boxes smallestBoxes = boxes.get(boxes.size()-1);
 
         Map<String, Integer> boxCount = new LinkedHashMap<>();
 
-        for(Box box : boxes){
+        for(Boxes box : boxes){
             boxCount.put(box.getType(),0);
         }
 
-        for(Box box : boxes){
+        for(Boxes box : boxes){
             int count = (int) (remainVolume / box.getVolume());
             remainVolume -= count * box.getVolume();
             boxCount.put(box.getType(), boxCount.get(box.getType())+ count);
@@ -109,17 +105,15 @@ public class BoxDetailService {
                 break;
             }
         }
-        if(remainVolume > 0 && remainVolume < smallestBox.getVolume()){
-            boxCount.put(smallestBox.getType(), boxCount.get(smallestBox.getType()) + 1);
-            remainingSpaceInSmallBox = smallestBox.getVolume() - remainVolume;
+        if(remainVolume > 0 && remainVolume < smallestBoxes.getVolume()){
+            boxCount.put(smallestBoxes.getType(), boxCount.get(smallestBoxes.getType()) + 1);
+            remainingSpaceInSmallBox = smallestBoxes.getVolume() - remainVolume;
         }
 
-        for (Box box : boxes) {
+        for (Boxes box : boxes) {
             totalPrice += box.getPrice() * boxCount.get(box.getType());
             totalCount += boxCount.get(box.getType());
         }
-
-        // Chuẩn bị chi tiết hộp
         Map<String, Object> boxDetails = new LinkedHashMap<>();
 
         for(Map.Entry<String, Integer> entry : boxCount.entrySet()){
@@ -163,10 +157,10 @@ public class BoxDetailService {
         return boxDetails;
     }
 
-    public CreateBoxDetailResponse createBox(Map<Double, Integer> fishSizeQuantityMap, OrderDetail orderDetail){
+    public CreateBoxDetailResponse createBox(Map<Double, Integer> fishSizeQuantityMap, OrderDetails orderDetails){
         try{
             Map<String, Object> boxDetails = calculateBox(fishSizeQuantityMap);
-            List<BoxDetail> boxDetailList = new ArrayList<>();
+            List<BoxDetails> boxDetailsList = new ArrayList<>();
             double totalVolume = (double) boxDetails.get("totalVolume");
             double totalPrice = (double) boxDetails.get("totalPrice");
             int totalCount = (int) boxDetails.get("totalCount");
@@ -177,31 +171,30 @@ public class BoxDetailService {
                     continue;
                 }
                 Integer quantityBox = (Integer) value;
-                Box box = boxRepository.findBoxByType(boxType);
-                if(box != null){
-                    BoxDetail boxDetail = new BoxDetail();
-                    boxDetail.setBox(box);
+                Boxes boxes = boxRepository.findBoxesByType(boxType);
+                if(boxes != null){
+                    BoxDetails boxDetail = new BoxDetails();
+                    boxDetail.setBoxes(boxes);
                     boxDetail.setQuantity(quantityBox);
-                    boxDetail.setOrderDetail(orderDetail);
+                    boxDetail.setOrderDetails(orderDetails);
                     boxDetailRepository.save(boxDetail);
-                    boxDetailList.add(boxDetail);
+                    boxDetailsList.add(boxDetail);
                 }
             }
             CreateBoxDetailResponse createBoxDetailResponse = new CreateBoxDetailResponse();
-            createBoxDetailResponse.setBoxDetails(boxDetailList);
+            createBoxDetailResponse.setBoxDetails(boxDetailsList);
             createBoxDetailResponse.setTotalPrice(totalPrice);
             createBoxDetailResponse.setTotalVolume(totalVolume);
             createBoxDetailResponse.setTotalCount(totalCount);
 
             return createBoxDetailResponse;
         }catch(Exception e){
-            e.printStackTrace();
             throw new BoxException("BoxDetail cant create");
         }
     }
 
     public List<AllBoxDetailResponse> getAllBox(){
-        List<BoxDetail> boxDetails = boxDetailRepository.findAll();
+        List<BoxDetails> boxDetails = boxDetailRepository.findAll();
         if(boxDetails.isEmpty()){
             return Collections.emptyList();
         }
@@ -210,8 +203,8 @@ public class BoxDetailService {
                 .map(boxDetail -> new AllBoxDetailResponse(
                         boxDetail.getId(),
                         boxDetail.getQuantity(),
-                        boxDetail.getOrderDetail(),
-                        boxDetail.getBox()
+                        boxDetail.getOrderDetails(),
+                        boxDetail.getBoxes()
                 ))
                 .collect(Collectors.toList());
     }

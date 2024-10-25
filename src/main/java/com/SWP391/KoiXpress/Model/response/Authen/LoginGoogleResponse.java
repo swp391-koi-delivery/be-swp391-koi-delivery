@@ -1,4 +1,4 @@
-package com.SWP391.KoiXpress.Model.response;
+package com.SWP391.KoiXpress.Model.response.Authen;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

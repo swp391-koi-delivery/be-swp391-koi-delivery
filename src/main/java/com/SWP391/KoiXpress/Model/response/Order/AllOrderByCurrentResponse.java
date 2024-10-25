@@ -3,7 +3,7 @@ package com.SWP391.KoiXpress.Model.response.Order;
 import com.SWP391.KoiXpress.Entity.Enum.MethodTransPort;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
-import com.SWP391.KoiXpress.Entity.OrderDetail;
+import com.SWP391.KoiXpress.Entity.OrderDetails;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -19,6 +19,7 @@ public class AllOrderByCurrentResponse {
     Date orderDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date deliveryDate;
+
     String originLocation;
     String nearWareHouse;
     String destinationLocation;
@@ -27,10 +28,11 @@ public class AllOrderByCurrentResponse {
     int totalBox;
     double totalDistance;
     double totalVolume;
+    String recipientInfo;
     String customerNotes;
     MethodTransPort methodTransPort;
     PaymentMethod paymentMethod;
     OrderStatus orderStatus;
 
-    List<OrderDetail> orderDetails;
+    List<OrderDetails> orderDetails;
 }

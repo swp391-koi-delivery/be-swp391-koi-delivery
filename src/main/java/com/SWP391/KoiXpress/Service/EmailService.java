@@ -27,17 +27,17 @@ public class EmailService {
     public boolean sendEmailVerify(EmailDetail emailDetail)  {
         try{
             Context context = new Context();
-            context.setVariable("name",emailDetail.getUser().getEmail());
+            context.setVariable("name",emailDetail.getUsers().getEmail());
             context.setVariable("button","Click Here to verify");
             context.setVariable("link",emailDetail.getLink());
-            context.setVariable("email",emailDetail.getUser().getEmail());
+            context.setVariable("email",emailDetail.getUsers().getEmail());
             String template = templateEngine.process("EmailVerify",context);
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message);
 
             messageHelper.setFrom("admin@gmail.com");
-            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setTo(emailDetail.getUsers().getEmail());
             messageHelper.setText(template,true);
             messageHelper.setSubject(emailDetail.getSubject());
             javaMailSender.send(message);
@@ -50,17 +50,17 @@ public class EmailService {
     public boolean sendEmailResetPassword(EmailDetail emailDetail)  {
         try{
             Context context = new Context();
-            context.setVariable("name",emailDetail.getUser().getEmail());
+            context.setVariable("name",emailDetail.getUsers().getEmail());
             context.setVariable("button","Reset Password");
             context.setVariable("link",emailDetail.getLink());
-            context.setVariable("email",emailDetail.getUser().getEmail());
+            context.setVariable("email",emailDetail.getUsers().getEmail());
             String template = templateEngine.process("EmailResetPassword",context);
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message);
 
             messageHelper.setFrom("admin@gmail.com");
-            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setTo(emailDetail.getUsers().getEmail());
             messageHelper.setText(template,true);
             messageHelper.setSubject(emailDetail.getSubject());
             javaMailSender.send(message);
@@ -73,17 +73,18 @@ public class EmailService {
     public boolean sendEmailAccount(EmailDetail emailDetail)  {
         try{
             Context context = new Context();
-            context.setVariable("name",emailDetail.getUser().getEmail());
-
+            context.setVariable("name",emailDetail.getUsers().getEmail());
             context.setVariable("link",emailDetail.getLink());
-            context.setVariable("email",emailDetail.getUser().getEmail());
+            context.setVariable("email",emailDetail.getUsers().getEmail());
+            context.setVariable("username", emailDetail.getUsers().getFullname());
+            context.setVariable("password", emailDetail.getUsers().getFullname());
             String template = templateEngine.process("EmailAccount",context);
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message);
 
             messageHelper.setFrom("admin@gmail.com");
-            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setTo(emailDetail.getUsers().getEmail());
             messageHelper.setText(template,true);
             messageHelper.setSubject(emailDetail.getSubject());
             javaMailSender.send(message);
@@ -96,17 +97,17 @@ public class EmailService {
     public boolean sendEmailThankYou(EmailDetail emailDetail)  {
         try{
             Context context = new Context();
-            context.setVariable("name",emailDetail.getUser().getEmail());
+            context.setVariable("name",emailDetail.getUsers().getEmail());
             context.setVariable("button","Our Website");
             context.setVariable("link",emailDetail.getLink());
-            context.setVariable("email",emailDetail.getUser().getEmail());
+            context.setVariable("email",emailDetail.getUsers().getEmail());
             String template = templateEngine.process("EmailThankYou",context);
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message);
 
             messageHelper.setFrom("admin@gmail.com");
-            messageHelper.setTo(emailDetail.getUser().getEmail());
+            messageHelper.setTo(emailDetail.getUsers().getEmail());
             messageHelper.setText(template,true);
             messageHelper.setSubject(emailDetail.getSubject());
             javaMailSender.send(message);

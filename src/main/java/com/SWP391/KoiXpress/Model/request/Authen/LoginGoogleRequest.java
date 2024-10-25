@@ -1,4 +1,4 @@
-package com.SWP391.KoiXpress.Model.request;
+package com.SWP391.KoiXpress.Model.request.Authen;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

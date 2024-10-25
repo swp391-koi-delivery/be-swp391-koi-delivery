@@ -1,20 +1,19 @@
 package com.SWP391.KoiXpress.Repository;
 
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.Enum.Role;
+import com.SWP391.KoiXpress.Entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<Users, Long> {
+    Users findUsersById(long Id);
+    Users findUsersByUsername(String username);
+    Users findUsersByEmail(String email);
 
-    User findUserById(long Id);
-//    List<User> findUserByisDeletedFalse();
-    User findUserByUsername(String username);
-    User findUserByEmail(String email);
+    Optional<Users> findUsersByFullname(String fullname);
 
-    @Query("SELECT u.email FROM User u WHERE u.Id = :Id")
-    String findEmailById( long Id);
+    Users findUsersByRole(Role role);
 }

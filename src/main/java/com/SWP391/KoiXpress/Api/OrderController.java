@@ -1,8 +1,5 @@
 package com.SWP391.KoiXpress.Api;
 
-
-
-import com.SWP391.KoiXpress.Model.request.Order.CreateOrderRequest;
 import com.SWP391.KoiXpress.Model.request.Order.UpdateOrderRequest;
 import com.SWP391.KoiXpress.Model.response.Order.*;
 import com.SWP391.KoiXpress.Service.OrderService;
@@ -20,13 +17,13 @@ import java.util.List;
 @SecurityRequirement(name = "api")
 @CrossOrigin("*")
 @PreAuthorize("hasAuthority('MANAGER') or hasAuthority('DELIVERING_STAFF') or hasAuthority('SALE_STAFF')")
-public class OrderAPI {
+public class OrderController {
 
     @Autowired
     OrderService orderService;
 
     @GetMapping("{id}")
-    public ResponseEntity getEachOrder(@PathVariable long id){
+    public ResponseEntity<CreateOrderResponse> getEachOrder(@PathVariable long id) {
         CreateOrderResponse createOrderResponse = orderService.getEachOrderById(id);
         return ResponseEntity.ok(createOrderResponse);
     }
@@ -34,20 +31,44 @@ public class OrderAPI {
     @GetMapping("/allOrder")
     public ResponseEntity<List<AllOrderResponse>> getAll(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size){
+            @RequestParam(defaultValue = "5") int size) {
         List<AllOrderResponse> orderResponses = orderService.getAll(page - 1, size);
         return ResponseEntity.ok(orderResponses);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable long id, @RequestBody @Valid UpdateOrderRequest orderRequest) throws Exception {
-        UpdateOrderResponse updateOrder = orderService.updateBySale(id,orderRequest);
-        return ResponseEntity.ok(updateOrder);
-    }
-
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity<DeleteOrderResponse> delete(@PathVariable long id) {
         DeleteOrderResponse deleteOrder = orderService.delete(id);
         return ResponseEntity.ok(deleteOrder);
+    }
+
+    @GetMapping("/listOrderPending")
+    public ResponseEntity<List<AllOrderResponse>> getListOrderPending(){
+        return  ResponseEntity.ok(orderService.getListOrderPending());
+    }
+
+    @GetMapping("/listOrderAwaitingPayment")
+    public ResponseEntity<List<AllOrderResponse>> getListOrderAwaitingPayment(){
+        return  ResponseEntity.ok(orderService.getListOrderAwaitingPayment());
+    }
+
+    @GetMapping("/listOrderPaid")
+    public ResponseEntity<List<AllOrderResponse>> getListOrderPaid(){
+        return  ResponseEntity.ok(orderService.getListOrderPaid());
+    }
+
+    @GetMapping("/listOrderReject")
+    public ResponseEntity<List<AllOrderResponse>> getListOrderReject(){
+        return  ResponseEntity.ok(orderService.getListOrderRejected());
+    }
+
+    @GetMapping("/listOrderShipping")
+    public ResponseEntity<List<AllOrderResponse>> getListOrderShipping(){
+        return  ResponseEntity.ok(orderService.getListOrderShipping());
+    }
+
+    @GetMapping("/listOrderDelivered")
+    public ResponseEntity<List<AllOrderResponse>> getListOrderDelivered(){
+        return  ResponseEntity.ok(orderService.getListOrderDelivered());
     }
 }

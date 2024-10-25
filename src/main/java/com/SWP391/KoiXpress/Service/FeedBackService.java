@@ -38,31 +38,31 @@ public class FeedBackService {
 
 
 
-    public FeedBack createFeedBack(FeedBackRequet feedBackRequet) {
+    public FeedBacks createFeedBack(FeedBackRequet feedBackRequet) {
 
-        User user = authenticationService.getCurrentUser();
+        Users users = authenticationService.getCurrentUser();
 
-        Order order = orderRepository.findById(feedBackRequet.getOrderId())
+        Orders orders = orderRepository.findById(feedBackRequet.getOrderId())
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
 
-        FeedBack feedBack = new FeedBack();
-        feedBack.setUser(user);
-        feedBack.setOrder(order);
-        feedBack.setComment(feedBackRequet.getComment());
-        feedBack.setRatingScore(feedBackRequet.getRatingScore());
+        FeedBacks feedBacks = new FeedBacks();
+        feedBacks.setUsers(users);
+        feedBacks.setOrders(orders);
+        feedBacks.setComment(feedBackRequet.getComment());
+        feedBacks.setRatingScore(feedBackRequet.getRatingScore());
 
-        feedBack.setCreatedTime(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        feedBacks.setCreatedTime(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-        return feedBackRepository.save(feedBack);
+        return feedBackRepository.save(feedBacks);
     }
 
 
 
 
 
-    public FeedBack updateFeedBack(long FeedId, FeedBackRequet feedBackRequet) {
-        FeedBack oldFeedback = getFeedById(FeedId);
+    public FeedBacks updateFeedBack(long FeedId, FeedBackRequet feedBackRequet) {
+        FeedBacks oldFeedback = getFeedById(FeedId);
         try {
             oldFeedback.setComment(feedBackRequet.getComment());
             oldFeedback.setRatingScore(feedBackRequet.getRatingScore());
@@ -74,9 +74,9 @@ public class FeedBackService {
 
     public void deleteFeedBack(long FeedId) {
         try {
-            FeedBack feedBack = getFeedById(FeedId);
-            feedBack.setDelete(true);
-            feedBackRepository.save(feedBack);
+            FeedBacks feedBacks = getFeedById(FeedId);
+            feedBacks.setDelete(true);
+            feedBackRepository.save(feedBacks);
         } catch (Exception e) {
             e.printStackTrace();
             throw new EntityNotFoundException("Not found feedback");
@@ -85,12 +85,12 @@ public class FeedBackService {
 
     public FeedBackReply replyToFeedBack(long Id, String replyContent, String repliedBy) {
 
-        FeedBack feedBack =getFeedById(Id);
+        FeedBacks feedBacks =getFeedById(Id);
 
 
         FeedBackReply feedBackReply = new FeedBackReply();
 
-        feedBackReply.setFeedBack(feedBack);
+        feedBackReply.setFeedBacks(feedBacks);
         feedBackReply.setReplyContent(replyContent);
         feedBackReply.setRepliedBy(repliedBy);
         feedBackReply.setReplyDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
@@ -98,31 +98,31 @@ public class FeedBackService {
         feedBackReply = feedBackReplyRepository.save(feedBackReply);
 
 
-        feedBack.getReplies().add(feedBackReply);
+        feedBacks.getReplies().add(feedBackReply);
 
 
-        feedBackRepository.save(feedBack);
+        feedBackRepository.save(feedBacks);
 
         return feedBackReply;
     }
 
     public List<FeedBackResponse> getAllFeedBacksByUser(Long userId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<FeedBack> feedBackPage = feedBackRepository.findFeedBacksByUserId(userId, pageRequest);
+        Page<FeedBacks> feedBackPage = feedBackRepository.findFeedBacksByUsersId(userId, pageRequest);
 
         List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        for (FeedBack feedBack : feedBackPage.getContent()) {
-            User user = feedBack.getUser();
+        for (FeedBacks feedBacks : feedBackPage.getContent()) {
+            Users users = feedBacks.getUsers();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
-            EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);
+            EachUserResponse eachUserResponse = modelMapper.map(users, EachUserResponse.class);
 
-            feedBackResponse.setId(feedBack.getId());
-            feedBackResponse.setRatingScore(feedBack.getRatingScore());
-            feedBackResponse.setComment(feedBack.getComment());
+            feedBackResponse.setId(feedBacks.getId());
+            feedBackResponse.setRatingScore(feedBacks.getRatingScore());
+            feedBackResponse.setComment(feedBacks.getComment());
             feedBackResponse.setEachUserResponse(eachUserResponse);
-            feedBackResponse.setCreatedTime(feedBack.getCreatedTime());
+            feedBackResponse.setCreatedTime(feedBacks.getCreatedTime());
 
-            List<FeedBackReplyResponse> replyResponses = feedBack.getReplies().stream()
+            List<FeedBackReplyResponse> replyResponses = feedBacks.getReplies().stream()
                     .map(reply -> {
                         FeedBackReplyResponse replyResponse = new FeedBackReplyResponse();
                         replyResponse.setReplyContent(reply.getReplyContent());
@@ -141,21 +141,21 @@ public class FeedBackService {
 
     public List<FeedBackResponse> getAllFeedBacksByOrder(Long orderId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<FeedBack> feedBackPage = feedBackRepository.findFeedBacksByOrderId(orderId, pageRequest);
+        Page<FeedBacks> feedBackPage = feedBackRepository.findFeedBacksByOrdersId(orderId, pageRequest);
 
         List<FeedBackResponse> feedBackResponses = new ArrayList<>();
-        for (FeedBack feedBack : feedBackPage.getContent()) {
-            User user = feedBack.getUser();
+        for (FeedBacks feedBacks : feedBackPage.getContent()) {
+            Users users = feedBacks.getUsers();
             FeedBackResponse feedBackResponse = new FeedBackResponse();
-            EachUserResponse eachUserResponse = modelMapper.map(user, EachUserResponse.class);
+            EachUserResponse eachUserResponse = modelMapper.map(users, EachUserResponse.class);
 
-            feedBackResponse.setId(feedBack.getId());
-            feedBackResponse.setRatingScore(feedBack.getRatingScore());
-            feedBackResponse.setComment(feedBack.getComment());
+            feedBackResponse.setId(feedBacks.getId());
+            feedBackResponse.setRatingScore(feedBacks.getRatingScore());
+            feedBackResponse.setComment(feedBacks.getComment());
             feedBackResponse.setEachUserResponse(eachUserResponse);
-            feedBackResponse.setCreatedTime(feedBack.getCreatedTime());
+            feedBackResponse.setCreatedTime(feedBacks.getCreatedTime());
 
-            List<FeedBackReplyResponse> replyResponses = feedBack.getReplies().stream()
+            List<FeedBackReplyResponse> replyResponses = feedBacks.getReplies().stream()
                     .map(reply -> {
                         FeedBackReplyResponse replyResponse = new FeedBackReplyResponse();
                         replyResponse.setReplyContent(reply.getReplyContent());
@@ -172,20 +172,20 @@ public class FeedBackService {
     }
 
     public List<FeedBackResponse> getAllFeedBacksByCurrentUser(int page, int size) {
-        User user = authenticationService.getCurrentUser();
-        if (user != null) {
-            return getAllFeedBacksByUser(user.getId(), page, size);
+        Users users = authenticationService.getCurrentUser();
+        if (users != null) {
+            return getAllFeedBacksByUser(users.getId(), page, size);
         }
         return new ArrayList<>();
     }
 
 
-    private FeedBack getFeedById(long Id) {
-        FeedBack oldFeedBack = feedBackRepository.findById(Id);
-        if (oldFeedBack == null) {
+    private FeedBacks getFeedById(long Id) {
+        FeedBacks oldFeedBacks = feedBackRepository.findById(Id);
+        if (oldFeedBacks == null) {
             throw new EntityNotFoundException("FeedBack not found!");
         }
-        return oldFeedBack;
+        return oldFeedBacks;
     }
     //---------------------------------------------------------------------
 

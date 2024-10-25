@@ -3,11 +3,11 @@ package com.SWP391.KoiXpress.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,15 +19,13 @@ import lombok.experimental.FieldDefaults;
 import java.util.Date;
 import java.util.List;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FeedBack {
+@Table(name = "`feedback`")
+public class FeedBacks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -48,7 +46,7 @@ public class FeedBack {
 
     boolean isDelete = false;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "feedBack")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "feedBacks")
     @JsonManagedReference
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -56,9 +54,10 @@ public class FeedBack {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User user;
+    @JsonIgnoreProperties({"feedBacks", "orders", "blogs"})
+    Users users;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
-    Order order;
+    Orders orders;
 }

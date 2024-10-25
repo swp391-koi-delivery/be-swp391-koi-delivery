@@ -1,9 +1,8 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.WareHouse;
-import com.SWP391.KoiXpress.Exception.ProgressException;
+import com.SWP391.KoiXpress.Entity.WareHouses;
 import com.SWP391.KoiXpress.Model.request.WareHouse.CreateWareHouseRequest;
-import com.SWP391.KoiXpress.Model.response.CreateWarehouseResponse;
+import com.SWP391.KoiXpress.Model.response.WareHouse.CreateWarehouseResponse;
 import com.SWP391.KoiXpress.Repository.OrderRepository;
 import com.SWP391.KoiXpress.Repository.WareHouseRepository;
 import org.modelmapper.ModelMapper;
@@ -25,23 +24,23 @@ public class WareHouseService {
     ModelMapper modelMapper;
 
     public CreateWarehouseResponse create(CreateWareHouseRequest createWareHouseRequest){
-        WareHouse wareHouse = new WareHouse();
-        wareHouse.setLocation(createWareHouseRequest.getLocation());
-        wareHouseRepository.save(wareHouse);
-        return modelMapper.map(wareHouse, CreateWarehouseResponse.class);
+        WareHouses wareHouses = new WareHouses();
+        wareHouses.setLocation(createWareHouseRequest.getLocation());
+        wareHouseRepository.save(wareHouses);
+        return modelMapper.map(wareHouses, CreateWarehouseResponse.class);
     }
 
     public void delete(long id){
-        WareHouse wareHouse = wareHouseRepository.findWareHouseById(id);
-        wareHouse.setAvailable(false);
-        wareHouseRepository.save(wareHouse);
+        WareHouses wareHouses = wareHouseRepository.findWaresHouseById(id);
+        wareHouses.setAvailable(false);
+        wareHouseRepository.save(wareHouses);
     }
 
-    public List<WareHouse> getAllWareHouseAvailable(){
+    public List<WareHouses> getAllWareHouseAvailable(){
         return wareHouseRepository.findByIsAvailableTrue();
     }
 
-    public List<WareHouse> getAllWareHouseNotAvailable(){
+    public List<WareHouses> getAllWareHouseNotAvailable(){
         return wareHouseRepository.findByIsAvailableFalse();
     }
 }

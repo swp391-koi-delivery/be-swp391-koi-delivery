@@ -1,32 +1,27 @@
 package com.SWP391.KoiXpress.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.NumberFormat;
+
+import java.util.List;
+
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BoxDetail {
+@Table(name = "`ware_house`")
+public class WareHouses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+    String location;
+    boolean isAvailable=true;
 
-    int quantity;
-
-    @ManyToOne
-    @JoinColumn(name = "order_detail_id")
-    @JsonIgnore
-    OrderDetail orderDetail;
-
-    @ManyToOne
-    @JoinColumn(name = "box_id")
+    @OneToMany(mappedBy = "wareHouses")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Box box;
-
+    List<Progresses> progresses;
 }

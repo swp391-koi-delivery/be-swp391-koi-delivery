@@ -6,9 +6,6 @@ public enum OrderStatus {
     //sau khi dat don
     PENDING,
 
-    //user can not update
-    AWAITING_RESPONSE,
-
     //role sale staff
     ACCEPTED,
     REJECTED,
