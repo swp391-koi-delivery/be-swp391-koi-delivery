@@ -10,8 +10,10 @@ import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
 
 import com.SWP391.KoiXpress.Model.request.Authen.*;
+
 import com.SWP391.KoiXpress.Model.response.Authen.LoginGoogleResponse;
 import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+
 import com.SWP391.KoiXpress.Model.response.User.CreateUserByManagerResponse;
 import com.SWP391.KoiXpress.Repository.AuthenticationRepository;
 import com.SWP391.KoiXpress.Repository.UserRepository;
@@ -31,7 +33,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
-
 
 @Service
 
@@ -148,25 +149,45 @@ public class AuthenticationService implements UserDetailsService {
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(loginGoogleRequest.getToken());
             String email = decodedToken.getEmail();
-            Users users = userRepository.findUsersByEmail(email);
-            if (users == null) {
-                Users newUsers = new Users();
-                newUsers.setFullname(decodedToken.getName() != null ? decodedToken.getName() : "Unknown User");
-                newUsers.setEmail(email);
-                newUsers.setUsername(email);
-                newUsers.setRole(Role.CUSTOMER);
-                newUsers.setPassword(null);
-                newUsers.setPhone(null);
-                newUsers.setEmailStatus(EmailStatus.VERIFIED);
-                userRepository.save(newUsers);
+            Users user = userRepository.findUsersByEmail(email);
+            String image = decodedToken.getPicture();
+
+            if (user == null) {
+                Users newUser = new Users();
+                newUser.setFullname(decodedToken.getName() != null ? decodedToken.getName() : "Unknown User");
+                newUser.setEmail(email);
+                newUser.setUsername(email);
+                newUser.setRole(Role.CUSTOMER);
+                newUser.setPassword(null);
+                newUser.setPhone(null);
+                newUser.setEmailStatus(EmailStatus.VERIFIED);
+                userRepository.save(newUser);
                 return new LoginGoogleResponse(
-                        tokenService.generateToken(newUsers),
-                        newUsers.getUsername()
+                        tokenService.generateToken(newUser),
+                        newUser.getId(),
+                        newUser.getUsername(),
+                        newUser.getFullname(),
+                        image,
+                        newUser.getAddress(),
+                        newUser.getPhone(),
+                        newUser.getEmail(),
+                        newUser.getRole(),
+                        newUser.getLoyaltyPoint(),
+                        newUser.isDeleted()
                 );
             }
             return new LoginGoogleResponse(
-                    tokenService.generateToken(users),
-                    users.getUsername()
+                    tokenService.generateToken(user),
+                    user.getId(),
+                    user.getUsername(),
+                    user.getFullname(),
+                    image,
+                    user.getAddress(),
+                    user.getPhone(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getLoyaltyPoint(),
+                    user.isDeleted()
             );
         } catch (FirebaseAuthException e) {
             throw new RuntimeException("Invalid Google ID token.");

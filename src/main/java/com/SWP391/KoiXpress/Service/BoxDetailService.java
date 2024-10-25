@@ -6,9 +6,12 @@ import com.SWP391.KoiXpress.Entity.OrderDetails;
 import com.SWP391.KoiXpress.Model.response.Box.AllBoxDetailResponse;
 import com.SWP391.KoiXpress.Model.response.Box.CreateBoxDetailResponse;
 import com.SWP391.KoiXpress.Exception.BoxException;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
 import com.SWP391.KoiXpress.Repository.BoxDetailRepository;
 import com.SWP391.KoiXpress.Repository.BoxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -193,13 +196,14 @@ public class BoxDetailService {
         }
     }
 
-    public List<AllBoxDetailResponse> getAllBox(){
-        List<BoxDetails> boxDetails = boxDetailRepository.findAll();
-        if(boxDetails.isEmpty()){
-            return Collections.emptyList();
-        }
+    public PagedResponse<AllBoxDetailResponse> getAllBox(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BoxDetails> boxDetails = boxDetailRepository.findAll(pageRequest);
 
-        return boxDetails.stream()
+        if (boxDetails.isEmpty()) {
+            return new PagedResponse<>(Collections.emptyList(), page, size, 0, 0, true);
+        }
+        List<AllBoxDetailResponse> boxDetailResponses = boxDetails.stream()
                 .map(boxDetail -> new AllBoxDetailResponse(
                         boxDetail.getId(),
                         boxDetail.getQuantity(),
@@ -207,7 +211,6 @@ public class BoxDetailService {
                         boxDetail.getBoxes()
                 ))
                 .collect(Collectors.toList());
+        return new PagedResponse<>(boxDetailResponses, page, size, boxDetails.getTotalElements(), boxDetails.getTotalPages(), boxDetails.isLast());
     }
-
-
 }

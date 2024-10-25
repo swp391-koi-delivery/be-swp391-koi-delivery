@@ -7,6 +7,8 @@ import com.SWP391.KoiXpress.Exception.*;
 import com.SWP391.KoiXpress.Model.request.User.CreateUserByManagerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateCustomerRequest;
 import com.SWP391.KoiXpress.Model.request.User.UpdateUserByManagerRequest;
+import com.SWP391.KoiXpress.Model.response.Authen.LoginResponse;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
 import com.SWP391.KoiXpress.Model.response.User.*;
 import com.SWP391.KoiXpress.Repository.UserRepository;
 
@@ -161,18 +163,22 @@ public class UserService {
         }
     }
 
-    public List<AllUserResponse> getAllUser(int page, int size) {
-        // Tạo PageRequest để phân trang
+    public PagedResponse<LoginResponse> getAllUser(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-
-        // Truy xuất danh sách người dùng theo phân trang
         Page<Users> userPage = userRepository.findAll(pageRequest);
-
-        // Ánh xạ từ User sang RegisterResponse
-        return userPage.getContent().stream()
-                .map(user -> modelMapper.map(user, AllUserResponse.class))
+        List<LoginResponse> loginResponses = userPage.getContent().stream()
+                .map(user -> modelMapper.map(user, LoginResponse.class))
                 .collect(Collectors.toList());
+        return new PagedResponse<>(
+                loginResponses,
+                page,
+                size,
+                userPage.getTotalElements(),
+                userPage.getTotalPages(),
+                userPage.isLast()
+        );
     }
+
 
     public EachUserResponse getEachUserById(long id) {
         Users users = userRepository.findUsersById(id);

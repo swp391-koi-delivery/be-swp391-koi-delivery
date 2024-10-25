@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class FeedBackResponse {
-    long Id;
+    long id;
     byte ratingScore;
     String comment;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
