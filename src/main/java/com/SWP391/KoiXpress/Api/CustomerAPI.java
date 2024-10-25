@@ -48,13 +48,13 @@ public class CustomerAPI {
         return ResponseEntity.ok(newBlog);
     }
 
-    @DeleteMapping("/{blogId}")
+    @DeleteMapping("/blog/{blogId}")
     public ResponseEntity deleteBlog(@PathVariable long blogId){
         DeleteBlogResponse deleteBlog = blogService.delete(blogId);
         return ResponseEntity.ok(deleteBlog);
     }
 
-    @PutMapping("/{blogId}")
+    @PutMapping("/blog/{blogId}")
     public ResponseEntity updateBlog(@PathVariable long blogId,@Valid @RequestBody Blog blog){
         UpdateBlogResponse newBlog = blogService.update(blogId,blog);
         return  ResponseEntity.ok(newBlog);
@@ -66,7 +66,7 @@ public class CustomerAPI {
         return ResponseEntity.ok(updateUser);
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/user/{userId}")
     public ResponseEntity deleteCustomer(@PathVariable long userId){
         DeleteUserByUserResponse deleteUserByUserResponse = userService.deleteByUser(userId);
         return ResponseEntity.ok(deleteUserByUserResponse);

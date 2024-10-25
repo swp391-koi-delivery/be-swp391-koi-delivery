@@ -127,8 +127,6 @@ public class FeedBackService {
                     .map(reply -> {
                         FeedBackReplyResponse replyResponse = new FeedBackReplyResponse();
                         replyResponse.setReplyContent(reply.getReplyContent());
-                        replyResponse.setRepliedBy(reply.getRepliedBy());
-                        replyResponse.setReplyDate(reply.getReplyDate());
                         return replyResponse;
                     }).collect(Collectors.toList());
 
@@ -166,8 +164,6 @@ public class FeedBackService {
                     .map(reply -> {
                         FeedBackReplyResponse replyResponse = new FeedBackReplyResponse();
                         replyResponse.setReplyContent(reply.getReplyContent());
-                        replyResponse.setRepliedBy(reply.getRepliedBy());
-                        replyResponse.setReplyDate(reply.getReplyDate());
                         return replyResponse;
                     }).collect(Collectors.toList());
 
@@ -195,6 +191,6 @@ public class FeedBackService {
         return oldFeedBack;
     }
     //---------------------------------------------------------------------
-
+//jij
 
 }
