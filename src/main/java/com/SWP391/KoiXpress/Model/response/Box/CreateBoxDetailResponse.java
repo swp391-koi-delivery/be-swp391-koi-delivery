@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Model.response.Box;
 
-import com.SWP391.KoiXpress.Entity.BoxDetail;
+import com.SWP391.KoiXpress.Entity.BoxDetails;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateBoxDetailResponse {
-    List<BoxDetail> boxDetails;
+    List<BoxDetails> boxDetails;
     @NumberFormat(pattern = "#.##")
     double totalPrice;
     @NumberFormat(pattern = "#.##")

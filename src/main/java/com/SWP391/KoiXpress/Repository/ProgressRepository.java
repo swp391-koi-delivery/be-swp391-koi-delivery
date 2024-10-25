@@ -1,23 +1,22 @@
 package com.SWP391.KoiXpress.Repository;
 
-import com.SWP391.KoiXpress.Entity.Order;
-import com.SWP391.KoiXpress.Entity.Progress;
+import com.SWP391.KoiXpress.Entity.Orders;
+import com.SWP391.KoiXpress.Entity.Progresses;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProgressRepository extends JpaRepository<Progress, Long> {
-    @Query("SELECT p FROM Progress p WHERE p.order.id = :orderId")
-    List<Progress> findProgressesByOrderId(long orderId);
+public interface ProgressRepository extends JpaRepository<Progresses, Long> {
+    Optional<List<Progresses>> findProgressesByOrdersId(long orderId);
 
-    @Query("SELECT p FROM Progress p WHERE p.order.trackingOrder = :trackingOrder AND p.progressStatus IS NOT NULL")
-    List<Progress> findProgressesByOrderIdAndStatusNotNull(UUID trackingOrder);
+    @Query("SELECT p FROM Progresses p WHERE p.orders.trackingOrder = :trackingOrder AND p.progressStatus IS NOT NULL")
+    List<Progresses> findProgressesByTrackingOrderAndStatusNotNull(UUID trackingOrder);
 
-    Progress findProgressesById(long id);
+    Progresses findProgressesById(long id);
 
-    Order findOrderByOrderId(Order order);
 }

@@ -1,25 +1,37 @@
 package com.SWP391.KoiXpress.Entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.NumberFormat;
+
+import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DeliveryMethod {
+@Table(name = "`box`")
+public class Boxes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String typeVehicle;
+    String type;
+
+    @NumberFormat(pattern = "#.##")
+    double volume;
 
     @NumberFormat(pattern = "#.##")
     double price;
+
+    @OneToMany(mappedBy = "boxes", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    List<BoxDetails> boxDetails;
 }

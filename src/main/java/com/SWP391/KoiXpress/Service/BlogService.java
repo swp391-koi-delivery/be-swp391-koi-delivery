@@ -1,19 +1,19 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.Blog;
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.Blogs;
+import com.SWP391.KoiXpress.Entity.Users;
 import com.SWP391.KoiXpress.Exception.EntityNotFoundException;
 import com.SWP391.KoiXpress.Model.request.Blog.CreateBlogRequest;
 import com.SWP391.KoiXpress.Model.response.Blog.AllBlogResponse;
 import com.SWP391.KoiXpress.Model.response.Blog.CreateBlogResponse;
 import com.SWP391.KoiXpress.Model.response.Blog.DeleteBlogResponse;
 import com.SWP391.KoiXpress.Model.response.Blog.UpdateBlogResponse;
-import com.SWP391.KoiXpress.Model.response.User.UserResponse;
+import com.SWP391.KoiXpress.Model.response.Paging.PagedResponse;
+import com.SWP391.KoiXpress.Model.response.User.EachUserResponse;
 import com.SWP391.KoiXpress.Repository.BlogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -34,66 +34,66 @@ public class BlogService {
 
 
     public CreateBlogResponse createBlog(CreateBlogRequest createBlogRequest) {
-        Blog blog = new Blog();
-        User user = authenticationService.getCurrentUser();
-        blog.setImg(createBlogRequest.getImg());
-        blog.setPost(createBlogRequest.getPost());
-        blog.setUser(user);
-        blogRepository.save(blog);
+        Blogs blogs = new Blogs();
+        Users users = authenticationService.getCurrentUser();
+        blogs.setImg(createBlogRequest.getImg());
+        blogs.setPost(createBlogRequest.getPost());
+        blogs.setUsers(users);
+        blogRepository.save(blogs);
         //
-        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        EachUserResponse eachUserResponse = modelMapper.map(users, EachUserResponse.class);
         CreateBlogResponse createBlogResponse = new CreateBlogResponse();
-        createBlogResponse.setUserResponse(userResponse);
-        createBlogResponse.setBlogId(blog.getId());
-        createBlogResponse.setPost(blog.getPost());
-        createBlogResponse.setImg(blog.getImg());
+        createBlogResponse.setEachUserResponse(eachUserResponse);
+        createBlogResponse.setBlogId(blogs.getId());
+        createBlogResponse.setPost(blogs.getPost());
+        createBlogResponse.setImg(blogs.getImg());
 
         return createBlogResponse;
     }
 
-    public List<AllBlogResponse> getAllBlog(int page, int size) {
+    public PagedResponse<AllBlogResponse> getAllBlog(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Blog> blogsPage = blogRepository.findAll(pageRequest);
+        Page<Blogs> blogsPage = blogRepository.findAll(pageRequest);
 
         List<AllBlogResponse> allBlogResponses = new ArrayList<>();
-        for (Blog blog : blogsPage.getContent()) {
-            User user = blog.getUser();
+        for (Blogs blogs : blogsPage.getContent()) {
+            Users users = blogs.getUsers();
             AllBlogResponse allBlogResponse = new AllBlogResponse();
-            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-            allBlogResponse.setBlogId(blog.getId());
-            allBlogResponse.setImg(blog.getImg());
-            allBlogResponse.setPost(blog.getPost());
-            allBlogResponse.setUserResponse(userResponse);
+            EachUserResponse eachUserResponse = modelMapper.map(users, EachUserResponse.class);
+            allBlogResponse.setBlogId(blogs.getId());
+            allBlogResponse.setImg(blogs.getImg());
+            allBlogResponse.setPost(blogs.getPost());
+            allBlogResponse.setEachUserResponse(eachUserResponse);
             allBlogResponses.add(allBlogResponse);
         }
 
-        return allBlogResponses;
+        return new PagedResponse<>(allBlogResponses,page, size, blogsPage.getTotalElements(), blogsPage.getTotalPages(),blogsPage.isLast());
     }
 
     public DeleteBlogResponse delete(long blogId) {
-        Blog blog = getBlogById(blogId);
-        blog.setDeleted(true);
-        blogRepository.save(blog);
-        return modelMapper.map(blog, DeleteBlogResponse.class);
+        Blogs blogs = getBlogById(blogId);
+        blogs.setDeleted(true);
+        blogRepository.save(blogs);
+        return modelMapper.map(blogs, DeleteBlogResponse.class);
     }
 
-    public UpdateBlogResponse update(long blogId, Blog blog) {
-        Blog oldBlog = getBlogById(blogId);
-        oldBlog.setPost(blog.getPost());
-        oldBlog.setImg(blog.getImg());
-        blogRepository.save(oldBlog);
-        return modelMapper.map(oldBlog, UpdateBlogResponse.class);
+    public UpdateBlogResponse update(long blogId, Blogs blogs) {
+        Blogs oldBlogs = getBlogById(blogId);
+        oldBlogs.setPost(blogs.getPost());
+        oldBlogs.setImg(blogs.getImg());
+        blogRepository.save(oldBlogs);
+        return modelMapper.map(oldBlogs, UpdateBlogResponse.class);
     }
 
 
-    private Blog getBlogById(long blogId) {
-        Blog oldBlog = blogRepository.findBlogById(blogId);
-        if (oldBlog == null) {
+    private Blogs getBlogById(long blogId) {
+        Blogs oldBlogs = blogRepository.findBlogsById(blogId);
+        if (oldBlogs == null) {
             throw new EntityNotFoundException("Blog not found!");
         }
-        if (oldBlog.isDeleted()) {
+        if (oldBlogs.isDeleted()) {
             throw new EntityNotFoundException("Blog not found!");
         }
-        return oldBlog;
+        return oldBlogs;
     }
 }

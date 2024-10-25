@@ -4,7 +4,6 @@ import com.SWP391.KoiXpress.Entity.*;
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
 import com.SWP391.KoiXpress.Entity.Enum.ProgressStatus;
-import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Exception.ProgressException;
 import com.SWP391.KoiXpress.Model.request.Progress.ProgressRequest;
 import com.SWP391.KoiXpress.Model.request.Progress.UpdateProgressRequest;
@@ -28,6 +27,9 @@ public class ProgressService {
     OrderRepository orderRepository;
 
     @Autowired
+    OrderService orderService;
+
+    @Autowired
     ProgressRepository progressRepository;
 
     @Autowired
@@ -40,19 +42,16 @@ public class ProgressService {
     WareHouseService wareHouseService;
 
     public List<ProgressResponse> create(ProgressRequest progressRequest) {
-        Order order = orderRepository.findOrderById(progressRequest.getOrderId());
-        List<Progress> existProgressOrder = progressRepository.findProgressesByOrderId(progressRequest.getOrderId());
-        if (!existProgressOrder.isEmpty()) {
+        Orders orders = orderService.getOrderById(progressRequest.getOrderId());
+        List<Progresses> existProgressesOrder = progressRepository.findProgressesByOrdersId(orders.getId()).orElseThrow();
+        if (!existProgressesOrder.isEmpty()) {
             throw new ProgressException("Order already in another Progress");
         }
-        if (order == null) {
-            throw new NotFoundException("Can not found order");
-        }
-        if (order.getOrderStatus() == OrderStatus.SHIPPING) {
+        if (orders.getOrderStatus() == OrderStatus.SHIPPING) {
             List<ProgressResponse> progresses = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
-                Progress progress = new Progress();
-                progress.setOrder(order);
+                Progresses progress = new Progresses();
+                progress.setOrders(orders);
                 progressRepository.save(progress);
                 ProgressResponse response = new ProgressResponse();
                 response.setId(progress.getId());
@@ -63,8 +62,14 @@ public class ProgressService {
         throw new ProgressException("Order is not ready to ship");
     }
 
+    public List<ProgressResponse> findProgressesByOrderId(long orderId){
+        Orders orders = orderService.getOrderById(orderId);
+        List<Progresses> progresses = progressRepository.findProgressesByOrdersId(orders.getId()).orElseThrow(()->new ProgressException("Order do not have progress yet"));
+        return progresses.stream().map(progress -> modelMapper.map(progress, ProgressResponse.class)).toList();
+    }
+
     public List<ProgressResponse> trackingOrder(UUID trackingOrder) {
-        List<Progress> progresses = progressRepository.findProgressesByOrderIdAndStatusNotNull(trackingOrder);
+        List<Progresses> progresses = progressRepository.findProgressesByTrackingOrderAndStatusNotNull(trackingOrder);
         if (progresses != null) {
             return progresses.stream().map(progress -> modelMapper.map(progress, ProgressResponse.class)).collect(Collectors.toList());
         }
@@ -72,37 +77,37 @@ public class ProgressService {
     }
 
     public UpdateProgressResponse update(long id, UpdateProgressRequest updateProgressRequest) {
-        Progress oldProgress = progressRepository.findProgressesById(id);
-        Order order = progressRepository.findOrderByOrderId(oldProgress.getOrder());
-        WareHouse wareHouse = wareHouseRepository.findWareHouseByLocation(order.getNearWareHouse());
+        Progresses oldProgresses = progressRepository.findProgressesById(id);
+        Orders orders = orderRepository.findOrdersById(oldProgresses.getOrders().getId());
+        WareHouses wareHouses = wareHouseRepository.findWareHousesByLocation(orders.getNearWareHouse());
 
-        if (wareHouse != null && wareHouse.isAvailable()) {
-            oldProgress.setDateProgress(new Date());
-            oldProgress.setHealthFishStatus(updateProgressRequest.getHealthFishStatus());
+        if (wareHouses != null && wareHouses.isAvailable()) {
+            oldProgresses.setDateProgress(new Date());
+            oldProgresses.setHealthFishStatus(updateProgressRequest.getHealthFishStatus());
             if(updateProgressRequest.getHealthFishStatus()== HealthFishStatus.UNHEALTHY){
-                oldProgress.setProgressStatus(ProgressStatus.CANCELED);
-                progressRepository.save(oldProgress);
-                return modelMapper.map(oldProgress, UpdateProgressResponse.class);
+                oldProgresses.setProgressStatus(ProgressStatus.CANCELED);
+                progressRepository.save(oldProgresses);
+                return modelMapper.map(oldProgresses, UpdateProgressResponse.class);
             }
-            oldProgress.setImage(updateProgressRequest.getImage());
-            oldProgress.setProgressStatus(updateProgressRequest.getProgressStatus());
+            oldProgresses.setImage(updateProgressRequest.getImage());
+            oldProgresses.setProgressStatus(updateProgressRequest.getProgressStatus());
             if(updateProgressRequest.getProgressStatus() != null){
-                oldProgress.setInProgress(true);
+                oldProgresses.setInProgress(true);
             }
-            oldProgress.setWareHouse(wareHouse);
-            wareHouseRepository.save(wareHouse);
-            progressRepository.save(oldProgress);
-            return modelMapper.map(oldProgress, UpdateProgressResponse.class);
+            oldProgresses.setWareHouses(wareHouses);
+            wareHouseRepository.save(wareHouses);
+            progressRepository.save(oldProgresses);
+            return modelMapper.map(oldProgresses, UpdateProgressResponse.class);
         }
         throw new ProgressException("Can not update");
     }
 
     public DeleteProgressResponse delete(long id) {
-        Progress progress = progressRepository.findProgressesById(id);
-        progress.setInProgress(false);
-        progress.setProgressStatus(ProgressStatus.CANCELED);
-        progressRepository.save(progress);
-        return modelMapper.map(progress, DeleteProgressResponse.class);
+        Progresses progresses = progressRepository.findProgressesById(id);
+        progresses.setInProgress(false);
+        progresses.setProgressStatus(ProgressStatus.CANCELED);
+        progressRepository.save(progresses);
+        return modelMapper.map(progresses, DeleteProgressResponse.class);
     }
 
 }

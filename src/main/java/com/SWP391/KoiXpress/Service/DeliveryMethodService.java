@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Service;
 
-import com.SWP391.KoiXpress.Entity.DeliveryMethod;
+import com.SWP391.KoiXpress.Entity.DeliveryMethods;
 import com.SWP391.KoiXpress.Exception.NotFoundException;
 import com.SWP391.KoiXpress.Model.request.DeliveryMethod.CreateDeliveryMethodRequest;
 import com.SWP391.KoiXpress.Model.request.DeliveryMethod.UpdateDeliveryMethodRequest;
@@ -20,30 +20,30 @@ public class DeliveryMethodService {
     @Autowired
     ModelMapper modelMapper;
 
-    public DeliveryMethod create(CreateDeliveryMethodRequest createDeliveryMethodRequest){
-        DeliveryMethod deliveryMethod = modelMapper.map(createDeliveryMethodRequest, DeliveryMethod.class);
-        return deliveryMethodRepository.save(deliveryMethod);
+    public DeliveryMethods create(CreateDeliveryMethodRequest createDeliveryMethodRequest){
+        DeliveryMethods deliveryMethods = modelMapper.map(createDeliveryMethodRequest, DeliveryMethods.class);
+        return deliveryMethodRepository.save(deliveryMethods);
     }
-    public DeliveryMethod update(long id,UpdateDeliveryMethodRequest updateDeliveryMethodRequest){
-        DeliveryMethod oldDelivery = findDeliveryById(id);
+    public DeliveryMethods update(long id, UpdateDeliveryMethodRequest updateDeliveryMethodRequest){
+        DeliveryMethods oldDelivery = findDeliveryById(id);
         oldDelivery.setTypeVehicle(updateDeliveryMethodRequest.getTypeVehicle());
         oldDelivery.setPrice(updateDeliveryMethodRequest.getPrice());
         return deliveryMethodRepository.save(oldDelivery);
     }
     public void delete(long id){
-        DeliveryMethod deliveryMethod = findDeliveryById(id);
-        deliveryMethodRepository.delete(deliveryMethod);
+        DeliveryMethods deliveryMethods = findDeliveryById(id);
+        deliveryMethodRepository.delete(deliveryMethods);
     }
 
-    public List<DeliveryMethod> getAll(){
-        List<DeliveryMethod> deliveryMethods = deliveryMethodRepository.findAll();
+    public List<DeliveryMethods> getAll(){
+        List<DeliveryMethods> deliveryMethods = deliveryMethodRepository.findAll();
         return deliveryMethods;
     }
 
-    private DeliveryMethod findDeliveryById(long id){
-        DeliveryMethod deliveryMethod = deliveryMethodRepository.findDeliveryMethodById(id);
-        if(deliveryMethod != null){
-            return deliveryMethod;
+    private DeliveryMethods findDeliveryById(long id){
+        DeliveryMethods deliveryMethods = deliveryMethodRepository.findDeliveryMethodsById(id);
+        if(deliveryMethods != null){
+            return deliveryMethods;
         }
         else{
             throw new NotFoundException("Can not found DeliveryMethod");

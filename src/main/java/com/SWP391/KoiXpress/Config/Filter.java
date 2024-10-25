@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Config;
 
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.Users;
 import com.SWP391.KoiXpress.Service.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -40,7 +40,6 @@ public class Filter extends OncePerRequestFilter {
             "/api/free-access/**",
             "/api/authentication/register",
             "/api/authentication/forgot-password",
-            "/api/calculateBoxAndSuggestFishSizes",
             "/api/authentication/login-google"
     );
 
@@ -62,9 +61,9 @@ public class Filter extends OncePerRequestFilter {
                 return;
             }
             //co token
-            User user;
+            Users users;
             try{
-                user = tokenService.getUserByToken(token);
+                users = tokenService.getUserByToken(token);
             }catch(ExpiredJwtException e){
                 handlerExceptionResolver.resolveException(request,response,null,new AuthException("Token expired"));
                 return;
@@ -74,7 +73,7 @@ public class Filter extends OncePerRequestFilter {
             }
 
             //token chuẩn, cho phép truy cập, đồng thời lưu thông tin người dùng
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,token, user.getAuthorities());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(users,token, users.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request,response);

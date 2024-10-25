@@ -2,13 +2,9 @@ package com.SWP391.KoiXpress.Model.response.Progress;
 
 import com.SWP391.KoiXpress.Entity.Enum.HealthFishStatus;
 import com.SWP391.KoiXpress.Entity.Enum.ProgressStatus;
-import com.SWP391.KoiXpress.Entity.Order;
-import com.SWP391.KoiXpress.Entity.WareHouse;
+import com.SWP391.KoiXpress.Entity.Orders;
+import com.SWP391.KoiXpress.Entity.WareHouses;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,6 +19,6 @@ public class DeleteProgressResponse {
     boolean isInProgress;
     HealthFishStatus healthFishStatus;
     ProgressStatus progressStatus;
-    WareHouse wareHouse;
-    Order order;
+    WareHouses wareHouses;
+    Orders orders;
 }

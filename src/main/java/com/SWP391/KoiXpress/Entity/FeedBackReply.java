@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
 import java.util.Date;
 
 @Entity
@@ -29,5 +30,7 @@ public class FeedBackReply {
     @ManyToOne
     @JoinColumn(name = "feed_back_id")
     @JsonBackReference
-    FeedBack feedBack;
+    FeedBacks feedBacks;
+
+
 }

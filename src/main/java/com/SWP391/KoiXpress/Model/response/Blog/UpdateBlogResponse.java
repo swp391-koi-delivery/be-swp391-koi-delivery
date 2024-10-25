@@ -1,6 +1,6 @@
 package com.SWP391.KoiXpress.Model.response.Blog;
 
-import com.SWP391.KoiXpress.Entity.User;
+import com.SWP391.KoiXpress.Entity.Users;
 import lombok.Data;
 
 @Data
@@ -9,5 +9,5 @@ public class UpdateBlogResponse {
     String img;
     String post;
     boolean isDeleted =false;
-    User user;
+    Users users;
 }

@@ -1,10 +1,9 @@
 package com.SWP391.KoiXpress.Repository;
 
-import com.SWP391.KoiXpress.Entity.BoxDetails;
+import com.SWP391.KoiXpress.Entity.OrderDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BoxDetailRepository extends JpaRepository<BoxDetails,Long> {
-
+public interface OrderDetailRepository extends JpaRepository<OrderDetails, Long> {
 }

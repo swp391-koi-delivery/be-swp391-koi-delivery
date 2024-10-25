@@ -14,7 +14,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Blog {
+@Table(name = "`blog`")
+public class Blogs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -30,5 +31,5 @@ public class Blog {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    User user;
+    Users users;
 }

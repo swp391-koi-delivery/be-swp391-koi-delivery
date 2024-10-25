@@ -29,9 +29,6 @@ public class CreateOrderRequest {
     DescribeOrder describeOrder;
 
     @Enumerated(EnumType.STRING)
-    PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
     MethodTransPort methodTransPort;
 
     List<OrderDetailRequest> orderDetailRequestList;

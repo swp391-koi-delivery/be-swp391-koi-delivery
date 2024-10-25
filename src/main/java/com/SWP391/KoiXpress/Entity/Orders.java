@@ -3,17 +3,16 @@ package com.SWP391.KoiXpress.Entity;
 import com.SWP391.KoiXpress.Entity.Enum.DescribeOrder;
 import com.SWP391.KoiXpress.Entity.Enum.MethodTransPort;
 import com.SWP391.KoiXpress.Entity.Enum.OrderStatus;
-import com.SWP391.KoiXpress.Entity.Enum.PaymentMethod;
 import com.SWP391.KoiXpress.Exception.OrderException;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.springframework.format.annotation.NumberFormat;
 
 import java.util.Date;
@@ -28,7 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name="`order`")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
@@ -76,40 +75,50 @@ public class Order {
     MethodTransPort methodTransPort;
 
     @Enumerated(EnumType.STRING)
-    PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    User user;
+    Users users;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<OrderDetail> orderDetails;
+    List<OrderDetails> orderDetails;
 
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<Progress> progresses;
+    List<Progresses> progresses;
 
     @ManyToOne
     @JoinColumn(name = "report_id")
-    Report report;
+    Reports reports;
 
-    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orders",cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    List<FeedBack> feedBacks;
+    List<FeedBacks> feedBacks;
+
+    @OneToOne(mappedBy = "orders")
+    Payments payments;
 
 
     public double calculatePrice(){
         if(methodTransPort!=null){
+            if(describeOrder.equals(DescribeOrder.WHOLESALE_ORDER)){
+                return totalDistance * methodTransPort.getPrice() + totalPrice-(totalPrice*describeOrder.getDiscount());
+            }
             return totalDistance * methodTransPort.getPrice() + totalPrice;
         }
-        throw new OrderException("Method transport id not selected");
+        throw new OrderException("Method transport is not selected");
+    }
+
+    public double calculateDistancePrice(){
+        if(methodTransPort!= null){
+            return totalDistance * methodTransPort.getPrice();
+        }
+        throw new OrderException("Method transport is not selected");
     }
 }
